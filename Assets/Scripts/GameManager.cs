@@ -2,15 +2,23 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public static GameManager instance;
+    public GameObject grid;
+    public GameObject curTower;
+    public Transform[] targetPos;
+    public int posIndex = 0;
+    public bool isSelect = false;
+    public int stage = 0;
+
+    private void Awake()
     {
-        
+        instance = this;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
+        if(isSelect)
+        {
+        }
     }
 }
