@@ -35,8 +35,8 @@ public class MonsterWalk : BaseState<BasicMonster>
     {
         if(GameManager.instance.targetPos.Length != 0)
         {
-            Transform target = GameManager.instance.targetPos[GameManager.instance.posIndex];
-            switch(GameManager.instance.posIndex)
+            Transform target = GameManager.instance.targetPos[monster.posIndex];
+            switch(monster.posIndex)
             {
                 case 0:
                 case 1:
@@ -54,10 +54,10 @@ public class MonsterWalk : BaseState<BasicMonster>
 
             if(Vector2.Distance(monster.transform.position, target.position) < 0.1f)
             {
-                GameManager.instance.posIndex++;
-                if(GameManager.instance.posIndex >= GameManager.instance.targetPos.Length)
+                monster.posIndex++;
+                if(monster.posIndex >= GameManager.instance.targetPos.Length)
                 {
-                    GameManager.instance.posIndex = 0;
+                    monster.posIndex = 0;
                 }
             }
         }
@@ -129,9 +129,10 @@ public class BasicMonster : Monster
         }
     }
 
-    public MonsterState state;
+    public MonsterState monsterState;
     StateMachine<MonsterState, BasicMonster> stateMachine = new StateMachine<MonsterState, BasicMonster>();
     public Slider hpBar;
+    public int posIndex = 0;
 
     private void Awake()
     {
@@ -156,7 +157,7 @@ public class BasicMonster : Monster
 
     public void ChangeState(MonsterState _state)
     {
-        state = _state;
+        monsterState = _state;
         stateMachine.ChangeState(_state);
     }
 
