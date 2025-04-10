@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MonsterGenerator : Singleton<MonsterGenerator>
+public class MonsterSpawner : Singleton<MonsterSpawner>
 {
     [SerializeField] private GameObject[] monsters;
     private Dictionary<int, List<GameObject>> monsterPool = new Dictionary<int, List<GameObject>>();

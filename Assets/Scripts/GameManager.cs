@@ -1,6 +1,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public enum GameState
 {
@@ -57,7 +58,7 @@ public class StageStart : BaseState<GameManager>
 {
     public override void Enter(GameManager game)
     {
-        MonsterGenerator.instance.StartStage();
+        MonsterSpawner.instance.StartStage();
         game.StartCoroutine(StageStartCo(game));
     }
 
@@ -133,6 +134,7 @@ public class GameManager : Singleton<GameManager>
     public TextMeshProUGUI timeText;
     public StateMachine<GameState, GameManager> stateMachine = new StateMachine<GameState, GameManager>();
     public GameState gameState;
+    public Tilemap groundTileMap;
 
     private new void Awake()
     {
@@ -147,14 +149,7 @@ public class GameManager : Singleton<GameManager>
 
     private void Start()
     {
-        Time.timeScale = 2;
-    }
-
-    private void Update()
-    {
-        if(isSelect)
-        {
-        }
+        //Time.timeScale = 2;
     }
 
     public void ChanageState(GameState state)
