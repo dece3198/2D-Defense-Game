@@ -10,5 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 606347e0de2684a42a847958e4fa7b94, type: 3}
-  m_Name: Monster_1
+  m_Name: Unit_1
   m_EditorClassIdentifier: 
+  unitName: "\uD558\uAE09\uAC80\uC0AC"
+  recipeA:
+  - {fileID: 11400000}
+  - {fileID: 11400000}
+  - {fileID: 11400000}
+  recipeB: []
+  recipeTextA: 
+  recipeTextB: 
+  nextTowerA: {fileID: 0}
+  nextTowerB: {fileID: 0}

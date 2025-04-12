@@ -14,7 +14,6 @@ public abstract class BaseState<T>
 
 public class Monster : MonoBehaviour
 {
-    public State state;
     public float atk;
     public float def;
     public float hpReg;

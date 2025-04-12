@@ -34,7 +34,7 @@ public class MouseSelect : MonoBehaviour
             return;
         }
 
-        if(TowerSpawner.instance.usedTiles.Contains(currentCell))
+        if(UnitSpawner.instance.usedTiles.Contains(currentCell))
         {
             GameManager.instance.isSelect = false;
             renderer.color = Color.red;
