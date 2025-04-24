@@ -75,3 +75,5 @@ crashlytics-build.properties
 /Assets/ExternalAssets
 /Assets/SPUM
 /Assets/Resources/SPUM
+/Assets/Resources
+/Assets/Plugins
