@@ -4,7 +4,7 @@ public class ViewDetector : MonoBehaviour
 {
     [SerializeField] private GameObject target;
     public GameObject Target { get { return target; } }
-    [SerializeField] private Transform center;
+    public Transform center;
     [SerializeField] private float radius;
     [SerializeField] private LayerMask layerMask;
 
@@ -24,7 +24,7 @@ public class ViewDetector : MonoBehaviour
             }
         }
 
-        if(targets.Length < 0)
+        if(targets.Length <= 0)
         {
             target = null;
         }

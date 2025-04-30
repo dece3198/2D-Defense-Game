@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -25,7 +26,9 @@ public class DamageText : MonoBehaviour
 
     private IEnumerator TextCo()
     {
-        float time = 2;
+        float time = 0.5f;
+        transform.DOScale(new Vector2(1.5f, 1.5f), 0.2f).SetEase(Ease.Linear).SetUpdate(true);
+       
         while (time > 0)
         {
             time -= Time.deltaTime;
@@ -34,10 +37,9 @@ public class DamageText : MonoBehaviour
             text.color = alpha;
             yield return null;
         }
-        if (transform.CompareTag("DamageText"))
-        {
-            textManager.EnterPool(this.gameObject);
-        }
+
+        transform.localScale = Vector2.one;
+        textManager.EnterPool(this.gameObject);
         gameObject.SetActive(false);
     }
 }

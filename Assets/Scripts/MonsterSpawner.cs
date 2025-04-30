@@ -6,6 +6,7 @@ public class MonsterSpawner : Singleton<MonsterSpawner>
 {
     [SerializeField] private GameObject[] monsters;
     private Dictionary<int, List<GameObject>> monsterPool = new Dictionary<int, List<GameObject>>();
+    
 
     public void StartStage()
     {
@@ -15,14 +16,22 @@ public class MonsterSpawner : Singleton<MonsterSpawner>
 
     private IEnumerator MonsterCo()
     {
-        for(int i = 0; i < 40; i++)
+        if(((GameManager.instance.stage + 1) % 10) == 0 && GameManager.instance.stage != 0)
         {
             GameObject monster = GetFormPool(GameManager.instance.stage);
             monster.transform.position = transform.position;
             monster.SetActive(true);
-            yield return new WaitForSeconds(3f);
         }
-
+        else
+        {
+            for (int i = 0; i < 40; i++)
+            {
+                GameObject monster = GetFormPool(GameManager.instance.stage);
+                monster.transform.position = transform.position;
+                monster.SetActive(true);
+                yield return new WaitForSeconds(3f);
+            }
+        }
         GameManager.instance.stage++;
     }
 

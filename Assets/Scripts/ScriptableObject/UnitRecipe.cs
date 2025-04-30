@@ -4,10 +4,12 @@ using UnityEngine;
 public class UnitRecipe : ScriptableObject
 {
     public string unitName;
+    public Sprite unitImage;
+    public int minAtk;
+    public int maxAtk;
+    public int debuff;
     public UnitRecipe[] recipeA;
     public UnitRecipe[] recipeB;
-    public string recipeTextA;
-    public string recipeTextB;
-    public GameObject nextTowerA;
-    public GameObject nextTowerB;
+    public GameObject nextUnitA;
+    public GameObject nextUnitB;
 }

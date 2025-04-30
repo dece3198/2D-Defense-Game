@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 606347e0de2684a42a847958e4fa7b94, type: 3}
+  m_Name: Unit_3
+  m_EditorClassIdentifier: 
+  unitName: "\uD558\uAE09\uB9C8\uBC95\uC0AC"
+  unitImage: {fileID: 21300000, guid: 36c76b634a8930e48a4c0c5f4c049330, type: 3}
+  minAtk: 11
+  maxAtk: 15
+  debuff: 0
+  recipeA:
+  - {fileID: 11400000}
+  - {fileID: 11400000}
+  - {fileID: 11400000}
+  recipeB:
+  - {fileID: 11400000}
+  - {fileID: 11400000, guid: f5634630d60b44c4395c56efd267cd16, type: 2}
+  nextUnitA: {fileID: 3551105139136960956, guid: 51985bf133f10804d90f51b2376a40af, type: 3}
+  nextUnitB: {fileID: 3551105139136960956, guid: 16ac8127c789bfa4f8c5819e1d430821, type: 3}

@@ -1,4 +1,7 @@
+using System.Buffers.Text;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -40,7 +43,7 @@ public class Wait : BaseState<GameManager>
 
     private IEnumerator WaitCo(GameManager game)
     {
-        float time = 30;
+        float time = 5;
 
         while (time > 0)
         {
@@ -60,6 +63,7 @@ public class StageStart : BaseState<GameManager>
     {
         MonsterSpawner.instance.StartStage();
         game.StartCoroutine(StageStartCo(game));
+        game.roundText.text = (game.stage + 1).ToString() + "R";
     }
 
     public override void Exit(GameManager game)
@@ -91,6 +95,7 @@ public class StageEnd : BaseState<GameManager>
     public override void Enter(GameManager game)
     {
         game.StartCoroutine(StageEndCo(game));
+        game.Gold += 2;
     }
 
     public override void Exit(GameManager game)
@@ -131,10 +136,25 @@ public class GameManager : Singleton<GameManager>
     public Transform[] targetPos;
     public bool isSelect = false;
     public int stage = 0;
+    [SerializeField] private int gold;
+    public int Gold
+    {
+        get { return gold; }
+        set 
+        {
+            gold = value;
+            goldText.text = gold.ToString();
+        }
+    }
     public TextMeshProUGUI timeText;
+    public TextMeshProUGUI roundText;
+    [SerializeField] private TextMeshProUGUI goldText;
     public StateMachine<GameState, GameManager> stateMachine = new StateMachine<GameState, GameManager>();
     public GameState gameState;
     public Tilemap groundTileMap;
+    public HashSet<UnitRecipe> unitHashSet = new HashSet<UnitRecipe>();
+    public int debuff = 0;
+
 
     private new void Awake()
     {
@@ -149,7 +169,29 @@ public class GameManager : Singleton<GameManager>
 
     private void Start()
     {
-        //Time.timeScale = 2;
+        //Time.timeScale = 4;
+        Gold += 8;
+    }
+
+    public void AddUnit(UnitRecipe unit)
+    {
+        unitHashSet.Add(unit);
+        Debuff();
+    }
+
+    public void RemoveUnit(UnitRecipe unit)
+    {
+        unitHashSet.Remove(unit);
+        Debuff();
+    }
+
+    private void Debuff()
+    {
+        debuff = 0;
+        foreach (var u in unitHashSet)
+        {
+            debuff += u.debuff;
+        }
     }
 
     public void ChanageState(GameState state)

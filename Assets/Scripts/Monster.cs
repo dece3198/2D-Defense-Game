@@ -2,7 +2,7 @@ using UnityEngine;
 
 public enum MonsterState
 {
-    Idle, Walk, Attack, Stun, Die
+    Idle, Walk, Hit, Stun, Die
 }
 
 public abstract class BaseState<T>
@@ -14,11 +14,10 @@ public abstract class BaseState<T>
 
 public class Monster : MonoBehaviour
 {
-    public float atk;
     public float def;
-    public float hpReg;
     public float speed;
-
+    public float maxHp;
+    public Transform center;
     public Animator animator;
 }
 

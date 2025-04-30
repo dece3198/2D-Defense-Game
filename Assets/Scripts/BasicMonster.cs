@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -5,7 +6,7 @@ public class MonsterIdle : BaseState<BasicMonster>
 {
     public override void Enter(BasicMonster monster)
     {
-        monster.animator.SetFloat("RunState", 0f);
+        monster.animator.SetBool("1_Move", false);
     }
 
     public override void Exit(BasicMonster monster)
@@ -23,7 +24,7 @@ public class MonsterWalk : BaseState<BasicMonster>
 {
     public override void Enter(BasicMonster monster)
     {
-        monster.animator.SetFloat("RunState", 0.5f);
+        monster.animator.SetBool("1_Move", true);
     }
 
     public override void Exit(BasicMonster monster)
@@ -41,12 +42,12 @@ public class MonsterWalk : BaseState<BasicMonster>
                 case 0:
                 case 1:
                     monster.transform.localScale = new Vector3(-1f, 1f, 1);
-                    monster.hpBar.transform.localScale = new Vector3(-0.005f, 0.02f, 1);
+                    monster.hpBar.transform.localScale = new Vector3(-0.004f, 0.01f, 1);
                     break;
                 case 2:
                 case 3:
                     monster.transform.localScale = new Vector3(1f, 1f, 1);
-                    monster.hpBar.transform.localScale = new Vector3(0.005f, 0.02f, 1);
+                    monster.hpBar.transform.localScale = new Vector3(0.004f, 0.01f, 1);
                     break;
 
             }
@@ -64,11 +65,11 @@ public class MonsterWalk : BaseState<BasicMonster>
     }
 }
 
-public class MonsterAttack : BaseState<BasicMonster>
+public class MonsterHit : BaseState<BasicMonster>
 {
     public override void Enter(BasicMonster monster)
     {
-
+        monster.animator.SetTrigger("3_Damaged");
     }
 
     public override void Exit(BasicMonster monster)
@@ -86,7 +87,7 @@ public class MonsterStun : BaseState<BasicMonster>
 {
     public override void Enter(BasicMonster monster)
     {
-        monster.animator.SetFloat("RunState", 1f);
+        monster.animator.SetTrigger("5_Debuff");
     }
 
     public override void Exit(BasicMonster monster)
@@ -104,6 +105,8 @@ public class MonsterDie : BaseState<BasicMonster>
 {
     public override void Enter(BasicMonster monster)
     {
+        MonsterSpawner.instance.EnterPool(monster.gameObject, GameManager.instance.stage);
+        monster.posIndex = 0;
     }
 
     public override void Exit(BasicMonster monster)
@@ -117,20 +120,27 @@ public class MonsterDie : BaseState<BasicMonster>
     }
 }
 
-public class BasicMonster : Monster
+public class BasicMonster : Monster, IInteractable
 {
+    
     [SerializeField] private float hp;
     public float Hp 
     { 
         get { return hp; } 
         set 
         { 
-            value = hp; 
+            hp = value;
+            if(hp <= 0)
+            {
+                ChangeState(MonsterState.Die);
+            }
+            hpBar.value = Hp / maxHp;
         }
     }
 
     public MonsterState monsterState;
     StateMachine<MonsterState, BasicMonster> stateMachine = new StateMachine<MonsterState, BasicMonster>();
+    public TextManager textManager;
     public Slider hpBar;
     public int posIndex = 0;
 
@@ -140,19 +150,38 @@ public class BasicMonster : Monster
         stateMachine.Reset(this);
         stateMachine.AddState(MonsterState.Idle, new MonsterIdle());
         stateMachine.AddState(MonsterState.Walk, new MonsterWalk());
-        stateMachine.AddState(MonsterState.Attack, new MonsterAttack());
+        stateMachine.AddState(MonsterState.Hit, new MonsterHit());
         stateMachine.AddState(MonsterState.Stun, new MonsterStun());
         stateMachine.AddState(MonsterState.Die, new MonsterDie());
     }
 
-    private void Start()
+    private void OnEnable()
     {
+        if((GameManager.instance.stage + 1) % 10 == 0 && GameManager.instance.stage != 0)
+        {
+            Hp = 200 * Mathf.Pow(1.127745f, GameManager.instance.stage) * 3;
+        }
+        else
+        {
+            Hp = 200 * Mathf.Pow(1.127745f, GameManager.instance.stage);
+        }
+        maxHp = Hp;
+        def = 30 + (2.5f * (GameManager.instance.stage + 1));
         ChangeState(MonsterState.Walk);
     }
 
     private void Update()
     {
         stateMachine.Update();
+
+        if(Hp < maxHp)
+        {
+            Hp += maxHp * 0.002f * Time.deltaTime;
+            if(Hp > maxHp)
+            {
+                Hp = maxHp;
+            }
+        }
     }
 
     public void ChangeState(MonsterState _state)
@@ -161,4 +190,25 @@ public class BasicMonster : Monster
         stateMachine.ChangeState(_state);
     }
 
+    public void TakeHit(int damage, UnitType unit, float stun)
+    {
+        float damageP = ((def - GameManager.instance.debuff) * 0.06f) / (1 + (def - GameManager.instance.debuff) * 0.06f);
+        float curDamage = damage * (1f - damageP);
+        Hp -= curDamage;
+        textManager.ExitPool(curDamage);
+        if (unit == UnitType.Stun)
+        {
+            StartCoroutine(StunCo(stun));
+        }
+    }
+
+    public IEnumerator StunCo(float stunCool)
+    {
+        ChangeState(MonsterState.Stun);
+        animator.SetBool("1_Move", false);
+        animator.SetBool("5_Debuff", true);
+        yield return new WaitForSeconds(stunCool);
+        animator.SetBool("5_Debuff", false);
+        ChangeState(MonsterState.Walk);
+    }
 }
