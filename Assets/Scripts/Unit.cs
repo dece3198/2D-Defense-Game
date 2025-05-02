@@ -126,7 +126,7 @@ public class Unit : MonoBehaviour
     public Vector3Int currentTilePos;
     public Vector3Int reservedTilePos;
     private Vector2 dargStartPos;
-    private bool isDragging = true;
+    private bool isDragging = false;
 
     private void Awake()
     {
