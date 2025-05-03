@@ -32,7 +32,7 @@ public class Bullet : MonoBehaviour
         if(collision.GetComponentInChildren<IInteractable>() != null)
         {
             int rand = Random.Range(unit.unitRecipe.minAtk, unit.unitRecipe.maxAtk);
-            collision.GetComponentInChildren<IInteractable>().TakeHit(rand, unit.unitType, unit.stun);
+            collision.GetComponentInChildren<IInteractable>().TakeHit(rand, unit.unitRecipe.unitType, unit.stun);
             unit.EnterPool(gameObject);
             target = null;
         }

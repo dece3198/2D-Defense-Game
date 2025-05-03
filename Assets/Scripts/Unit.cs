@@ -8,7 +8,7 @@ public enum UnitState
 }
 public enum UnitType
 {
-   DPS, DDps, AD, Magic, Debuff, Stun
+   DPS, DDps, AD, Magic, Debuff, Stun, SpeedDebuff
 }
 
 
@@ -80,7 +80,7 @@ public class UnitAttack : BaseState<Unit>
 
     private IEnumerator AttackCo(Unit unit)
     {
-        if (unit.unitType == UnitType.DDps)
+        if (unit.unitRecipe.unitType == UnitType.DDps)
         {
             for (int i = 0; i < 5; i++)
             {
@@ -92,7 +92,7 @@ public class UnitAttack : BaseState<Unit>
         else
         {
             unit.sPUM_Prefabs.PlayAnimation(PlayerState.ATTACK, 0);
-            if (unit.unitType == UnitType.AD)
+            if (unit.unitRecipe.unitType == UnitType.AD)
             {
                 yield return new WaitForSeconds(0.5f);
             }
@@ -113,7 +113,6 @@ public class Unit : MonoBehaviour
     public Animator animator;
     public ViewDetector viewDetector;
     public UnitState unitState;
-    public UnitType unitType;
     [SerializeField] private GameObject bullet;
     [SerializeField] private Transform bulletPos;
     public Stack<GameObject> bulletStack = new Stack<GameObject>();
@@ -143,12 +142,12 @@ public class Unit : MonoBehaviour
 
     private void Start()
     {
-        if(unitType == UnitType.Debuff)
+        if(unitRecipe.unitType == UnitType.Debuff || unitRecipe.unitType == UnitType.SpeedDebuff)
         {
             GameManager.instance.AddUnit(unitRecipe);
         }
 
-        if(unitType == UnitType.AD || unitType == UnitType.Magic)
+        if(unitRecipe.unitType == UnitType.AD || unitRecipe.unitType == UnitType.Magic)
         {
             for (int i = 0; i < 10; i++)
             {
@@ -221,7 +220,7 @@ public class Unit : MonoBehaviour
         if (viewDetector.Target != null)
         {
             int rand = Random.Range(unitRecipe.minAtk, unitRecipe.maxAtk);
-            if (unitType == UnitType.AD || unitType == UnitType.Magic)
+            if (unitRecipe.unitType == UnitType.AD || unitRecipe.unitType == UnitType.Magic)
             {
                 GameObject _bullet = bulletStack.Pop();
                 _bullet.transform.position = bulletPos.position;
@@ -230,7 +229,7 @@ public class Unit : MonoBehaviour
             }
             else
             {
-                viewDetector.Target.GetComponentInChildren<IInteractable>().TakeHit(rand, unitType, stun);
+                viewDetector.Target.GetComponentInChildren<IInteractable>().TakeHit(rand, unitRecipe.unitType, stun);
             }
 
         }
@@ -249,7 +248,10 @@ public class Unit : MonoBehaviour
 
     private void OnDestroy()
     {
-        GameManager.instance.RemoveUnit(unitRecipe);
+        if (unitRecipe.unitType == UnitType.Debuff || unitRecipe.unitType == UnitType.SpeedDebuff)
+        {
+            GameManager.instance.RemoveUnit(unitRecipe);
+        }
     }
 
     public void StartAttackCo()

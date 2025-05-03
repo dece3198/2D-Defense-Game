@@ -51,7 +51,8 @@ public class MonsterWalk : BaseState<BasicMonster>
                     break;
 
             }
-            monster.transform.position = Vector2.MoveTowards(monster.transform.position, target.position, monster.speed);
+
+            monster.transform.position = Vector2.MoveTowards(monster.transform.position, target.position, (monster.speed - GameManager.instance.speedDebuff) * Time.deltaTime);
 
             if(Vector2.Distance(monster.transform.position, target.position) < 0.1f)
             {
@@ -137,7 +138,6 @@ public class BasicMonster : Monster, IInteractable
             hpBar.value = Hp / maxHp;
         }
     }
-
     public MonsterState monsterState;
     StateMachine<MonsterState, BasicMonster> stateMachine = new StateMachine<MonsterState, BasicMonster>();
     public TextManager textManager;

@@ -12,12 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 606347e0de2684a42a847958e4fa7b94, type: 3}
   m_Name: Unit_8_6
   m_EditorClassIdentifier: 
-  unitName: 
+  unitName: "\uC0C1\uAE09\uBC29\uD328\uC6A9\uBCD1D"
   unitImage: {fileID: 21300000, guid: 5c3685173c390a247aee007ae201c4ac, type: 3}
   minAtk: 0
   maxAtk: 0
   debuff: 0
-  recipeA: []
+  recipeA:
+  - {fileID: 11400000}
+  - {fileID: 11400000, guid: 30489fed80920714da75206e4a2650ed, type: 2}
+  - {fileID: 11400000, guid: e99dab9efd039eb4c880b88c58c855a2, type: 2}
   recipeB: []
   nextUnitA: {fileID: 0}
   nextUnitB: {fileID: 0}

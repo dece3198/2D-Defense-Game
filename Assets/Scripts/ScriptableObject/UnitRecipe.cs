@@ -8,8 +8,10 @@ public class UnitRecipe : ScriptableObject
     public int minAtk;
     public int maxAtk;
     public int debuff;
+    public float speedDebuff;
     public UnitRecipe[] recipeA;
     public UnitRecipe[] recipeB;
     public GameObject nextUnitA;
     public GameObject nextUnitB;
+    public UnitType unitType;
 }

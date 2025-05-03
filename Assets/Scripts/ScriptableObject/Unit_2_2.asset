@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 606347e0de2684a42a847958e4fa7b94, type: 3}
   m_Name: Unit_2_2
   m_EditorClassIdentifier: 
-  unitName: "\uC911\uAE09\uC30D\uAC80\uC6A9\uBCD1A"
+  unitName: "\uC911\uAE09\uC30D\uAC80\uC6A9\uBCD1"
   unitImage: {fileID: 21300000, guid: 8f8f36ac75644c0479e5aa23f484154d, type: 3}
   minAtk: 13
   maxAtk: 17
@@ -25,5 +25,5 @@ MonoBehaviour:
   - {fileID: 11400000}
   - {fileID: 11400000, guid: c1ec2546bf5de8e43a00b1d6f0238d2a, type: 2}
   - {fileID: 11400000, guid: 96dafe447e5d9564083e2ae9f384fb81, type: 2}
-  nextTowerA: {fileID: 0}
-  nextTowerB: {fileID: 0}
+  nextUnitA: {fileID: 1991207522359943556, guid: 7d5ff9424bc80e84fbc1c64561982be4, type: 3}
+  nextUnitB: {fileID: 3164615627731638260, guid: b90f7bb523411e541ad53aeeedb94194, type: 3}
