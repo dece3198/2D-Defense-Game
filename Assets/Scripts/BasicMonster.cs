@@ -1,4 +1,6 @@
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -52,7 +54,7 @@ public class MonsterWalk : BaseState<BasicMonster>
 
             }
 
-            monster.transform.position = Vector2.MoveTowards(monster.transform.position, target.position, (monster.speed - GameManager.instance.speedDebuff) * Time.deltaTime);
+            monster.transform.position = Vector2.MoveTowards(monster.transform.position, target.position, monster.GetCurSpeed() * Time.deltaTime);
 
             if(Vector2.Distance(monster.transform.position, target.position) < 0.1f)
             {
@@ -139,10 +141,13 @@ public class BasicMonster : Monster, IInteractable
         }
     }
     public MonsterState monsterState;
+    public Dictionary<MonsterType, float> speedDic = new Dictionary<MonsterType, float>();
     StateMachine<MonsterState, BasicMonster> stateMachine = new StateMachine<MonsterState, BasicMonster>();
     public TextManager textManager;
     public Slider hpBar;
     public int posIndex = 0;
+    private HashSet<UnitRecipe> units = new HashSet<UnitRecipe>();
+
 
     private void Awake()
     {
@@ -153,6 +158,10 @@ public class BasicMonster : Monster, IInteractable
         stateMachine.AddState(MonsterState.Hit, new MonsterHit());
         stateMachine.AddState(MonsterState.Stun, new MonsterStun());
         stateMachine.AddState(MonsterState.Die, new MonsterDie());
+        speedDic.Add(MonsterType.Normal, 1f);
+        speedDic.Add(MonsterType.Fast, 1.5f);
+        speedDic.Add(MonsterType.VeryFast, 2f);
+        speedDic.Add(MonsterType.Boss, 0.5f);
     }
 
     private void OnEnable()
@@ -168,6 +177,7 @@ public class BasicMonster : Monster, IInteractable
         maxHp = Hp;
         def = 30 + (2.5f * (GameManager.instance.stage + 1));
         ChangeState(MonsterState.Walk);
+        speed = speedDic[monsterType];
     }
 
     private void Update()
@@ -184,6 +194,45 @@ public class BasicMonster : Monster, IInteractable
         }
     }
 
+    public void SetSpeed(float debuff, UnitRecipe unit)
+    {
+        if(!units.Contains(unit))
+        {
+            units.Add(unit);
+            float tempSpeed = speed - (speedDic[monsterType] * debuff);
+            speed = Mathf.Clamp(tempSpeed, 0.1f, 2f);
+        }
+    }
+
+    public float GetCurSpeed()
+    {
+        return speed;
+    }
+
+    public void ResetSpeed(UnitRecipe unit)
+    {
+        float tempDeBuff = 0;
+
+        if (units.Contains(unit))
+        {
+            units.Remove(unit);
+
+            if(units.Count > 0)
+            {
+                foreach (var u in units)
+                {
+                    tempDeBuff += u.speedDebuff;
+                }
+                float tempSpeed = speed - (speedDic[monsterType] * tempDeBuff);
+                speed = Mathf.Clamp(tempSpeed, 0.1f, 2f);
+            }
+            else
+            {
+                speed = speedDic[monsterType];
+            }
+        }
+    }
+
     public void ChangeState(MonsterState _state)
     {
         monsterState = _state;
@@ -195,7 +244,7 @@ public class BasicMonster : Monster, IInteractable
         float damageP = ((def - GameManager.instance.debuff) * 0.06f) / (1 + (def - GameManager.instance.debuff) * 0.06f);
         float curDamage = damage * (1f - damageP);
         Hp -= curDamage;
-        textManager.ExitPool(curDamage);
+        textManager.ShowDamageText(curDamage);
         if (unit == UnitType.Stun)
         {
             StartCoroutine(StunCo(stun));

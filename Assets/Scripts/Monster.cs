@@ -24,6 +24,7 @@ public class Monster : MonoBehaviour
     public float speed;
     public Transform center;
     public Animator animator;
+    public MonsterType monsterType;
 }
 
 

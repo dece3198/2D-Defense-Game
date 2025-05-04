@@ -18567,15 +18567,12 @@ MonoBehaviour:
   isSelect: 0
   stage: 0
   gold: 0
-  baseSpeed: 1
-  speed: 1
   timeText: {fileID: 878758660}
   roundText: {fileID: 326576879}
   goldText: {fileID: 821528167}
   gameState: 0
   groundTileMap: {fileID: 1633303165}
   debuff: 0
-  speedDebuff: 0
 --- !u!4 &2108795788
 Transform:
   m_ObjectHideFlags: 0

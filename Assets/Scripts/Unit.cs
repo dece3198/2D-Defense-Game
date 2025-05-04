@@ -8,7 +8,7 @@ public enum UnitState
 }
 public enum UnitType
 {
-   DPS, DDps, AD, Magic, Debuff, Stun, SpeedDebuff
+   DPS, DDps, AD, Magic, DefDebuff, Stun, SpeedDebuff
 }
 
 
@@ -142,7 +142,7 @@ public class Unit : MonoBehaviour
 
     private void Start()
     {
-        if(unitRecipe.unitType == UnitType.Debuff || unitRecipe.unitType == UnitType.SpeedDebuff)
+        if(unitRecipe.unitType == UnitType.DefDebuff)
         {
             GameManager.instance.AddUnit(unitRecipe);
         }
@@ -238,6 +238,10 @@ public class Unit : MonoBehaviour
     private void Update()
     {
         stateMachine.Update();
+        if(unitRecipe.unitType == UnitType.SpeedDebuff)
+        {
+            viewDetector.DebuffTarget(unitRecipe.speedDebuff);
+        }
     }
 
     public void ChanageState(UnitState state)
@@ -248,7 +252,7 @@ public class Unit : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (unitRecipe.unitType == UnitType.Debuff || unitRecipe.unitType == UnitType.SpeedDebuff)
+        if (unitRecipe.unitType == UnitType.DefDebuff)
         {
             GameManager.instance.RemoveUnit(unitRecipe);
         }

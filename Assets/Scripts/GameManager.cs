@@ -153,9 +153,7 @@ public class GameManager : Singleton<GameManager>
     public GameState gameState;
     public Tilemap groundTileMap;
     public HashSet<UnitRecipe> defHashSet = new HashSet<UnitRecipe>();
-    public HashSet<UnitRecipe> speedHashSet = new HashSet<UnitRecipe>();
     public int debuff = 0;
-    public float speedDebuff = 0;
 
 
     private new void Awake()
@@ -177,30 +175,14 @@ public class GameManager : Singleton<GameManager>
 
     public void AddUnit(UnitRecipe unit)
     {
-        if(unit.unitType == UnitType.Debuff)
-        {
-            defHashSet.Add(unit);
-            DefDebuff();
-        }
-        else if(unit.unitType == UnitType.SpeedDebuff)
-        {
-            speedHashSet.Add(unit);
-            SpeedDebuff();
-        }
+        defHashSet.Add(unit);
+        DefDebuff();
     }
 
     public void RemoveUnit(UnitRecipe unit)
     {
-        if (unit.unitType == UnitType.Debuff)
-        {
-            defHashSet.Remove(unit);
-            DefDebuff();
-        }
-        else if (unit.unitType == UnitType.SpeedDebuff)
-        {
-            speedHashSet.Remove(unit);
-            SpeedDebuff();
-        }
+        defHashSet.Remove(unit);
+        DefDebuff();
     }
 
     private void DefDebuff()
@@ -209,15 +191,6 @@ public class GameManager : Singleton<GameManager>
         foreach (var u in defHashSet)
         {
             debuff += u.debuff;
-        }
-    }
-
-    private void SpeedDebuff()
-    {
-        speedDebuff = 0;
-        foreach(var u in speedHashSet)
-        {
-            speedDebuff += u.speedDebuff;
         }
     }
 

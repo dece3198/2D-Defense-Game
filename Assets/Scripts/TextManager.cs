@@ -24,7 +24,7 @@ public class TextManager : MonoBehaviour
         }
     }
 
-    public void ExitPool(float damage)
+    public void ShowDamageText(float damage)
     {
         float rnadX = Random.Range(-(rect.rect.width / 4), rect.rect.width / 4);
         float randY = Random.Range(0, 0.5f);
