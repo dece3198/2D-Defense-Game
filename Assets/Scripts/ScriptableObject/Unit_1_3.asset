@@ -26,3 +26,4 @@ MonoBehaviour:
   nextUnitA: {fileID: 0}
   nextUnitB: {fileID: 0}
   unitType: 0
+  unitRating: 2

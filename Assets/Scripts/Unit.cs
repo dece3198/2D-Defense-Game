@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum UnitState
 {
@@ -108,7 +109,6 @@ public class Unit : MonoBehaviour
     public float atkSpeed;
     public float stun;
     public UnitRecipe unitRecipe;
-
     public SPUM_Prefabs sPUM_Prefabs;
     public Animator animator;
     public ViewDetector viewDetector;
@@ -204,7 +204,7 @@ public class Unit : MonoBehaviour
             }
             else
             {
-                UnitSpawner.instance.curTower = this;
+                UnitSpawner.instance.curUnit = this;
                 UiManager.instance.AddUnit(unitRecipe);
             }
         }

@@ -1,4 +1,8 @@
 using UnityEngine;
+public enum UnitRating
+{
+    Normal, Rare, Epic, Unique, Legendary
+}
 
 [CreateAssetMenu(fileName = "New UnitRecipe", menuName = "New UnitRecipe/UnitRecipe")]
 public class UnitRecipe : ScriptableObject
@@ -14,4 +18,5 @@ public class UnitRecipe : ScriptableObject
     public GameObject nextUnitA;
     public GameObject nextUnitB;
     public UnitType unitType;
+    public UnitRating unitRating;
 }
