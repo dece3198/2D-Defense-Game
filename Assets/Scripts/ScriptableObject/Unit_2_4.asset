@@ -28,4 +28,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: dd12bab2a24bcfc44b1994198dec70c0, type: 2}
   nextUnitA: {fileID: 0}
   nextUnitB: {fileID: 0}
-  unitType: 0
+  unitType: 1
+  unitRating: 2

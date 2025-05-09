@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,12 +10,25 @@ public class UiManager : Singleton<UiManager>
     [SerializeField] private Image unitImage;
     [SerializeField] private Image[] recipeImageA;
     [SerializeField] private Image[] recipeImageB;
+    [SerializeField] private Image[] starImageA;
+    [SerializeField] private Image[] starImageB;
     [SerializeField] private Image resultImageA;
     [SerializeField] private Image resultImageB;
     [SerializeField] private GameObject buttonA;
     [SerializeField] private GameObject buttonB;
+    [SerializeField] private Image starA;
+    [SerializeField] private Image starB;
+    private Dictionary<UnitRating, Color> unitDic = new Dictionary<UnitRating, Color>();
 
-
+    private new void Awake()
+    {
+        base.Awake();
+        unitDic.Add(UnitRating.Normal, Color.gray);
+        unitDic.Add(UnitRating.Rare, Color.white);
+        unitDic.Add(UnitRating.Epic, Color.yellow);
+        unitDic.Add(UnitRating.Unique, Color.blue);
+        unitDic.Add(UnitRating.Legendary, Color.red);
+    }
 
     public void AddUnit(UnitRecipe unitRecipe)
     {
@@ -26,6 +40,7 @@ public class UiManager : Singleton<UiManager>
             if (i < unitRecipe.recipeA.Length && unitRecipe.recipeA[i] != null)
             {
                 recipeImageA[i].sprite = unitRecipe.recipeA[i].unitImage;
+                starImageA[i].color = unitDic[unitRecipe.recipeA[i].unitRating];
                 recipeImageA[i].gameObject.SetActive(true);
             }
             else
@@ -36,6 +51,7 @@ public class UiManager : Singleton<UiManager>
             if (i < unitRecipe.recipeB.Length && unitRecipe.recipeB[i] != null)
             {
                 recipeImageB[i].sprite = unitRecipe.recipeB[i].unitImage;
+                starImageB[i].color = unitDic[unitRecipe.recipeB[i].unitRating];
                 recipeImageB[i].gameObject.SetActive(true);
             }
             else
@@ -48,6 +64,7 @@ public class UiManager : Singleton<UiManager>
         {
             resultImageA.gameObject.SetActive(true);
             resultImageA.sprite = unitRecipe.nextUnitA.GetComponentInChildren<Unit>().unitRecipe.unitImage;
+            starA.color = unitDic[unitRecipe.nextUnitA.GetComponentInChildren<Unit>().unitRecipe.unitRating];
         }
         else
         {
@@ -57,6 +74,7 @@ public class UiManager : Singleton<UiManager>
         {
             resultImageB.gameObject.SetActive(true);
             resultImageB.sprite = unitRecipe.nextUnitB.GetComponentInChildren<Unit>().unitRecipe.unitImage;
+            starB.color = unitDic[unitRecipe.nextUnitB.GetComponentInChildren<Unit>().unitRecipe.unitRating];
         }
         else
         {
@@ -72,5 +90,4 @@ public class UiManager : Singleton<UiManager>
         towerUi.SetActive(false);
         closeUi.SetActive(false);
     }
-
 }

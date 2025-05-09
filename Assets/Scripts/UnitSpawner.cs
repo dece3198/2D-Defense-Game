@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -13,7 +12,7 @@ public class UnitSpawner : Singleton<UnitSpawner>
     public HashSet<Vector3Int> usedTiles = new HashSet<Vector3Int>();
     public List<Vector3Int> tilePosList = new List<Vector3Int>();
     public List<GameObject> unitList = new List<GameObject>();
-    public Unit curTower;
+    public Unit curUnit;
     [SerializeField] private TextMeshProUGUI missing;
 
     private void Start()
@@ -69,41 +68,45 @@ public class UnitSpawner : Singleton<UnitSpawner>
 
     public void CombineA()
     {
-        List<GameObject> matchedTowers = new List<GameObject>();
-        UnitRecipe[] required = curTower.unitRecipe.recipeA;
+        List<GameObject> matchedUnits = new List<GameObject>() { curUnit.gameObject };
+        UnitRecipe[] required = curUnit.unitRecipe.recipeA;
+        List<UnitRecipe> requiredList = new List<UnitRecipe>(required);
+        requiredList.Remove(curUnit.unitRecipe);
         List<GameObject> tempList = new List<GameObject>(unitList);
+        tempList.Remove(tempList.FirstOrDefault(t => t.GetComponentInChildren<Unit>() == curUnit));
 
-        foreach(var req in required)
+        foreach (var req in requiredList)
         {
             var match = tempList.FirstOrDefault(t => t.GetComponentInChildren<Unit>().unitRecipe == req);
-            if(match != null)
+            if (match != null)
             {
-                matchedTowers.Add(match);
+                matchedUnits.Add(match);
                 tempList.Remove(match);
             }
         }
 
-        if (matchedTowers.Count == curTower.unitRecipe.recipeA.Length)
+        if (matchedUnits.Count == required.Length)
         {
-            Vector3Int spawnCell = curTower.currentTilePos;
+            Vector3Int spawnCell = curUnit.currentTilePos;
 
-            foreach (var t in matchedTowers)
+            foreach (var t in matchedUnits)
             {
                 usedTiles.Remove(t.GetComponentInChildren<Unit>().currentTilePos);
                 unitList.Remove(t);
                 Destroy(t);
             }
-            GameObject tower = Instantiate(curTower.unitRecipe.nextUnitA, transform);
+            GameObject tower = Instantiate(curUnit.unitRecipe.nextUnitA, transform);
             Unit towerComp = tower.GetComponentInChildren<Unit>();
             towerComp.currentTilePos = spawnCell;
             unitList.Add(tower);
             Vector3 worldPos = tilemap.GetCellCenterWorld(spawnCell);
             tower.transform.position = worldPos;
             usedTiles.Add(spawnCell);
+            UiManager.instance.CloseUi();
         }
         else
         {
-            List<UnitRecipe> existing = unitList.Where(t => t != curTower.gameObject).Select(t => t.GetComponentInChildren<Unit>().unitRecipe).ToList();
+            List<UnitRecipe> existing = unitList.Where(t => t != curUnit.gameObject).Select(t => t.GetComponentInChildren<Unit>().unitRecipe).ToList();
             List<UnitRecipe> missings = new List<UnitRecipe>();
             foreach (var req in required.Distinct())
             {
@@ -133,41 +136,45 @@ public class UnitSpawner : Singleton<UnitSpawner>
 
     public void CombineB()
     {
-        List<GameObject> matchedTowers = new List<GameObject>();
-        UnitRecipe[] required = curTower.unitRecipe.recipeB;
+        List<GameObject> matchedUnits = new List<GameObject>() { curUnit.gameObject };
+        UnitRecipe[] required = curUnit.unitRecipe.recipeB;
+        List<UnitRecipe> requiredList = new List<UnitRecipe>(required);
+        requiredList.Remove(curUnit.unitRecipe);
         List<GameObject> tempList = new List<GameObject>(unitList);
+        tempList.Remove(tempList.FirstOrDefault(t => t.GetComponentInChildren<Unit>() == curUnit));
 
-        foreach (var req in required)
+        foreach (var req in requiredList)
         {
             var match = tempList.FirstOrDefault(t => t.GetComponentInChildren<Unit>().unitRecipe == req);
             if (match != null)
             {
-                matchedTowers.Add(match);
+                matchedUnits.Add(match);
                 tempList.Remove(match);
             }
         }
 
-        if (matchedTowers.Count == curTower.unitRecipe.recipeB.Length)
+        if (matchedUnits.Count == required.Length)
         {
-            Vector3Int spawnCell = curTower.currentTilePos;
+            Vector3Int spawnCell = curUnit.currentTilePos;
 
-            foreach (var t in matchedTowers)
+            foreach (var t in matchedUnits)
             {
                 usedTiles.Remove(t.GetComponentInChildren<Unit>().currentTilePos);
                 unitList.Remove(t);
                 Destroy(t);
             }
-            GameObject tower = Instantiate(curTower.unitRecipe.nextUnitB, transform);
+            GameObject tower = Instantiate(curUnit.unitRecipe.nextUnitB, transform);
             Unit towerComp = tower.GetComponentInChildren<Unit>();
             towerComp.currentTilePos = spawnCell;
             unitList.Add(tower);
             Vector3 worldPos = tilemap.GetCellCenterWorld(spawnCell);
             tower.transform.position = worldPos;
             usedTiles.Add(spawnCell);
+            UiManager.instance.CloseUi();
         }
         else
         {
-            List<UnitRecipe> existing = unitList.Where(t => t != curTower.gameObject).Select(t => t.GetComponentInChildren<Unit>().unitRecipe).ToList();
+            List<UnitRecipe> existing = unitList.Where(t => t != curUnit.gameObject).Select(t => t.GetComponentInChildren<Unit>().unitRecipe).ToList();
             List<UnitRecipe> missings = new List<UnitRecipe>();
 
             foreach (var req in required.Distinct())
@@ -194,6 +201,8 @@ public class UnitSpawner : Singleton<UnitSpawner>
             }
         }
     }
+
+
 
     private IEnumerator shakeCo()
     {

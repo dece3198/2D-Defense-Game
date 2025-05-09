@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitName: "\uC0C1\uAE09\uB454\uAE30\uC6A9\uBCD1D"
   unitImage: {fileID: 21300000, guid: 347be06a3af5959408a01b04e825efb4, type: 3}
-  minAtk: 0
-  maxAtk: 0
+  minAtk: 999
+  maxAtk: 1000
   debuff: 0
+  speedDebuff: 0
   recipeA:
   - {fileID: 11400000}
   - {fileID: 11400000, guid: 5ace51cd24db30248bbfb56305d8e400, type: 2}
@@ -27,3 +28,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 804cbaff4fb9686419e756999e193738, type: 2}
   nextUnitA: {fileID: 0}
   nextUnitB: {fileID: 0}
+  unitType: 0
+  unitRating: 2
