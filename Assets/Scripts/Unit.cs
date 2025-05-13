@@ -147,7 +147,7 @@ public class Unit : MonoBehaviour
             GameManager.instance.AddUnit(unitRecipe);
         }
 
-        if(unitRecipe.unitType == UnitType.AD || unitRecipe.unitType == UnitType.Magic)
+        if(unitRecipe.unitType == UnitType.AD || unitRecipe.unitType == UnitType.Magic || unitRecipe.unitType == UnitType.Stun)
         {
             for (int i = 0; i < 10; i++)
             {
@@ -220,7 +220,7 @@ public class Unit : MonoBehaviour
         if (viewDetector.Target != null)
         {
             int rand = Random.Range(unitRecipe.minAtk, unitRecipe.maxAtk);
-            if (unitRecipe.unitType == UnitType.AD || unitRecipe.unitType == UnitType.Magic)
+            if (unitRecipe.unitType == UnitType.AD || unitRecipe.unitType == UnitType.Magic || unitRecipe.unitType == UnitType.Stun)
             {
                 GameObject _bullet = bulletStack.Pop();
                 _bullet.transform.position = bulletPos.position;

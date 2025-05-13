@@ -3465,7 +3465,7 @@ MonoBehaviour:
   - {fileID: 4395971954585361379, guid: 897ac88a8b17f674ca472b37526662cc, type: 3}
   tilePosList: []
   unitList: []
-  curTower: {fileID: 0}
+  curUnit: {fileID: 0}
   missing: {fileID: 1979958726}
 --- !u!4 &782163320
 Transform:

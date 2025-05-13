@@ -245,7 +245,7 @@ public class BasicMonster : Monster, IInteractable
         float curDamage = damage * (1f - damageP);
         Hp -= curDamage;
         textManager.ShowDamageText(curDamage);
-        if (unit == UnitType.Stun)
+        if (unit == UnitType.Stun && gameObject.activeSelf)
         {
             StartCoroutine(StunCo(stun));
         }

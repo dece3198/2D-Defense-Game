@@ -10,23 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 606347e0de2684a42a847958e4fa7b94, type: 3}
-  m_Name: Unit_4_4
+  m_Name: Unit_1_1
   m_EditorClassIdentifier: 
-  unitName: "\uC0C1\uAE09\uC554\uC0B4\uC6A9\uBCD1C"
-  unitImage: {fileID: 21300000, guid: 3802fc85d6dae4c4cb5030e8b52e64bd, type: 3}
-  minAtk: 56
-  maxAtk: 61
+  unitName: "\uC0C1\uAE09\uAC80\uC6A9\uBCD1A"
+  unitImage: {fileID: 21300000, guid: 86863a3d08281ec47bf29f82a433851d, type: 3}
+  minAtk: 83
+  maxAtk: 91
   debuff: 0
   speedDebuff: 0
   recipeA:
   - {fileID: 11400000}
-  - {fileID: 11400000, guid: 0e2cb01235b48c745ba759e255a1e705, type: 2}
-  - {fileID: 11400000, guid: f15c6e36dd5eae846ab3b077b577820f, type: 2}
-  recipeB:
-  - {fileID: 11400000}
   - {fileID: 11400000, guid: dee005bb59532964295a94aa38929ff9, type: 2}
-  - {fileID: 11400000, guid: 5b819f064fa816546ac0453ff54a5e13, type: 2}
-  nextUnitA: {fileID: 0}
+  - {fileID: 11400000, guid: 80e71437b6d1e2d40a9388abc0622539, type: 2}
+  recipeB: []
+  nextUnitA: {fileID: 1708944993428466585, guid: b9584b60faf14214cbaf653ab10c6b31, type: 3}
   nextUnitB: {fileID: 0}
   unitType: 0
   unitRating: 2
