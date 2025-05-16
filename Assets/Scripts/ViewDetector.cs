@@ -11,6 +11,7 @@ public class ViewDetector : MonoBehaviour
     [SerializeField] private float debuffRadius;
     [SerializeField] private LayerMask layerMask;
     private List<BasicMonster> monsterList = new List<BasicMonster>();
+    private List<Unit> unitList = new List<Unit>();
 
     private void Awake()
     {
@@ -64,6 +65,35 @@ public class ViewDetector : MonoBehaviour
             {
                 monsterList[i].ResetSpeed(unit.unitRecipe);
                 monsterList.RemoveAt(i);
+            }
+        }
+    }
+
+    public void FindBufferTarget()
+    {
+        Collider2D[] targets = Physics2D.OverlapCircleAll(center.position, debuffRadius, layerMask);
+        HashSet<Unit> curUnit = new();
+
+        foreach(var col in targets)
+        {
+            Unit unit = col.GetComponentInChildren<Unit>();
+            if(unit != null)
+            {
+                curUnit.Add(unit);
+                if(!unitList.Contains(unit))
+                {
+                    unit.SetBuff();
+                    unitList.Add(unit);
+                }
+            }
+        }
+
+        for(int i = unitList.Count -1; i >= 0; i--)
+        {
+            if (!curUnit.Contains(unitList[i]))
+            {
+                unitList[i].ResetBuff();
+                unitList.RemoveAt(i);
             }
         }
     }

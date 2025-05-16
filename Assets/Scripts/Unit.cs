@@ -9,7 +9,7 @@ public enum UnitState
 }
 public enum UnitType
 {
-   DPS, DDps, AD, Magic, DefDebuff, Stun, SpeedDebuff
+   DPS, DDps, AD, Magic, DefDebuff, Stun, SpeedDebuff, Buffer
 }
 
 
@@ -108,6 +108,8 @@ public class Unit : MonoBehaviour
 {
     public float atkSpeed;
     public float stun;
+    public float maxAtk;
+    public float minAtk;
     public UnitRecipe unitRecipe;
     public SPUM_Prefabs sPUM_Prefabs;
     public Animator animator;
@@ -119,6 +121,7 @@ public class Unit : MonoBehaviour
     public bool isAtk = true;
 
     private StateMachine<UnitState, Unit> stateMachine = new StateMachine<UnitState, Unit>();
+    private HashSet<UnitRecipe> units = new HashSet<UnitRecipe>();
 
 
     public Vector3 target;
@@ -142,6 +145,9 @@ public class Unit : MonoBehaviour
 
     private void Start()
     {
+        maxAtk = unitRecipe.maxAtk;
+        minAtk = unitRecipe.minAtk;
+
         if(unitRecipe.unitType == UnitType.DefDebuff)
         {
             GameManager.instance.AddUnit(unitRecipe);
@@ -242,7 +248,50 @@ public class Unit : MonoBehaviour
         {
             viewDetector.DebuffTarget(unitRecipe.speedDebuff);
         }
+        else if(unitRecipe.unitType == UnitType.Buffer)
+        {
+            viewDetector.FindBufferTarget();
+        }
     }
+
+    public void SetBuff()
+    {
+        if(!units.Contains(unitRecipe))
+        {
+            units.Add(unitRecipe);
+            RecalculateBuff();
+        }
+    }
+
+    public void ResetBuff()
+    {
+        if(units.Contains(unitRecipe))
+        {
+            units.Remove(unitRecipe);
+            if(units.Count > 0)
+            {
+                RecalculateBuff();
+            }
+            else
+            {
+                maxAtk = unitRecipe.maxAtk;
+                minAtk = unitRecipe.minAtk;
+            }
+        }
+    }
+
+    public void RecalculateBuff()
+    {
+        float tempBuff = 0;
+        foreach (var u in units)
+        {
+            tempBuff += u.buff;
+        }
+        maxAtk = unitRecipe.maxAtk + (unitRecipe.maxAtk * tempBuff);
+        minAtk = unitRecipe.minAtk + (unitRecipe.minAtk * tempBuff);
+    }
+
+
 
     public void ChanageState(UnitState state)
     {

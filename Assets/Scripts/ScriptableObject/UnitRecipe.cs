@@ -12,6 +12,7 @@ public class UnitRecipe : ScriptableObject
     public int minAtk;
     public int maxAtk;
     public int debuff;
+    public float buff;
     public float speedDebuff;
     public UnitRecipe[] recipeA;
     public UnitRecipe[] recipeB;

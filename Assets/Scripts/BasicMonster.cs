@@ -196,11 +196,10 @@ public class BasicMonster : Monster, IInteractable
 
     public void SetSpeed(float debuff, UnitRecipe unit)
     {
-        if(!units.Contains(unit))
+        if (!units.Contains(unit))
         {
             units.Add(unit);
-            float tempSpeed = speed - (speedDic[monsterType] * debuff);
-            speed = Mathf.Clamp(tempSpeed, 0.1f, 2f);
+            RecalculateSpeed();
         }
     }
 
@@ -211,26 +210,31 @@ public class BasicMonster : Monster, IInteractable
 
     public void ResetSpeed(UnitRecipe unit)
     {
-        float tempDeBuff = 0;
-
         if (units.Contains(unit))
         {
             units.Remove(unit);
 
+            
             if(units.Count > 0)
             {
-                foreach (var u in units)
-                {
-                    tempDeBuff += u.speedDebuff;
-                }
-                float tempSpeed = speed - (speedDic[monsterType] * tempDeBuff);
-                speed = Mathf.Clamp(tempSpeed, 0.1f, 2f);
+                RecalculateSpeed();
             }
             else
             {
                 speed = speedDic[monsterType];
             }
         }
+    }
+
+    public void RecalculateSpeed()
+    {
+        float tempDeBuff = 1f;
+
+        foreach (var u in units)
+        {
+            tempDeBuff *= (1f - u.speedDebuff);
+        }
+        speed = Mathf.Clamp(speedDic[monsterType] * tempDeBuff, 0.1f, 2f);
     }
 
     public void ChangeState(MonsterState _state)

@@ -23,7 +23,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5ace51cd24db30248bbfb56305d8e400, type: 2}
   - {fileID: 11400000, guid: 1f18637ec6a958040a034a0833ad2c64, type: 2}
   recipeB: []
-  nextUnitA: {fileID: 0}
+  nextUnitA: {fileID: 4521574315689595136, guid: 8a536ded7cf5e684f9fcec68616fff0e, type: 3}
   nextUnitB: {fileID: 0}
   unitType: 1
   unitRating: 2

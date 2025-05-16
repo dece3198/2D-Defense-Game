@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Unit_1_2
   m_EditorClassIdentifier: 
   unitName: "\uC911\uAE09\uAC80\uC6A9\uBCD1"
-  unitImage: {fileID: 21300000, guid: ef850023e4dca9b42bba928ba7eb2daf, type: 3}
+  unitImage: {fileID: -3518682837263881568, guid: ef850023e4dca9b42bba928ba7eb2daf, type: 3}
   minAtk: 42
   maxAtk: 47
   debuff: 0
