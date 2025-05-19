@@ -16,8 +16,9 @@ MonoBehaviour:
   unitImage: {fileID: 0}
   minAtk: 777
   maxAtk: 888
-  debuff: 0
-  speedDebuff: 8
+  debuff: 4
+  buff: 0
+  speedDebuff: 0
   recipeA: []
   recipeB: []
   nextUnitA: {fileID: 0}

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,12 +13,16 @@ public class UiManager : Singleton<UiManager>
     [SerializeField] private Image[] recipeImageB;
     [SerializeField] private Image[] starImageA;
     [SerializeField] private Image[] starImageB;
+    [SerializeField] private TextMeshProUGUI[] unitANames;
+    [SerializeField] private TextMeshProUGUI[] unitBNames;
     [SerializeField] private Image resultImageA;
     [SerializeField] private Image resultImageB;
     [SerializeField] private GameObject buttonA;
     [SerializeField] private GameObject buttonB;
     [SerializeField] private Image starA;
     [SerializeField] private Image starB;
+    [SerializeField] private TextMeshProUGUI unitAName;
+    [SerializeField] private TextMeshProUGUI unitBName;
     private Dictionary<UnitRating, Color> unitDic = new Dictionary<UnitRating, Color>();
 
     private new void Awake()
@@ -42,6 +47,7 @@ public class UiManager : Singleton<UiManager>
                 recipeImageA[i].sprite = unitRecipe.recipeA[i].unitImage;
                 starImageA[i].color = unitDic[unitRecipe.recipeA[i].unitRating];
                 recipeImageA[i].gameObject.SetActive(true);
+                unitANames[i].text = unitRecipe.recipeA[i].unitName;
             }
             else
             {
@@ -53,6 +59,7 @@ public class UiManager : Singleton<UiManager>
                 recipeImageB[i].sprite = unitRecipe.recipeB[i].unitImage;
                 starImageB[i].color = unitDic[unitRecipe.recipeB[i].unitRating];
                 recipeImageB[i].gameObject.SetActive(true);
+                unitBNames[i].text = unitRecipe.recipeB[i].unitName;
             }
             else
             {
@@ -65,6 +72,7 @@ public class UiManager : Singleton<UiManager>
             resultImageA.gameObject.SetActive(true);
             resultImageA.sprite = unitRecipe.nextUnitA.GetComponentInChildren<Unit>().unitRecipe.unitImage;
             starA.color = unitDic[unitRecipe.nextUnitA.GetComponentInChildren<Unit>().unitRecipe.unitRating];
+            unitAName.text = unitRecipe.nextUnitA.GetComponentInChildren<Unit>().unitRecipe.unitName;
         }
         else
         {
@@ -75,6 +83,7 @@ public class UiManager : Singleton<UiManager>
             resultImageB.gameObject.SetActive(true);
             resultImageB.sprite = unitRecipe.nextUnitB.GetComponentInChildren<Unit>().unitRecipe.unitImage;
             starB.color = unitDic[unitRecipe.nextUnitB.GetComponentInChildren<Unit>().unitRecipe.unitRating];
+            unitBName.text = unitRecipe.nextUnitB.GetComponentInChildren<Unit>().unitRecipe.unitName;
         }
         else
         {

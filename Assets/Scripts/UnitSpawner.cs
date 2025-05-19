@@ -68,7 +68,7 @@ public class UnitSpawner : Singleton<UnitSpawner>
 
     public void CombineA()
     {
-        List<GameObject> matchedUnits = new List<GameObject>() { curUnit.gameObject };
+        List<GameObject> matchedUnits = new List<GameObject>() { curUnit.transform.parent.GetComponent<SPUM_Prefabs>().gameObject };
         UnitRecipe[] required = curUnit.unitRecipe.recipeA;
         List<UnitRecipe> requiredList = new List<UnitRecipe>(required);
         requiredList.Remove(curUnit.unitRecipe);
@@ -77,7 +77,7 @@ public class UnitSpawner : Singleton<UnitSpawner>
 
         foreach (var req in requiredList)
         {
-            var match = tempList.FirstOrDefault(t => t.GetComponentInChildren<Unit>().unitRecipe == req);
+            GameObject match = tempList.FirstOrDefault(t => t.GetComponentInChildren<Unit>().unitRecipe == req);
             if (match != null)
             {
                 matchedUnits.Add(match);
@@ -136,7 +136,7 @@ public class UnitSpawner : Singleton<UnitSpawner>
 
     public void CombineB()
     {
-        List<GameObject> matchedUnits = new List<GameObject>() { curUnit.gameObject };
+        List<GameObject> matchedUnits = new List<GameObject>() { curUnit.transform.parent.GetComponent<SPUM_Prefabs>().gameObject };
         UnitRecipe[] required = curUnit.unitRecipe.recipeB;
         List<UnitRecipe> requiredList = new List<UnitRecipe>(required);
         requiredList.Remove(curUnit.unitRecipe);

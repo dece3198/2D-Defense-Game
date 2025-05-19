@@ -10,21 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 606347e0de2684a42a847958e4fa7b94, type: 3}
-  m_Name: Unit_7_4
+  m_Name: Unit_9_10
   m_EditorClassIdentifier: 
-  unitName: "\uC0C1\uAE09\uC804\uC0AC\uC6A9\uBCD1B"
-  unitImage: {fileID: 21300000, guid: 4a4163c59a1543b4e99b043b529d4940, type: 3}
-  minAtk: 301
-  maxAtk: 312
+  unitName: "\uD558\uAE09\uB454\uAE30\uAE30\uC0ACD"
+  unitImage: {fileID: 0}
+  minAtk: 888
+  maxAtk: 999
   debuff: 0
   buff: 0
   speedDebuff: 0
-  recipeA:
-  - {fileID: 11400000}
-  - {fileID: 11400000, guid: 175ccc228d00c7e429389ed931ae9a5a, type: 2}
-  - {fileID: 11400000, guid: 4b28f60868eebdc44a15ac20588d28cf, type: 2}
+  recipeA: []
   recipeB: []
-  nextUnitA: {fileID: 6235809687019543741, guid: 1de68fd7bea264645b7272ede8114218, type: 3}
+  nextUnitA: {fileID: 0}
   nextUnitB: {fileID: 0}
   unitType: 0
-  unitRating: 2
+  unitRating: 0

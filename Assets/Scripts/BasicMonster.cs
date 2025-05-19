@@ -44,12 +44,12 @@ public class MonsterWalk : BaseState<BasicMonster>
                 case 0:
                 case 1:
                     monster.transform.localScale = new Vector3(-1f, 1f, 1);
-                    monster.hpBar.transform.localScale = new Vector3(-0.004f, 0.01f, 1);
+                    monster.textManager.transform.localScale = new Vector3(1f, 1f, 1);
                     break;
                 case 2:
                 case 3:
                     monster.transform.localScale = new Vector3(1f, 1f, 1);
-                    monster.hpBar.transform.localScale = new Vector3(0.004f, 0.01f, 1);
+                    monster.textManager.transform.localScale = new Vector3(-1f, 1f, 1);
                     break;
 
             }
@@ -108,8 +108,20 @@ public class MonsterDie : BaseState<BasicMonster>
 {
     public override void Enter(BasicMonster monster)
     {
-        MonsterSpawner.instance.EnterPool(monster.gameObject, GameManager.instance.stage);
-        monster.posIndex = 0;
+        monster.gameObject.layer = 0;
+        monster.animator.SetTrigger("4_Death");
+        switch (monster.posIndex)
+        {
+            case 0:
+            case 1:
+                monster.textManager.transform.localScale = new Vector3(1f, 1f, 1);
+                break;
+            case 2:
+            case 3:
+                monster.textManager.transform.localScale = new Vector3(-1f, 1f, 1);
+                break;
+
+        }
     }
 
     public override void Exit(BasicMonster monster)
@@ -119,7 +131,24 @@ public class MonsterDie : BaseState<BasicMonster>
 
     public override void Update(BasicMonster monster)
     {
+        if(monster.animator.GetCurrentAnimatorStateInfo(0).IsName("IDLE"))
+        {
+            monster.gameObject.layer = 7;
+            switch (monster.posIndex)
+            {
+                case 0:
+                case 1:
+                    monster.textManager.transform.localScale = new Vector3(-1f, 1f, 1);
+                    break;
+                case 2:
+                case 3:
+                    monster.textManager.transform.localScale = new Vector3(1f, 1f, 1);
+                    break;
 
+            }
+            monster.posIndex = 0;
+            MonsterSpawner.instance.EnterPool(monster.gameObject, GameManager.instance.stage);
+        }
     }
 }
 
@@ -135,7 +164,10 @@ public class BasicMonster : Monster, IInteractable
             hp = value;
             if(hp <= 0)
             {
-                ChangeState(MonsterState.Die);
+                if(monsterState != MonsterState.Die)
+                {
+                    ChangeState(MonsterState.Die);
+                }
             }
             hpBar.value = Hp / maxHp;
         }
@@ -243,7 +275,7 @@ public class BasicMonster : Monster, IInteractable
         stateMachine.ChangeState(_state);
     }
 
-    public void TakeHit(int damage, UnitType unit, float stun)
+    public void TakeHit(float damage, UnitType unit, float stun)
     {
         float damageP = ((def - GameManager.instance.debuff) * 0.06f) / (1 + (def - GameManager.instance.debuff) * 0.06f);
         float curDamage = damage * (1f - damageP);

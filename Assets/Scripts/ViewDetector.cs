@@ -69,7 +69,7 @@ public class ViewDetector : MonoBehaviour
         }
     }
 
-    public void FindBufferTarget()
+    public void FindBufferTarget(UnitRecipe unitRecipe)
     {
         Collider2D[] targets = Physics2D.OverlapCircleAll(center.position, debuffRadius, layerMask);
         HashSet<Unit> curUnit = new();
@@ -82,7 +82,7 @@ public class ViewDetector : MonoBehaviour
                 curUnit.Add(unit);
                 if(!unitList.Contains(unit))
                 {
-                    unit.SetBuff();
+                    unit.SetBuff(unitRecipe);
                     unitList.Add(unit);
                 }
             }
@@ -92,7 +92,7 @@ public class ViewDetector : MonoBehaviour
         {
             if (!curUnit.Contains(unitList[i]))
             {
-                unitList[i].ResetBuff();
+                unitList[i].ResetBuff(unitRecipe);
                 unitList.RemoveAt(i);
             }
         }

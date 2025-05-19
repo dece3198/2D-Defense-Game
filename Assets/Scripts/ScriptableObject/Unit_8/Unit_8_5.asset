@@ -17,6 +17,7 @@ MonoBehaviour:
   minAtk: 87
   maxAtk: 94
   debuff: 4
+  buff: 0
   speedDebuff: 0
   recipeA:
   - {fileID: 11400000}
@@ -26,7 +27,7 @@ MonoBehaviour:
   - {fileID: 11400000}
   - {fileID: 11400000, guid: 329cba529dbbccd49a03cd5126b8d7a2, type: 2}
   - {fileID: 11400000, guid: ad198c7723be9984c8dfec0ec4e69318, type: 2}
-  nextUnitA: {fileID: 0}
-  nextUnitB: {fileID: 0}
+  nextUnitA: {fileID: 6761555772783952638, guid: 8ec6f94267b19d34b9116cc70e5d0453, type: 3}
+  nextUnitB: {fileID: 3517286403934804966, guid: e43dbd8e8c96ecf42a0dfacd996e928e, type: 3}
   unitType: 4
   unitRating: 2

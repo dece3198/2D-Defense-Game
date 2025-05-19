@@ -99,7 +99,7 @@ public class UnitAttack : BaseState<Unit>
             }
             unit.Attack();
         }
-        unit.ChanageState(UnitState.Idle);
+        unit.ChanageState(unit.unitState == UnitState.Walk ? UnitState.Walk : UnitState.Idle);
     }
 }
 
@@ -108,8 +108,8 @@ public class Unit : MonoBehaviour
 {
     public float atkSpeed;
     public float stun;
-    public float maxAtk;
     public float minAtk;
+    public float maxAtk;
     public UnitRecipe unitRecipe;
     public SPUM_Prefabs sPUM_Prefabs;
     public Animator animator;
@@ -225,7 +225,7 @@ public class Unit : MonoBehaviour
         viewDetector.FindTarget();
         if (viewDetector.Target != null)
         {
-            int rand = Random.Range(unitRecipe.minAtk, unitRecipe.maxAtk);
+            float rand = Random.Range(maxAtk, minAtk);
             if (unitRecipe.unitType == UnitType.AD || unitRecipe.unitType == UnitType.Magic || unitRecipe.unitType == UnitType.Stun)
             {
                 GameObject _bullet = bulletStack.Pop();
@@ -250,24 +250,24 @@ public class Unit : MonoBehaviour
         }
         else if(unitRecipe.unitType == UnitType.Buffer)
         {
-            viewDetector.FindBufferTarget();
+            viewDetector.FindBufferTarget(unitRecipe);
         }
     }
 
-    public void SetBuff()
+    public void SetBuff(UnitRecipe _unitRecipe)
     {
-        if(!units.Contains(unitRecipe))
+        if(!units.Contains(_unitRecipe))
         {
-            units.Add(unitRecipe);
+            units.Add(_unitRecipe);
             RecalculateBuff();
         }
     }
 
-    public void ResetBuff()
+    public void ResetBuff(UnitRecipe _unitRecipe)
     {
-        if(units.Contains(unitRecipe))
+        if(units.Contains(_unitRecipe))
         {
-            units.Remove(unitRecipe);
+            units.Remove(_unitRecipe);
             if(units.Count > 0)
             {
                 RecalculateBuff();
