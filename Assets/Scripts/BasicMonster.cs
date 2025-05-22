@@ -207,7 +207,7 @@ public class BasicMonster : Monster, IInteractable
             Hp = 200 * Mathf.Pow(1.127745f, GameManager.instance.stage);
         }
         maxHp = Hp;
-        def = 30 + (2.5f * (GameManager.instance.stage + 1));
+        def = 10 + (2.5f * (GameManager.instance.stage + 1));
         ChangeState(MonsterState.Walk);
         speed = speedDic[monsterType];
     }

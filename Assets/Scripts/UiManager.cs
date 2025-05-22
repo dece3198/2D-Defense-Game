@@ -23,6 +23,8 @@ public class UiManager : Singleton<UiManager>
     [SerializeField] private Image starB;
     [SerializeField] private TextMeshProUGUI unitAName;
     [SerializeField] private TextMeshProUGUI unitBName;
+    [SerializeField] private GameObject RecipeUi;
+    private bool isRecipeUi = false;
     private Dictionary<UnitRating, Color> unitDic = new Dictionary<UnitRating, Color>();
 
     private new void Awake()
@@ -92,6 +94,20 @@ public class UiManager : Singleton<UiManager>
 
         buttonA.SetActive(recipeImageA.Any(img => img.gameObject.activeSelf) || resultImageA.gameObject.activeSelf);
         buttonB.SetActive(recipeImageB.Any(img => img.gameObject.activeSelf) || resultImageB.gameObject.activeSelf);
+    }
+
+    public void RecipeUiOnOff()
+    {
+        isRecipeUi = !isRecipeUi;
+
+        if(isRecipeUi)
+        {
+            RecipeUi.SetActive(true);
+        }
+        else
+        {
+            RecipeUi.SetActive(false);
+        }
     }
 
     public void CloseUi()

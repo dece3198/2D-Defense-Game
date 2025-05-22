@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: Unit_1_7
   m_EditorClassIdentifier: 
   unitName: "\uD558\uAE09\uAC80\uAE30\uC0ACC"
-  unitImage: {fileID: 0}
-  minAtk: 2222
-  maxAtk: 2333
+  unitImage: {fileID: 21300000, guid: 5001befb0493e8348ad0eb0d98d4fad2, type: 3}
+  minAtk: 888
+  maxAtk: 999
   debuff: 0
+  buff: 0
   speedDebuff: 0
   recipeA: []
   recipeB: []
