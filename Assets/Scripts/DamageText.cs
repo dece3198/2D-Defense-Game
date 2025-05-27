@@ -26,18 +26,19 @@ public class DamageText : MonoBehaviour
 
     private IEnumerator TextCo()
     {
-        float time = 0.5f;
-        transform.DOScale(new Vector2(1.5f, 1.5f), 0.2f).SetEase(Ease.Linear).SetUpdate(true);
-       
+        float time = 1f;
+
         while (time > 0)
         {
             time -= Time.deltaTime;
+            text.fontSize += 0.005f;
             transform.Translate(new Vector3(0, moveSpeed * Time.deltaTime, 0));
             alpha.a = Mathf.Lerp(alpha.a, 0, Time.deltaTime * alphaSpeed);
             text.color = alpha;
             yield return null;
         }
 
+        text.fontSize = 0.15f;
         transform.localScale = Vector2.one;
         textManager.EnterPool(this.gameObject);
         gameObject.SetActive(false);

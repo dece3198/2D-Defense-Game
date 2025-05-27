@@ -95,7 +95,7 @@ public class StageEnd : BaseState<GameManager>
     public override void Enter(GameManager game)
     {
         game.StartCoroutine(StageEndCo(game));
-        game.Gold += 3;
+        game.Gold += 4;
     }
 
     public override void Exit(GameManager game)
@@ -169,8 +169,8 @@ public class GameManager : Singleton<GameManager>
 
     private void Start()
     {
-        Time.timeScale = 4;
-        Gold += 8;
+        Time.timeScale = 2;
+        Gold += 12;
     }
 
     public void AddUnit(UnitRecipe unit)

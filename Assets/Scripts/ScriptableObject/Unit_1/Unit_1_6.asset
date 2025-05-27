@@ -14,14 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitName: "\uD558\uAE09\uAC80\uAE30\uC0ACB"
   unitImage: {fileID: 21300000, guid: bb714b5229b6ed242904b06aa3086bb5, type: 3}
-  minAtk: 1111
-  maxAtk: 1222
+  minAtk: 1388
+  maxAtk: 1478
   debuff: 0
   buff: 0
   speedDebuff: 0
-  recipeA: []
+  recipeA:
+  - {fileID: 11400000}
+  - {fileID: 11400000, guid: b90deeecf6e203943b638faa3480e6be, type: 2}
+  - {fileID: 11400000, guid: 44306648b635eb24e88d39de15ed0080, type: 2}
   recipeB: []
-  nextUnitA: {fileID: 0}
+  nextUnitA: {fileID: 884159676051393231, guid: 873af9bcd40a524439a87be0db018999, type: 3}
   nextUnitB: {fileID: 0}
   unitType: 0
   unitRating: 0

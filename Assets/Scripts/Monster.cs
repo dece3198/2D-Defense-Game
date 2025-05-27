@@ -19,6 +19,7 @@ public abstract class BaseState<T>
 
 public class Monster : MonoBehaviour
 {
+    public int stage;
     public float def;
     public float maxHp;
     public float speed;

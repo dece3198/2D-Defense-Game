@@ -211,7 +211,7 @@ public class Unit : MonoBehaviour
             else
             {
                 UnitSpawner.instance.curUnit = this;
-                UiManager.instance.AddUnit(unitRecipe);
+                UiManager.instance.AddUnit(this);
             }
         }
         

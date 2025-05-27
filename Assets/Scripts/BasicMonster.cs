@@ -114,11 +114,11 @@ public class MonsterDie : BaseState<BasicMonster>
         {
             case 0:
             case 1:
-                monster.textManager.transform.localScale = new Vector3(1f, 1f, 1);
+                monster.textManager.transform.localScale = new Vector3(-1f, 1f, 1);
                 break;
             case 2:
             case 3:
-                monster.textManager.transform.localScale = new Vector3(-1f, 1f, 1);
+                monster.textManager.transform.localScale = new Vector3(1f, 1f, 1);
                 break;
 
         }
@@ -138,11 +138,11 @@ public class MonsterDie : BaseState<BasicMonster>
             {
                 case 0:
                 case 1:
-                    monster.textManager.transform.localScale = new Vector3(-1f, 1f, 1);
+                    monster.textManager.transform.localScale = new Vector3(1f, 1f, 1);
                     break;
                 case 2:
                 case 3:
-                    monster.textManager.transform.localScale = new Vector3(1f, 1f, 1);
+                    monster.textManager.transform.localScale = new Vector3(-1f, 1f, 1);
                     break;
 
             }
@@ -198,7 +198,7 @@ public class BasicMonster : Monster, IInteractable
 
     private void OnEnable()
     {
-        if((GameManager.instance.stage + 1) % 10 == 0 && GameManager.instance.stage != 0)
+        if(monsterType == MonsterType.Boss)
         {
             Hp = 200 * Mathf.Pow(1.127745f, GameManager.instance.stage) * 3;
         }

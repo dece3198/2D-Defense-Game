@@ -19,9 +19,12 @@ MonoBehaviour:
   debuff: 0
   buff: 0
   speedDebuff: 0
-  recipeA: []
+  recipeA:
+  - {fileID: 11400000}
+  - {fileID: 11400000, guid: e1e7dda0eb20dfd44a71cf067d50b65b, type: 2}
+  - {fileID: 11400000, guid: 8ac67fcde0ea5b54589c24f38bffe8c5, type: 2}
   recipeB: []
-  nextUnitA: {fileID: 0}
+  nextUnitA: {fileID: 2321485776734150170, guid: 55fb1cbef369b144c8726e2c77657c73, type: 3}
   nextUnitB: {fileID: 0}
   unitType: 0
-  unitRating: 0
+  unitRating: 3

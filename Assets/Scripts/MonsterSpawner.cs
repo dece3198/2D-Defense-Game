@@ -41,7 +41,7 @@ public class MonsterSpawner : Singleton<MonsterSpawner>
         {
             foreach(var monster in monsterPool[stage])
             {
-                if(!monster.activeInHierarchy)
+                if(!monster.activeInHierarchy && monster.GetComponentInChildren<BasicMonster>().stage == monsters[stage].GetComponentInChildren<BasicMonster>().stage)
                 {
                     monster.SetActive(true);
                     return monster;
