@@ -29,6 +29,7 @@ public class UiManager : Singleton<UiManager>
     [SerializeField] private TextMeshProUGUI curUnitDefDebuff;
     [SerializeField] private TextMeshProUGUI curUnitSpeedDebuff;
     [SerializeField] private TextMeshProUGUI curUnitBuff;
+    [SerializeField] private TextMeshProUGUI curUnitStun;
     [SerializeField] private GameObject recipeUi;
     [SerializeField] private GameObject menuUi;
     private bool isRecipeUi = false;
@@ -52,10 +53,11 @@ public class UiManager : Singleton<UiManager>
         unitImage.sprite = unit.unitRecipe.unitImage;
         curUnitName.text = unit.unitRecipe.unitName;
         curUnitAtk.text = unit.unitRecipe.minAtk.ToString() + " ~ " + unit.unitRecipe.maxAtk.ToString();
-        curUnitAtkSpeed.text = (1 / unit.atkSpeed).ToString("N1");
+        curUnitAtkSpeed.text = (1 / unit.unitRecipe.atkCoolTime).ToString("N1");
         curUnitDefDebuff.text = unit.unitRecipe.debuff.ToString("N1");
         curUnitSpeedDebuff.text = unit.unitRecipe.speedDebuff.ToString("N1");
         curUnitBuff.text = unit.unitRecipe.buff.ToString("N1");
+        curUnitStun.text = unit.unitRecipe.stun.ToString("N1");
         for (int i = 0; i < recipeImageA.Length; i++)
         {
             if (i < unit.unitRecipe.recipeA.Length && unit.unitRecipe.recipeA[i] != null)

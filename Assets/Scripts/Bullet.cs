@@ -5,12 +5,6 @@ public class Bullet : MonoBehaviour
     [SerializeField] private float speed;
     public Unit unit;
     public GameObject target;
-    private ViewDetector viewDetector;
-
-    private void Awake()
-    {
-        viewDetector = GetComponent<ViewDetector>();
-    }
 
     private void Update()
     {
@@ -31,10 +25,20 @@ public class Bullet : MonoBehaviour
     {
         if(collision.GetComponentInChildren<IInteractable>() != null)
         {
-            int rand = Random.Range(unit.unitRecipe.minAtk, unit.unitRecipe.maxAtk);
-            collision.GetComponentInChildren<IInteractable>().TakeHit(rand, unit.unitRecipe.unitType, unit.stun);
-            unit.EnterPool(gameObject);
-            target = null;
+            if(target != null)
+            {
+                if (collision.GetComponentInChildren<BasicMonster>().gameObject == target.gameObject)
+                {
+                    int rand = Random.Range(unit.unitRecipe.minAtk, unit.unitRecipe.maxAtk);
+                    collision.GetComponentInChildren<IInteractable>().TakeHit(rand, unit.unitRecipe.unitType, unit.unitRecipe.stun);
+                    target = null;
+                    unit.EnterPool(gameObject);
+                }
+                else
+                {
+                    return;
+                }
+            }
         }
     }
 }

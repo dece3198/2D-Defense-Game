@@ -40,6 +40,18 @@ public class ViewDetector : MonoBehaviour
         }
     }
 
+    public void FindSkillTarget(float atk,UnitType unitType , float stun)
+    {
+        Collider2D[] targets = Physics2D.OverlapCircleAll(center.position, radius, layerMask);
+
+        for(int i = 0; i < targets.Length; i++)
+        {
+            targets[i].GetComponent<BasicMonster>().TakeHit(atk, unitType, stun);
+        }
+
+        target = null;
+    }
+
     public void DebuffTarget(float deBuff)
     {
         Collider2D[] targets = Physics2D.OverlapCircleAll(center.position, debuffRadius, layerMask);

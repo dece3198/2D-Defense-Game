@@ -14,8 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitName: "\uC0C1\uAE09\uAD81\uC218\uAE30\uC0ACC"
   unitImage: {fileID: 21300000, guid: 23e0fc1d6fc374b4086dfbd7c36a75aa, type: 3}
+  atkCoolTime: 0.5
   minAtk: 0
   maxAtk: 0
+  stun: 0
+  skillStun: 0
+  skillPercent: 0.125
+  skillDamage: 0
   debuff: 0
   buff: 0
   speedDebuff: 0
@@ -23,5 +28,6 @@ MonoBehaviour:
   recipeB: []
   nextUnitA: {fileID: 0}
   nextUnitB: {fileID: 0}
-  unitType: 2
+  unitType: 0
+  unitAtkType: 2
   unitRating: 4

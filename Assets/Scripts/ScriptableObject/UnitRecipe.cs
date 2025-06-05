@@ -9,9 +9,14 @@ public class UnitRecipe : ScriptableObject
 {
     public string unitName;
     public Sprite unitImage;
+    public float atkCoolTime;
     public int minAtk;
     public int maxAtk;
-    public int debuff;                             
+    public float stun;
+    public float skillStun;
+    public float skillPercent;
+    public float skillDamage;
+    public int debuff;
     public float buff;
     public float speedDebuff;
     public UnitRecipe[] recipeA;
@@ -19,5 +24,6 @@ public class UnitRecipe : ScriptableObject
     public GameObject nextUnitA;
     public GameObject nextUnitB;
     public UnitType unitType;
+    public UnitAtkType unitAtkType;
     public UnitRating unitRating;
 }

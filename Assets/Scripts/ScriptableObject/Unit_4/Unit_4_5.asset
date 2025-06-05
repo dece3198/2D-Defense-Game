@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitName: "\uD558\uAE09\uC554\uC0B4\uAE30\uC0ACA"
   unitImage: {fileID: 21300000, guid: 7f907bbf567affa4ca527ed0a1d30754, type: 3}
+  atkCoolTime: 1
   minAtk: 389
   maxAtk: 401
+  skillPercent: 0
   debuff: 0
   buff: 0
   speedDebuff: 0

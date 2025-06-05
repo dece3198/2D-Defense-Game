@@ -9,7 +9,12 @@ public enum UnitState
 }
 public enum UnitType
 {
-   DPS, DDps, AD, Magic, DefDebuff, Stun, SpeedDebuff, Buffer
+    None, DefDebuff, Stun, SpeedDebuff, Buffer
+}
+
+public enum UnitAtkType
+{
+    DPS, DDps, AD
 }
 
 
@@ -81,7 +86,7 @@ public class UnitAttack : BaseState<Unit>
 
     private IEnumerator AttackCo(Unit unit)
     {
-        if (unit.unitRecipe.unitType == UnitType.DDps)
+        if (unit.unitRecipe.unitAtkType == UnitAtkType.DDps)
         {
             for (int i = 0; i < 5; i++)
             {
@@ -93,7 +98,7 @@ public class UnitAttack : BaseState<Unit>
         else
         {
             unit.sPUM_Prefabs.PlayAnimation(PlayerState.ATTACK, 0);
-            if (unit.unitRecipe.unitType == UnitType.AD)
+            if (unit.unitRecipe.unitAtkType == UnitAtkType.AD)
             {
                 yield return new WaitForSeconds(0.5f);
             }
@@ -106,8 +111,6 @@ public class UnitAttack : BaseState<Unit>
 
 public class Unit : MonoBehaviour
 {
-    public float atkSpeed;
-    public float stun;
     public float minAtk;
     public float maxAtk;
     public UnitRecipe unitRecipe;
@@ -117,6 +120,10 @@ public class Unit : MonoBehaviour
     public UnitState unitState;
     [SerializeField] private GameObject bullet;
     [SerializeField] private Transform bulletPos;
+    [SerializeField] private GameObject skill;
+    [SerializeField] private Transform skillPos;
+    [SerializeField] private Stack<GameObject> skillStack = new Stack<GameObject>();
+
     public Stack<GameObject> bulletStack = new Stack<GameObject>();
     public bool isAtk = true;
 
@@ -148,18 +155,31 @@ public class Unit : MonoBehaviour
         maxAtk = unitRecipe.maxAtk;
         minAtk = unitRecipe.minAtk;
 
-        if(unitRecipe.unitType == UnitType.DefDebuff)
+        if (unitRecipe.unitType == UnitType.DefDebuff)
         {
             GameManager.instance.AddUnit(unitRecipe);
         }
 
-        if(unitRecipe.unitType == UnitType.AD || unitRecipe.unitType == UnitType.Magic || unitRecipe.unitType == UnitType.Stun)
+        if(unitRecipe.unitAtkType == UnitAtkType.AD)
         {
             for (int i = 0; i < 10; i++)
             {
                 GameObject _bullet = Instantiate(bullet, transform);
                 _bullet.GetComponent<Bullet>().unit = this;
                 bulletStack.Push(_bullet);
+            }
+        }
+
+        if(skill != null)
+        {
+            for(int i = 0; i < 10; i++)
+            {
+                GameObject _skill = Instantiate(skill, transform);
+                if(skillPos != null)
+                {
+                    _skill.transform.position = skillPos.position;
+                }
+                skillStack.Push(_skill);
             }
         }
     }
@@ -226,7 +246,7 @@ public class Unit : MonoBehaviour
         if (viewDetector.Target != null)
         {
             float rand = Random.Range(maxAtk, minAtk);
-            if (unitRecipe.unitType == UnitType.AD || unitRecipe.unitType == UnitType.Magic || unitRecipe.unitType == UnitType.Stun)
+            if (unitRecipe.unitAtkType == UnitAtkType.AD)
             {
                 GameObject _bullet = bulletStack.Pop();
                 _bullet.transform.position = bulletPos.position;
@@ -235,9 +255,24 @@ public class Unit : MonoBehaviour
             }
             else
             {
-                viewDetector.Target.GetComponentInChildren<IInteractable>().TakeHit(rand, unitRecipe.unitType, stun);
+                viewDetector.Target.GetComponentInChildren<IInteractable>().TakeHit(rand, unitRecipe.unitType, unitRecipe.stun);
             }
 
+            if (unitRecipe.unitRating == UnitRating.Legendary)
+            {
+                if (Random.value < unitRecipe.skillPercent)
+                {
+                    GameObject _skill = skillStack.Pop();
+                    _skill.GetComponent<Animator>().SetTrigger("Skill");
+                    if (unitRecipe.unitAtkType == UnitAtkType.AD)
+                    {
+                        _skill.transform.position = viewDetector.Target.transform.position;
+                    }
+                    float skillDamage = ((minAtk + maxAtk) / 2) * unitRecipe.skillDamage;
+                    _skill.GetComponent<ViewDetector>().FindSkillTarget(skillDamage, unitRecipe.unitType, unitRecipe.skillStun);
+                    StartCoroutine(SkillCo(_skill));
+                }
+            }
         }
     }
 
@@ -307,15 +342,23 @@ public class Unit : MonoBehaviour
         }
     }
 
+
+    private IEnumerator SkillCo(GameObject _skill)
+    {
+        yield return new WaitForSeconds(3f);
+        skillStack.Push(_skill);
+    }
+
     public void StartAttackCo()
     {
         StartCoroutine(AttackCo());
+
     }
 
     private IEnumerator AttackCo()
     {
         isAtk = false;
-        yield return new WaitForSeconds(atkSpeed);
+        yield return new WaitForSeconds(unitRecipe.atkCoolTime);
         isAtk = true;
     }
 }
