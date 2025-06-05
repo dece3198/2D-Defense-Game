@@ -30,6 +30,9 @@ public class UiManager : Singleton<UiManager>
     [SerializeField] private TextMeshProUGUI curUnitSpeedDebuff;
     [SerializeField] private TextMeshProUGUI curUnitBuff;
     [SerializeField] private TextMeshProUGUI curUnitStun;
+    [SerializeField] private TextMeshProUGUI curUnitSkill;
+    [SerializeField] private TextMeshProUGUI characteristicText;
+    [SerializeField] private GameObject sellButton;
     [SerializeField] private GameObject recipeUi;
     [SerializeField] private GameObject menuUi;
     private bool isRecipeUi = false;
@@ -58,6 +61,18 @@ public class UiManager : Singleton<UiManager>
         curUnitSpeedDebuff.text = unit.unitRecipe.speedDebuff.ToString("N1");
         curUnitBuff.text = unit.unitRecipe.buff.ToString("N1");
         curUnitStun.text = unit.unitRecipe.stun.ToString("N1");
+        curUnitSkill.text = (unit.unitRecipe.skillDamage * 100).ToString("N0");
+        characteristicText.text = unit.unitRecipe.unitCharacteristic;
+
+        if(unit.unitRecipe.unitRating < UnitRating.Legendary)
+        {
+            sellButton.SetActive(true);
+        }
+        else
+        {
+            sellButton.SetActive(false);
+        }
+
         for (int i = 0; i < recipeImageA.Length; i++)
         {
             if (i < unit.unitRecipe.recipeA.Length && unit.unitRecipe.recipeA[i] != null)

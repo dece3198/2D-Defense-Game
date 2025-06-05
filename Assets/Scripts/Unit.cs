@@ -230,7 +230,7 @@ public class Unit : MonoBehaviour
             }
             else
             {
-                UnitSpawner.instance.curUnit = this;
+                UnitSpawner.instance.curUnit = transform.parent.GetComponent<SPUM_Prefabs>().gameObject;
                 UiManager.instance.AddUnit(this);
             }
         }

@@ -12,8 +12,19 @@ public class UnitSpawner : Singleton<UnitSpawner>
     public HashSet<Vector3Int> usedTiles = new HashSet<Vector3Int>();
     public List<Vector3Int> tilePosList = new List<Vector3Int>();
     public List<GameObject> unitList = new List<GameObject>();
-    public Unit curUnit;
+    public GameObject curUnit;
     [SerializeField] private TextMeshProUGUI missing;
+
+    private Dictionary<UnitRating, int> unitPriceDic = new Dictionary<UnitRating, int>();
+
+    private new void Awake()
+    {
+        base.Awake();
+        unitPriceDic.Add(UnitRating.Normal, 1);
+        unitPriceDic.Add(UnitRating.Rare, 2);
+        unitPriceDic.Add(UnitRating.Epic, 3);
+        unitPriceDic.Add(UnitRating.Unique, 9);
+    }
 
     private void Start()
     {
@@ -68,10 +79,12 @@ public class UnitSpawner : Singleton<UnitSpawner>
 
     public void CombineA()
     {
-        List<GameObject> matchedUnits = new List<GameObject>() { curUnit.transform.parent.GetComponent<SPUM_Prefabs>().gameObject };
-        UnitRecipe[] required = curUnit.unitRecipe.recipeA;
+        Unit unit = curUnit.GetComponentInChildren<Unit>();
+
+        List<GameObject> matchedUnits = new List<GameObject>() { curUnit.GetComponent<SPUM_Prefabs>().gameObject };
+        UnitRecipe[] required = unit.unitRecipe.recipeA;
         List<UnitRecipe> requiredList = new List<UnitRecipe>(required);
-        requiredList.Remove(curUnit.unitRecipe);
+        requiredList.Remove(unit.unitRecipe);
         List<GameObject> tempList = new List<GameObject>(unitList);
         tempList.Remove(tempList.FirstOrDefault(t => t.GetComponentInChildren<Unit>() == curUnit));
 
@@ -87,7 +100,7 @@ public class UnitSpawner : Singleton<UnitSpawner>
 
         if (matchedUnits.Count == required.Length)
         {
-            Vector3Int spawnCell = curUnit.currentTilePos;
+            Vector3Int spawnCell = unit.currentTilePos;
 
             foreach (var t in matchedUnits)
             {
@@ -95,7 +108,7 @@ public class UnitSpawner : Singleton<UnitSpawner>
                 unitList.Remove(t);
                 Destroy(t);
             }
-            GameObject tower = Instantiate(curUnit.unitRecipe.nextUnitA, transform);
+            GameObject tower = Instantiate(unit.unitRecipe.nextUnitA, transform);
             Unit towerComp = tower.GetComponentInChildren<Unit>();
             towerComp.currentTilePos = spawnCell;
             unitList.Add(tower);
@@ -136,10 +149,12 @@ public class UnitSpawner : Singleton<UnitSpawner>
 
     public void CombineB()
     {
-        List<GameObject> matchedUnits = new List<GameObject>() { curUnit.transform.parent.GetComponent<SPUM_Prefabs>().gameObject };
-        UnitRecipe[] required = curUnit.unitRecipe.recipeB;
+        Unit unit = curUnit.GetComponentInChildren<Unit>();
+
+        List<GameObject> matchedUnits = new List<GameObject>() { curUnit.GetComponent<SPUM_Prefabs>().gameObject };
+        UnitRecipe[] required = unit.unitRecipe.recipeB;
         List<UnitRecipe> requiredList = new List<UnitRecipe>(required);
-        requiredList.Remove(curUnit.unitRecipe);
+        requiredList.Remove(unit.unitRecipe);
         List<GameObject> tempList = new List<GameObject>(unitList);
         tempList.Remove(tempList.FirstOrDefault(t => t.GetComponentInChildren<Unit>() == curUnit));
 
@@ -155,7 +170,7 @@ public class UnitSpawner : Singleton<UnitSpawner>
 
         if (matchedUnits.Count == required.Length)
         {
-            Vector3Int spawnCell = curUnit.currentTilePos;
+            Vector3Int spawnCell = unit.currentTilePos;
 
             foreach (var t in matchedUnits)
             {
@@ -163,7 +178,7 @@ public class UnitSpawner : Singleton<UnitSpawner>
                 unitList.Remove(t);
                 Destroy(t);
             }
-            GameObject tower = Instantiate(curUnit.unitRecipe.nextUnitB, transform);
+            GameObject tower = Instantiate(unit.unitRecipe.nextUnitB, transform);
             Unit towerComp = tower.GetComponentInChildren<Unit>();
             towerComp.currentTilePos = spawnCell;
             unitList.Add(tower);
@@ -202,7 +217,17 @@ public class UnitSpawner : Singleton<UnitSpawner>
         }
     }
 
-
+    public void SellUnit()
+    {
+        if(Random.value < 0.33)
+        {
+            GameManager.instance.Gold += unitPriceDic[curUnit.GetComponentInChildren<Unit>().unitRecipe.unitRating];
+        }
+        usedTiles.Remove(curUnit.GetComponentInChildren<Unit>().currentTilePos);
+        unitList.Remove(curUnit);
+        Destroy(curUnit);
+        UiManager.instance.CloseUi();
+    }
 
     private IEnumerator shakeCo()
     {

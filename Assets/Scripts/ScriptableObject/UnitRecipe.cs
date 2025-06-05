@@ -8,6 +8,7 @@ public enum UnitRating
 public class UnitRecipe : ScriptableObject
 {
     public string unitName;
+    public string unitCharacteristic;
     public Sprite unitImage;
     public float atkCoolTime;
     public int minAtk;
