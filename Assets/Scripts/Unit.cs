@@ -164,7 +164,7 @@ public class Unit : MonoBehaviour
         {
             for (int i = 0; i < 10; i++)
             {
-                GameObject _bullet = Instantiate(bullet, transform);
+                GameObject _bullet = Instantiate(bullet, sPUM_Prefabs.transform);
                 _bullet.GetComponent<Bullet>().unit = this;
                 bulletStack.Push(_bullet);
             }
@@ -174,7 +174,7 @@ public class Unit : MonoBehaviour
         {
             for(int i = 0; i < 10; i++)
             {
-                GameObject _skill = Instantiate(skill, transform);
+                GameObject _skill = Instantiate(skill, sPUM_Prefabs.transform);
                 if(skillPos != null)
                 {
                     _skill.transform.position = skillPos.position;
@@ -264,10 +264,7 @@ public class Unit : MonoBehaviour
                 {
                     GameObject _skill = skillStack.Pop();
                     _skill.GetComponent<Animator>().SetTrigger("Skill");
-                    if (unitRecipe.unitAtkType == UnitAtkType.AD)
-                    {
-                        _skill.transform.position = viewDetector.Target.transform.position;
-                    }
+                    _skill.transform.position = viewDetector.Target.transform.position;
                     float skillDamage = ((minAtk + maxAtk) / 2) * unitRecipe.skillDamage;
                     _skill.GetComponent<ViewDetector>().FindSkillTarget(skillDamage, unitRecipe.unitType, unitRecipe.skillStun);
                     StartCoroutine(SkillCo(_skill));

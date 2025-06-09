@@ -81,12 +81,12 @@ public class UnitSpawner : Singleton<UnitSpawner>
     {
         Unit unit = curUnit.GetComponentInChildren<Unit>();
 
-        List<GameObject> matchedUnits = new List<GameObject>() { curUnit.GetComponent<SPUM_Prefabs>().gameObject };
+        List<GameObject> matchedUnits = new List<GameObject>() { curUnit };
         UnitRecipe[] required = unit.unitRecipe.recipeA;
         List<UnitRecipe> requiredList = new List<UnitRecipe>(required);
         requiredList.Remove(unit.unitRecipe);
         List<GameObject> tempList = new List<GameObject>(unitList);
-        tempList.Remove(tempList.FirstOrDefault(t => t.GetComponentInChildren<Unit>() == curUnit));
+        tempList.Remove(tempList.FirstOrDefault(t => t.GetComponentInChildren<Unit>() == unit));
 
         foreach (var req in requiredList)
         {
@@ -151,12 +151,12 @@ public class UnitSpawner : Singleton<UnitSpawner>
     {
         Unit unit = curUnit.GetComponentInChildren<Unit>();
 
-        List<GameObject> matchedUnits = new List<GameObject>() { curUnit.GetComponent<SPUM_Prefabs>().gameObject };
+        List<GameObject> matchedUnits = new List<GameObject>() { curUnit};
         UnitRecipe[] required = unit.unitRecipe.recipeB;
         List<UnitRecipe> requiredList = new List<UnitRecipe>(required);
         requiredList.Remove(unit.unitRecipe);
         List<GameObject> tempList = new List<GameObject>(unitList);
-        tempList.Remove(tempList.FirstOrDefault(t => t.GetComponentInChildren<Unit>() == curUnit));
+        tempList.Remove(tempList.FirstOrDefault(t => t.GetComponentInChildren<Unit>() == unit));
 
         foreach (var req in requiredList)
         {

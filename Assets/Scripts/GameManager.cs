@@ -64,6 +64,15 @@ public class StageStart : BaseState<GameManager>
         MonsterSpawner.instance.StartStage();
         game.StartCoroutine(StageStartCo(game));
         game.roundText.text = (game.stage + 1).ToString() + "R";
+
+        switch (game.stage)
+        {
+            case 14 : game.lockImage[0].SetActive(false); break;
+            case 24: game.lockImage[1].SetActive(false); break;
+            case 39: game.lockImage[2].SetActive(false); break;
+            case 54: game.lockImage[3].SetActive(false); break;
+        }
+
     }
 
     public override void Exit(GameManager game)
@@ -76,7 +85,7 @@ public class StageStart : BaseState<GameManager>
 
     private IEnumerator StageStartCo(GameManager game)
     {
-        float time = 120;
+        float time = 40;
 
         while(time > 0)
         {
@@ -95,7 +104,14 @@ public class StageEnd : BaseState<GameManager>
     public override void Enter(GameManager game)
     {
         game.StartCoroutine(StageEndCo(game));
-        game.Gold += 4;
+        if(game.missionFail <= 0)
+        {
+            game.Gold += 4;
+        }
+        else
+        {
+            game.missionFail -= 1;
+        }
     }
 
     public override void Exit(GameManager game)
@@ -108,7 +124,7 @@ public class StageEnd : BaseState<GameManager>
 
     private IEnumerator StageEndCo(GameManager game)
     {
-        float time = 30;
+        float time = 10;
         while(time > 0)
         {
             time -= Time.deltaTime;
@@ -150,11 +166,22 @@ public class GameManager : Singleton<GameManager>
     public TextMeshProUGUI roundText;
     [SerializeField] private TextMeshProUGUI goldText;
     public StateMachine<GameState, GameManager> stateMachine = new StateMachine<GameState, GameManager>();
+    private Dictionary<UnitRecipe, int> defUnitCount = new Dictionary<UnitRecipe, int>();
     public GameState gameState;
     public Tilemap groundTileMap;
-    public HashSet<UnitRecipe> defHashSet = new HashSet<UnitRecipe>();
-    public int debuff = 0;
-
+    [SerializeField] private int defDeBuff;
+    public int DefDeBuff
+    {
+        get { return defDeBuff; }
+        set
+        {
+            defDeBuff = value;
+            defDeBuffText.text = defDeBuff.ToString();
+        }
+    }
+    public int missionFail = 0;
+    public GameObject[] lockImage;
+    [SerializeField] private TextMeshProUGUI defDeBuffText;
 
     private new void Awake()
     {
@@ -175,22 +202,36 @@ public class GameManager : Singleton<GameManager>
 
     public void AddUnit(UnitRecipe unit)
     {
-        defHashSet.Add(unit);
+        if(defUnitCount.ContainsKey(unit))
+        {
+            defUnitCount[unit]++;
+        }
+        else
+        {
+            defUnitCount[unit] = 1;
+        }
         DefDebuff();
     }
 
     public void RemoveUnit(UnitRecipe unit)
     {
-        defHashSet.Remove(unit);
-        DefDebuff();
+        if(defUnitCount.ContainsKey(unit))
+        {
+            defUnitCount[unit]--;
+            if (defUnitCount[unit] <= 0)
+            {
+                defUnitCount.Remove(unit);
+            }
+            DefDebuff();
+        }
     }
 
     private void DefDebuff()
     {
-        debuff = 0;
-        foreach (var u in defHashSet)
+        DefDeBuff = 0;
+        foreach (var u in defUnitCount.Keys)
         {
-            debuff += u.debuff;
+            DefDeBuff += u.debuff;
         }
     }
 

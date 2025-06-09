@@ -1,12 +1,37 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MonsterSpawner : Singleton<MonsterSpawner>
 {
     [SerializeField] private GameObject[] monsters;
+    [SerializeField] private GameObject[] missionMonsters;
+    [SerializeField] private GameObject missionUi;
+    public GameObject[] missionTimeUi;
+    [SerializeField] private TextMeshProUGUI[] timeText;
+    [SerializeField] private GameObject[] missionTime;
+    [SerializeField] private TextMeshProUGUI[] missionTimeText;
+    private bool isMission = false;
     private Dictionary<int, List<GameObject>> monsterPool = new Dictionary<int, List<GameObject>>();
-    
+    public Dictionary<MonsterType, float> speedDic = new Dictionary<MonsterType, float>();
+    [SerializeField] private GameObject monsterState;
+    [SerializeField] private Image monsterImage;
+    [SerializeField] private TextMeshProUGUI monsterHp;
+    [SerializeField] private TextMeshProUGUI monsterDef;
+    [SerializeField] private TextMeshProUGUI monsterSpeed;
+    private bool isState = false;
+
+    private new void Awake()
+    {
+        base.Awake();
+        speedDic.Add(MonsterType.Normal, 1f);
+        speedDic.Add(MonsterType.Fast, 1.5f);
+        speedDic.Add(MonsterType.VeryFast, 2f);
+        speedDic.Add(MonsterType.Boss, 0.5f);
+        speedDic.Add(MonsterType.Mission, 0.5f);
+    }
 
     public void StartStage()
     {
@@ -29,7 +54,7 @@ public class MonsterSpawner : Singleton<MonsterSpawner>
                 GameObject monster = GetFormPool(GameManager.instance.stage);
                 monster.transform.position = transform.position;
                 monster.SetActive(true);
-                yield return new WaitForSeconds(3f);
+                yield return new WaitForSeconds(1f);
             }
         }
         GameManager.instance.stage++;
@@ -87,5 +112,78 @@ public class MonsterSpawner : Singleton<MonsterSpawner>
                 }
             }
         }
+    }
+
+    public void MissionOnOf()
+    {
+        isMission = !isMission;
+        if(isMission)
+        {
+            missionUi.SetActive(true);
+        }
+        else
+        {
+            missionUi.SetActive(false);
+        }
+    }
+
+    public void Mission(int value)
+    {
+        missionMonsters[value].GetComponent<BasicMonster>().value = value;
+        missionMonsters[value].SetActive(true);
+        missionMonsters[value].transform.position = transform.position;
+        StartCoroutine(TimeCo(value));
+        StartCoroutine(MissionTimeCo(missionMonsters[value].GetComponent<BasicMonster>().missionCoolTime, value));
+    }
+
+    public void MonsterState()
+    {
+        isState = !isState;
+        if(isState)
+        {
+            monsterState.SetActive(true);
+            BasicMonster monster = monsters[GameManager.instance.stage].GetComponentInChildren<BasicMonster>();
+            monsterImage.sprite = monster.monsterImage;
+            monsterHp.text = (200 * Mathf.Pow(1.127745f, GameManager.instance.stage)).ToString("N0");
+            monsterDef.text = monster.def.ToString("N1");
+            monsterSpeed.text = (speedDic[monster.monsterType]).ToString("N1");
+        }
+        else
+        {
+            monsterState.SetActive(false);
+        }
+    }
+        
+
+    private IEnumerator MissionTimeCo(float _time, int value)
+    { 
+        missionTime[value].SetActive(true);
+        float time = _time;
+        while (time > 0)
+        {
+            time -= Time.deltaTime;
+            int minutes = Mathf.FloorToInt(time / 60);
+            int seconds = Mathf.FloorToInt(time % 60);
+            missionTimeText[value].text = $"{minutes:00} : {seconds:00}";
+            yield return null;
+        }
+        missionTime[value].SetActive(false);
+    }
+
+    private IEnumerator TimeCo(int value)
+    {
+        missionTimeUi[value].SetActive(true);
+        float time = 90;
+
+        while (time > 0)
+        {
+            time -= Time.deltaTime;
+            int minutes = Mathf.FloorToInt(time / 60);
+            int seconds = Mathf.FloorToInt(time % 60);
+            timeText[value].text = $"{minutes:00} : {seconds:00}";
+            yield return null;
+        }
+
+        missionTimeUi[value].SetActive(false);
     }
 }

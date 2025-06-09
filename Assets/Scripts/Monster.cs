@@ -7,7 +7,7 @@ public enum MonsterState
 
 public enum MonsterType
 {
-    Normal, Fast, VeryFast, Boss
+    Normal, Fast, VeryFast, Boss, Mission
 }
 
 public abstract class BaseState<T>
@@ -19,6 +19,7 @@ public abstract class BaseState<T>
 
 public class Monster : MonoBehaviour
 {
+    public Sprite monsterImage;
     public int stage;
     public float def;
     public float maxHp;
