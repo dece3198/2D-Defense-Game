@@ -216,7 +216,7 @@ public class BasicMonster : Monster, IInteractable
             }
             else
             {
-                Hp = 200 * Mathf.Pow(1.127745f, GameManager.instance.stage);
+                Hp = (200 * Mathf.Pow(1.127745f, GameManager.instance.stage)) * 0.5f;
             }
             def = (2.5f * (GameManager.instance.stage + 1));
         }

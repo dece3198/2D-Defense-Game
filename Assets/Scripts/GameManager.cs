@@ -63,7 +63,7 @@ public class StageStart : BaseState<GameManager>
     {
         MonsterSpawner.instance.StartStage();
         game.StartCoroutine(StageStartCo(game));
-        game.roundText.text = (game.stage + 1).ToString() + "R";
+        game.roundText.text = (game.stage + 1).ToString() + "Lv";
 
         switch (game.stage)
         {
@@ -106,7 +106,7 @@ public class StageEnd : BaseState<GameManager>
         game.StartCoroutine(StageEndCo(game));
         if(game.missionFail <= 0)
         {
-            game.Gold += 4;
+            game.Gold += 2;
         }
         else
         {
@@ -133,7 +133,7 @@ public class StageEnd : BaseState<GameManager>
             game.timeText.text = $"{minutes:00} : {seconds:00}";
             yield return null;
         }
-        if(game.stage < 90)
+        if(game.stage < 100)
         {
             game.ChanageState(GameState.StageStart);
         }

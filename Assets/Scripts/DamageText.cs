@@ -30,6 +30,12 @@ public class DamageText : MonoBehaviour
 
         while (time > 0)
         {
+            if (Time.timeScale == 0)
+            {
+                yield return null;
+                continue;
+            }
+
             time -= Time.deltaTime;
             text.fontSize += 0.005f;
             transform.Translate(new Vector3(0, moveSpeed * Time.deltaTime, 0));
