@@ -31,7 +31,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 39f2fb2695d381a4b866f0b9ccf82b30, type: 2}
   recipeB:
   - {fileID: 11400000}
-  - {fileID: 11400000, guid: dee005bb59532964295a94aa38929ff9, type: 2}
+  - {fileID: 11400000, guid: 5ace51cd24db30248bbfb56305d8e400, type: 2}
   - {fileID: 11400000, guid: dd12bab2a24bcfc44b1994198dec70c0, type: 2}
   nextUnitA: {fileID: 460116285148740370, guid: 65c65dfff8dbd1a419d6a7a5a908a277, type: 3}
   nextUnitB: {fileID: 2204604692700063246, guid: 20ec1fc3cfc942247a57fe93892b1dca, type: 3}

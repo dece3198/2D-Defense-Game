@@ -146,7 +146,7 @@ public class MonsterSpawner : Singleton<MonsterSpawner>
             BasicMonster monster = monsters[GameManager.instance.stage].GetComponentInChildren<BasicMonster>();
             monsterImage.sprite = monster.monsterImage;
             monsterHp.text = ((200 * Mathf.Pow(1.127745f, GameManager.instance.stage)) * 0.5f).ToString("N0");
-            monsterDef.text = (2.5f * (GameManager.instance.stage + 1)).ToString("N1");
+            monsterDef.text = (2 * (GameManager.instance.stage + 1)).ToString("N1");
             monsterSpeed.text = (speedDic[monster.monsterType]).ToString("N1");
         }
         else

@@ -16,8 +16,8 @@ MonoBehaviour:
   unitCharacteristic: 
   unitImage: {fileID: 21300000, guid: fbd6fbab4b99e6f4e9accfbccdfb0eeb, type: 3}
   atkCoolTime: 1
-  minAtk: 444
-  maxAtk: 666
+  minAtk: 784
+  maxAtk: 889
   stun: 0
   skillStun: 0
   skillPercent: 0

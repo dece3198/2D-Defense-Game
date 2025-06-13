@@ -32,12 +32,15 @@ public class UnitIdle : BaseState<Unit>
 
     public override void Update(Unit unit)
     {
-        unit.viewDetector.FindTarget();
-        if (unit.viewDetector.Target != null)
+        if(unit.unitRecipe.unitType != UnitType.Buffer)
         {
-            if(unit.isAtk)
+            unit.viewDetector.FindTarget();
+            if (unit.viewDetector.Target != null)
             {
-                unit.ChanageState(UnitState.Attack);
+                if (unit.isAtk)
+                {
+                    unit.ChanageState(UnitState.Attack);
+                }
             }
         }
     }
@@ -128,7 +131,7 @@ public class Unit : MonoBehaviour
     public bool isAtk = true;
 
     private StateMachine<UnitState, Unit> stateMachine = new StateMachine<UnitState, Unit>();
-    private HashSet<UnitRecipe> units = new HashSet<UnitRecipe>();
+    private Dictionary<UnitRecipe, int> buffUnits = new Dictionary<UnitRecipe, int>();
 
 
     public Vector3 target;
@@ -288,19 +291,29 @@ public class Unit : MonoBehaviour
 
     public void SetBuff(UnitRecipe _unitRecipe)
     {
-        if(!units.Contains(_unitRecipe))
+        if(buffUnits.ContainsKey(_unitRecipe))
         {
-            units.Add(_unitRecipe);
-            RecalculateBuff();
+            buffUnits[_unitRecipe]++;
         }
+        else
+        {
+            buffUnits[_unitRecipe] = 1;
+        }
+
+        RecalculateBuff();
     }
 
     public void ResetBuff(UnitRecipe _unitRecipe)
     {
-        if(units.Contains(_unitRecipe))
+        if(buffUnits.ContainsKey(_unitRecipe))
         {
-            units.Remove(_unitRecipe);
-            if(units.Count > 0)
+            buffUnits[_unitRecipe]--;
+            if (buffUnits[_unitRecipe] <= 0)
+            {
+                buffUnits.Remove(_unitRecipe);
+            }
+
+            if(buffUnits.Count > 0)
             {
                 RecalculateBuff();
             }
@@ -315,9 +328,11 @@ public class Unit : MonoBehaviour
     public void RecalculateBuff()
     {
         float tempBuff = 0;
-        foreach (var u in units)
+        foreach (var u in buffUnits)
         {
-            tempBuff += u.buff;
+            var unitRecipe = u.Key;
+
+            tempBuff += unitRecipe.buff;
         }
         maxAtk = unitRecipe.maxAtk + (unitRecipe.maxAtk * tempBuff);
         minAtk = unitRecipe.minAtk + (unitRecipe.minAtk * tempBuff);

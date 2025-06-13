@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum MonsterState
 {
@@ -24,8 +25,12 @@ public class Monster : MonoBehaviour
     public float def;
     public float maxHp;
     public float speed;
+    public int jam;
+    public int posIndex;
     public Transform center;
     public Animator animator;
+    public TextManager textManager;
+    public Slider hpBar;
     public MonsterType monsterType;
 }
 

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 606347e0de2684a42a847958e4fa7b94, type: 3}
   m_Name: Unit_6
   m_EditorClassIdentifier: 
-  unitName: "\uD558\uAE09\uCC3D\uC220\uC6A9\uBCD1"
+  unitName: "\uD558\uAE09\uCC3D\uC6A9\uBCD1"
   unitCharacteristic: 
   unitImage: {fileID: 21300000, guid: e9ff66876fe3e9c45bb76fa16c26b2ac, type: 3}
   atkCoolTime: 1.5

@@ -38,17 +38,17 @@ public class TextManager : MonoBehaviour
         GameObject text = textStack.Pop();
 
         text.GetComponent<RectTransform>().localPosition = pos;
-        if(damage >= 1000000)
+        if(damage >= 1_000_000)
         {
-            text.GetComponent<TextMeshProUGUI>().text = (damage / 1000000).ToString("N0") + "M";
+            text.GetComponent<TextMeshProUGUI>().text = (damage / 1000000).ToString("0.#") + "M";
         }
-        else if(damage >= 1000)
+        else if(damage >= 1_000)
         {
-            text.GetComponent<TextMeshProUGUI>().text = (damage / 1000).ToString("N0") + "K";
+            text.GetComponent<TextMeshProUGUI>().text = (damage / 1000).ToString("0.#") + "K";
         }
         else
         {
-            text.GetComponent<TextMeshProUGUI>().text = damage.ToString("N0");
+            text.GetComponent<TextMeshProUGUI>().text = damage.ToString("0");
         }
         text.SetActive(true);
     }

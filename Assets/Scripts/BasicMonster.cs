@@ -150,7 +150,7 @@ public class MonsterDie : BaseState<BasicMonster>
 
             if(monster.monsterType == MonsterType.Mission)
             {
-                GameManager.instance.Gold += monster.clearGold;
+                GameManager.instance.Jam += monster.jam;
                 monster.Hp = monster.maxHp;
                 MonsterSpawner.instance.missionTimeUi[monster.value].SetActive(false);
                 monster.gameObject.SetActive(false);
@@ -187,11 +187,7 @@ public class BasicMonster : Monster, IInteractable
     public SpriteRenderer[] spriteRenderers;
     StateMachine<MonsterState, BasicMonster> stateMachine = new StateMachine<MonsterState, BasicMonster>();
     private Dictionary<UnitRecipe, int> units = new Dictionary<UnitRecipe, int>();
-    public TextManager textManager;
-    public Slider hpBar;
-    public int posIndex = 0;
     private float missionTime = 0;
-    public int clearGold = 0;
     public int value = 0;
     public float missionCoolTime = 0;
 
@@ -218,7 +214,7 @@ public class BasicMonster : Monster, IInteractable
             {
                 Hp = (200 * Mathf.Pow(1.127745f, GameManager.instance.stage)) * 0.5f;
             }
-            def = (2.5f * (GameManager.instance.stage + 1));
+            def = (2f * (GameManager.instance.stage + 1));
         }
         maxHp = Hp;
         ChangeState(MonsterState.Walk);

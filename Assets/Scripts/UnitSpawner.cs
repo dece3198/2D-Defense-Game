@@ -14,6 +14,8 @@ public class UnitSpawner : Singleton<UnitSpawner>
     public List<GameObject> unitList = new List<GameObject>();
     public GameObject curUnit;
     [SerializeField] private TextMeshProUGUI missing;
+    [SerializeField] private GameObject unitStore;
+    private bool isStore = false;
 
     private Dictionary<UnitRating, int> unitPriceDic = new Dictionary<UnitRating, int>();
 
@@ -214,6 +216,43 @@ public class UnitSpawner : Singleton<UnitSpawner>
                 missing.text = "부족한 유닛 : " + missingText;
                 StartCoroutine(shakeCo());
             }
+        }
+    }
+    
+    public void BuyUnit(int value)
+    {
+        if (GameManager.instance.Jam > 0)
+        {
+            GameManager.instance.Jam -= 1;
+            foreach (var cellPos in tilePosList)
+            {
+                if (!usedTiles.Contains(cellPos))
+                {
+                    GameObject tower = Instantiate(units[value], transform);
+                    tower.GetComponentInChildren<Unit>().currentTilePos = cellPos;
+                    unitList.Add(tower);
+                    Vector3 worldPos = tilemap.GetCellCenterWorld(cellPos);
+                    tower.transform.position = worldPos;
+                    usedTiles.Add(cellPos);
+                    return;
+                }
+            }
+
+            Debug.Log("더 이상 배치할 타일이 없을 때");
+        }
+    }
+
+    public void StoreUi()
+    {
+        isStore = !isStore;
+
+        if(isStore)
+        {
+            unitStore.SetActive(true);
+        }
+        else
+        {
+            unitStore.SetActive(false);
         }
     }
 

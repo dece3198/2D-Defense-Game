@@ -162,9 +162,21 @@ public class GameManager : Singleton<GameManager>
             goldText.text = gold.ToString();
         }
     }
+    [SerializeField] private int jam;
+    public int Jam
+    {
+        get { return jam; }
+        set
+        {
+            jam = value;
+            jamText.text = jam.ToString();
+        }
+    }
+
     public TextMeshProUGUI timeText;
     public TextMeshProUGUI roundText;
     [SerializeField] private TextMeshProUGUI goldText;
+    [SerializeField] private TextMeshProUGUI jamText;
     public StateMachine<GameState, GameManager> stateMachine = new StateMachine<GameState, GameManager>();
     private Dictionary<UnitRecipe, int> defUnitCount = new Dictionary<UnitRecipe, int>();
     public GameState gameState;
