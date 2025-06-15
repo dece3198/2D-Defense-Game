@@ -4,6 +4,16 @@ public enum UnitRating
     Normal, Rare, Epic, Unique, Legendary
 }
 
+public enum UnitSkillType
+{
+    PD, MD
+}
+
+public enum UnitRangeType
+{
+    Range, Single
+}
+
 [CreateAssetMenu(fileName = "New UnitRecipe", menuName = "New UnitRecipe/UnitRecipe")]
 public class UnitRecipe : ScriptableObject
 {
@@ -26,5 +36,6 @@ public class UnitRecipe : ScriptableObject
     public GameObject nextUnitB;
     public UnitType unitType;
     public UnitAtkType unitAtkType;
+    public UnitSkillType unitSkillType;
     public UnitRating unitRating;
 }

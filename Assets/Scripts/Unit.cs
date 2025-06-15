@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public enum UnitState
 {
@@ -32,15 +31,12 @@ public class UnitIdle : BaseState<Unit>
 
     public override void Update(Unit unit)
     {
-        if(unit.unitRecipe.unitType != UnitType.Buffer)
+        unit.viewDetector.FindTarget();
+        if(unit.viewDetector.Target != null)
         {
-            unit.viewDetector.FindTarget();
-            if (unit.viewDetector.Target != null)
+            if (unit.isAtk)
             {
-                if (unit.isAtk)
-                {
-                    unit.ChanageState(UnitState.Attack);
-                }
+                unit.ChanageState(UnitState.Attack);
             }
         }
     }
@@ -116,6 +112,7 @@ public class Unit : MonoBehaviour
 {
     public float minAtk;
     public float maxAtk;
+    public float buff;
     public UnitRecipe unitRecipe;
     public SPUM_Prefabs sPUM_Prefabs;
     public Animator animator;
@@ -131,7 +128,7 @@ public class Unit : MonoBehaviour
     public bool isAtk = true;
 
     private StateMachine<UnitState, Unit> stateMachine = new StateMachine<UnitState, Unit>();
-    private Dictionary<UnitRecipe, int> buffUnits = new Dictionary<UnitRecipe, int>();
+    private Dictionary<UnitRecipe, (int count, float buff)> buffUnits = new Dictionary<UnitRecipe, (int count, float buff)>();
 
 
     public Vector3 target;
@@ -139,6 +136,9 @@ public class Unit : MonoBehaviour
     public Vector3Int reservedTilePos;
     private Vector2 dargStartPos;
     private bool isDragging = false;
+
+    private float buffTime = 0;
+    private bool isBuff = false;
 
     private void Awake()
     {
@@ -157,6 +157,7 @@ public class Unit : MonoBehaviour
     {
         maxAtk = unitRecipe.maxAtk;
         minAtk = unitRecipe.minAtk;
+        buff = unitRecipe.buff;
 
         if (unitRecipe.unitType == UnitType.DefDebuff)
         {
@@ -258,19 +259,29 @@ public class Unit : MonoBehaviour
             }
             else
             {
-                viewDetector.Target.GetComponentInChildren<IInteractable>().TakeHit(rand, unitRecipe.unitType, unitRecipe.stun);
+                viewDetector.Target.GetComponentInChildren<IInteractable>().TakeHit(rand, unitRecipe, unitRecipe.stun);
             }
 
-            if (unitRecipe.unitRating == UnitRating.Legendary)
+            if (unitRecipe.unitRating >= UnitRating.Legendary)
             {
                 if (Random.value < unitRecipe.skillPercent)
                 {
-                    GameObject _skill = skillStack.Pop();
-                    _skill.GetComponent<Animator>().SetTrigger("Skill");
-                    _skill.transform.position = viewDetector.Target.transform.position;
-                    float skillDamage = ((minAtk + maxAtk) / 2) * unitRecipe.skillDamage;
-                    _skill.GetComponent<ViewDetector>().FindSkillTarget(skillDamage, unitRecipe.unitType, unitRecipe.skillStun);
-                    StartCoroutine(SkillCo(_skill));
+                    if(unitRecipe.unitType != UnitType.Buffer)
+                    {
+                        GameObject _skill = skillStack.Pop();
+                        _skill.GetComponent<Animator>().SetTrigger("Skill");
+                        _skill.transform.position = viewDetector.Target.transform.position;
+                        float skillDamage = ((minAtk + maxAtk) / 2) * unitRecipe.skillDamage;
+                        _skill.GetComponent<ViewDetector>().FindSkillTarget(skillDamage, unitRecipe, unitRecipe.skillStun);
+                        StartCoroutine(SkillCo(_skill));
+                    }
+                    else
+                    {
+                        isBuff = true;
+                        buffTime = Mathf.Max(buffTime, 3f);
+                        buff = unitRecipe.skillDamage;
+                        viewDetector.UnitSetBuff(unitRecipe, buff);
+                    }
                 }
             }
         }
@@ -285,43 +296,54 @@ public class Unit : MonoBehaviour
         }
         else if(unitRecipe.unitType == UnitType.Buffer)
         {
-            viewDetector.FindBufferTarget(unitRecipe);
+            viewDetector.FindBufferTarget(unitRecipe, buff);
+        }
+
+        if(isBuff)
+        {
+            buffTime -= Time.deltaTime;
+            if(buffTime <= 0f)
+            {
+                isBuff = false;
+                buff = unitRecipe.buff;
+                viewDetector.UnitResetBuff(unitRecipe, buff);
+            }
         }
     }
 
-    public void SetBuff(UnitRecipe _unitRecipe)
+    public void SetBuff(UnitRecipe _unitRecipe, float _buff)
     {
         if(buffUnits.ContainsKey(_unitRecipe))
         {
-            buffUnits[_unitRecipe]++;
+            var current = buffUnits[_unitRecipe];
+            buffUnits[_unitRecipe] = (current.count +1, _buff);
         }
         else
         {
-            buffUnits[_unitRecipe] = 1;
+            buffUnits[_unitRecipe] = (1, _buff);
+
         }
 
         RecalculateBuff();
     }
 
-    public void ResetBuff(UnitRecipe _unitRecipe)
+    public void ResetBuff(UnitRecipe _unitRecipe, float buff)
     {
-        if(buffUnits.ContainsKey(_unitRecipe))
+        if (buffUnits.ContainsKey(_unitRecipe))
         {
-            buffUnits[_unitRecipe]--;
-            if (buffUnits[_unitRecipe] <= 0)
+            var current = buffUnits[_unitRecipe];
+            int newCount = current.count - 1;
+
+            if (newCount <= 0)
             {
                 buffUnits.Remove(_unitRecipe);
             }
-
-            if(buffUnits.Count > 0)
-            {
-                RecalculateBuff();
-            }
             else
             {
-                maxAtk = unitRecipe.maxAtk;
-                minAtk = unitRecipe.minAtk;
+                buffUnits[_unitRecipe] = (newCount, buff);
             }
+
+            RecalculateBuff();
         }
     }
 
@@ -330,9 +352,9 @@ public class Unit : MonoBehaviour
         float tempBuff = 0;
         foreach (var u in buffUnits)
         {
-            var unitRecipe = u.Key;
+            float buffValue = u.Value.buff;
 
-            tempBuff += unitRecipe.buff;
+            tempBuff += buffValue;
         }
         maxAtk = unitRecipe.maxAtk + (unitRecipe.maxAtk * tempBuff);
         minAtk = unitRecipe.minAtk + (unitRecipe.minAtk * tempBuff);

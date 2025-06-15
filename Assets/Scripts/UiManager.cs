@@ -25,6 +25,7 @@ public class UiManager : Singleton<UiManager>
     [SerializeField] private TextMeshProUGUI unitBName;
     [SerializeField] private TextMeshProUGUI curUnitName;
     [SerializeField] private TextMeshProUGUI curUnitAtk;
+    [SerializeField] private TextMeshProUGUI curUnitBuffAtk;
     [SerializeField] private TextMeshProUGUI curUnitAtkSpeed;
     [SerializeField] private TextMeshProUGUI curUnitDefDebuff;
     [SerializeField] private TextMeshProUGUI curUnitSpeedDebuff;
@@ -38,10 +39,12 @@ public class UiManager : Singleton<UiManager>
     private bool isRecipeUi = false;
     private bool isMenu = false;
     private Dictionary<UnitRating, Color> unitDic = new Dictionary<UnitRating, Color>();
+    private Unit curUnit;
 
     private new void Awake()
     {
         base.Awake();
+        recipeUi.SetActive(false);
         unitDic.Add(UnitRating.Normal, Color.gray);
         unitDic.Add(UnitRating.Rare, Color.white);
         unitDic.Add(UnitRating.Epic, Color.yellow);
@@ -49,8 +52,17 @@ public class UiManager : Singleton<UiManager>
         unitDic.Add(UnitRating.Legendary, Color.red);
     }
 
+    private void Update()
+    {
+        if(curUnit != null)
+        {
+            curUnitBuffAtk.text = "(+" + (curUnit.minAtk - curUnit.unitRecipe.minAtk).ToString() + " ~ +" + (curUnit.maxAtk - curUnit.unitRecipe.maxAtk).ToString() + ")";
+        }
+    }
+
     public void AddUnit(Unit unit)
     {
+        curUnit = unit;
         unitUi.SetActive(true);
         closeUi.SetActive(true);
         unitImage.sprite = unit.unitRecipe.unitImage;
@@ -140,7 +152,7 @@ public class UiManager : Singleton<UiManager>
         else
         {
             recipeUi.SetActive(false);
-            Time.timeScale = 2;
+            Time.timeScale = 1;
         }
     }
 
@@ -156,7 +168,7 @@ public class UiManager : Singleton<UiManager>
         else
         {
             menuUi.SetActive(false);
-            Time.timeScale = 2;
+            Time.timeScale = 1;
         }
     }
 
@@ -164,5 +176,6 @@ public class UiManager : Singleton<UiManager>
     {
         unitUi.SetActive(false);
         closeUi.SetActive(false);
+        curUnit = null;
     }
 }

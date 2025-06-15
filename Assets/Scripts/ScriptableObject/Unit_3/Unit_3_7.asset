@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Unit_3_7
   m_EditorClassIdentifier: 
   unitName: "\uD558\uAE09\uB9C8\uBC95\uAE30\uC0ACC"
-  unitCharacteristic: 
+  unitCharacteristic: "\uB9C8\uB51C"
   unitImage: {fileID: 21300000, guid: 8ddc80aa788b9a243ac737ac40412ea2, type: 3}
   atkCoolTime: 2
-  minAtk: 1321
-  maxAtk: 1444
+  minAtk: 1221
+  maxAtk: 1344
   stun: 0
   skillStun: 0
   skillPercent: 0
@@ -34,4 +34,5 @@ MonoBehaviour:
   nextUnitB: {fileID: 0}
   unitType: 0
   unitAtkType: 2
+  unitSkillType: 1
   unitRating: 3

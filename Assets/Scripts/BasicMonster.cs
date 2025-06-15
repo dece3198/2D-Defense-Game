@@ -312,16 +312,26 @@ public class BasicMonster : Monster, IInteractable
         stateMachine.ChangeState(_state);
     }
 
-    public void TakeHit(float damage, UnitType unit, float stun)
+    public void TakeHit(float damage, UnitRecipe unitRecipe, float stun)
     {
         if(Hp > 0)
         {
-            float damageP = ((def - GameManager.instance.DefDeBuff) * 0.06f) / (1 + (def - GameManager.instance.DefDeBuff) * 0.06f);
-            float curDamage = damage * (1f - damageP);
-            Hp -= curDamage;
-            textManager.ShowDamageText(curDamage);
+            if(unitRecipe.unitSkillType == UnitSkillType.PD)
+            {
+                float defFactor = def - GameManager.instance.DefDeBuff;
+                float damageP = defFactor * 0.0175f / (1 + defFactor * 0.0175f);
+                float finalDamage = damage * (1f - damageP);
+                Hp -= finalDamage;
+                textManager.ShowDamageText(finalDamage);
+            }
+            else
+            {
+                Hp -= damage;
+                textManager.ShowDamageText(damage);
+            }
+            
             StartCoroutine(HitCo());
-            if (unit == UnitType.Stun && gameObject.activeSelf)
+            if (unitRecipe.unitType == UnitType.Stun && gameObject.activeSelf)
             {
                 if(monsterState != MonsterState.Die)
                 {

@@ -2,5 +2,5 @@ using UnityEngine;
 
 public interface IInteractable
 {
-    public void TakeHit(float damage, UnitType unit, float stun);
+    public void TakeHit(float damage, UnitRecipe unitRecipe, float stun);
 }

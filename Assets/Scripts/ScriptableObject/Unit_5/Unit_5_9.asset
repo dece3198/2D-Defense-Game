@@ -13,14 +13,15 @@ MonoBehaviour:
   m_Name: Unit_5_9
   m_EditorClassIdentifier: 
   unitName: "\uC0C1\uAE09\uAD81\uC218\uAE30\uC0ACA"
+  unitCharacteristic: "\uBB3C\uB51C, \uBC94\uC704\uC2A4\uD134"
   unitImage: {fileID: 21300000, guid: c9a3c4ef558736b46af077725b5798c2, type: 3}
   atkCoolTime: 0.5
-  minAtk: 0
-  maxAtk: 0
+  minAtk: 1455
+  maxAtk: 1674
   stun: 0
-  skillStun: 0
-  skillPercent: 0.125
-  skillDamage: 0
+  skillStun: 2
+  skillPercent: 0.15
+  skillDamage: 10
   debuff: 0
   buff: 0
   speedDebuff: 0
@@ -28,6 +29,7 @@ MonoBehaviour:
   recipeB: []
   nextUnitA: {fileID: 0}
   nextUnitB: {fileID: 0}
-  unitType: 0
+  unitType: 2
   unitAtkType: 2
+  unitSkillType: 0
   unitRating: 4

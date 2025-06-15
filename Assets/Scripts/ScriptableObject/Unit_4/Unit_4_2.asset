@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Unit_4_2
   m_EditorClassIdentifier: 
   unitName: "\uC911\uAE09\uC554\uC0B4\uC6A9\uBCD1"
-  unitCharacteristic: 
+  unitCharacteristic: "\uBB3C\uB51C"
   unitImage: {fileID: 21300000, guid: 9dbc2058647d8d1418445e1b4e918964, type: 3}
   atkCoolTime: 0.5
   minAtk: 38
@@ -37,4 +37,5 @@ MonoBehaviour:
   nextUnitB: {fileID: 8779760603862990818, guid: bd825327c18397a4e9a0e87e78e16e89, type: 3}
   unitType: 0
   unitAtkType: 0
+  unitSkillType: 0
   unitRating: 1

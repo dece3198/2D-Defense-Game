@@ -208,7 +208,6 @@ public class GameManager : Singleton<GameManager>
 
     private void Start()
     {
-        Time.timeScale = 2;
         Gold += 12;
     }
 

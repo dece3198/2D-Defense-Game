@@ -10,8 +10,10 @@ public class ViewDetector : MonoBehaviour
     [SerializeField] private float radius;
     [SerializeField] private float debuffRadius;
     [SerializeField] private LayerMask layerMask;
+    [SerializeField] private LayerMask buffLayerMask;
     private List<BasicMonster> monsterList = new List<BasicMonster>();
     private List<Unit> unitList = new List<Unit>();
+    private List<Unit> buffUnits = new List<Unit>();
 
     private void Awake()
     {
@@ -30,7 +32,10 @@ public class ViewDetector : MonoBehaviour
             if(distance < min)
             {
                 min = distance;
-                target = collider2D.gameObject;
+                if(collider2D.GetComponentInChildren<BasicMonster>() != null)
+                {
+                    target = collider2D.gameObject;
+                }
             }
         }
 
@@ -40,13 +45,13 @@ public class ViewDetector : MonoBehaviour
         }
     }
 
-    public void FindSkillTarget(float atk,UnitType unitType , float stun)
+    public void FindSkillTarget(float atk,UnitRecipe unitRecipe , float stun)
     {
         Collider2D[] targets = Physics2D.OverlapCircleAll(center.position, radius, layerMask);
 
         for(int i = 0; i < targets.Length; i++)
         {
-            targets[i].GetComponent<BasicMonster>().TakeHit(atk, unitType, stun);
+            targets[i].GetComponent<BasicMonster>().TakeHit(atk, unitRecipe, stun);
         }
 
         target = null;
@@ -81,9 +86,9 @@ public class ViewDetector : MonoBehaviour
         }
     }
 
-    public void FindBufferTarget(UnitRecipe unitRecipe)
+    public void FindBufferTarget(UnitRecipe unitRecipe, float buff)
     {
-        Collider2D[] targets = Physics2D.OverlapCircleAll(center.position, debuffRadius, layerMask);
+        Collider2D[] targets = Physics2D.OverlapCircleAll(center.position, debuffRadius, buffLayerMask);
         HashSet<Unit> curUnit = new();
 
         foreach(var col in targets)
@@ -94,7 +99,7 @@ public class ViewDetector : MonoBehaviour
                 curUnit.Add(unit);
                 if(!unitList.Contains(unit))
                 {
-                    unit.SetBuff(unitRecipe);
+                    unit.SetBuff(unitRecipe, buff);
                     unitList.Add(unit);
                 }
             }
@@ -104,10 +109,40 @@ public class ViewDetector : MonoBehaviour
         {
             if (!curUnit.Contains(unitList[i]))
             {
-                unitList[i].ResetBuff(unitRecipe);
+                unitList[i].ResetBuff(unitRecipe, buff);
                 unitList.RemoveAt(i);
             }
         }
+    }
+
+    public void UnitSetBuff(UnitRecipe unitRecipe, float buff)
+    {
+        buffUnits.Clear();
+
+        Collider2D[] targets = Physics2D.OverlapCircleAll(center.position, debuffRadius, buffLayerMask);
+
+        foreach (var col in targets)
+        {
+            Unit targetUnit = col.GetComponentInChildren<Unit>();
+            if (targetUnit != null)
+            {
+                targetUnit.SetBuff(unitRecipe, buff);
+                buffUnits.Add(targetUnit);
+            }
+        }
+    }
+
+    public void UnitResetBuff(UnitRecipe unitRecipe, float buff)
+    {
+        foreach (var unit in buffUnits)
+        {
+            if (unit != null)
+            {
+                unit.ResetBuff(unitRecipe, buff);
+            }
+        }
+
+        buffUnits.Clear();
     }
 
     private void OnDestroy()
