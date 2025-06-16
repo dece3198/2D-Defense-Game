@@ -20,7 +20,7 @@ MonoBehaviour:
   maxAtk: 1264
   stun: 0
   skillStun: 0
-  skillPercent: 0.25
+  skillPercent: 0.3
   skillDamage: 5
   debuff: 0
   buff: 0

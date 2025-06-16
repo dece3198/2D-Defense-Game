@@ -22,7 +22,7 @@ MonoBehaviour:
   skillStun: 0
   skillPercent: 0
   skillDamage: 0
-  debuff: 10
+  debuff: 15
   buff: 0
   speedDebuff: 0
   recipeA:

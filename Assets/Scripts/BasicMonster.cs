@@ -146,7 +146,6 @@ public class MonsterDie : BaseState<BasicMonster>
             {
                 monster.textManager.transform.localScale = new Vector3(-1f, 1f, 1);
             }
-            monster.posIndex = 0;
 
             if(monster.monsterType == MonsterType.Mission)
             {
@@ -157,7 +156,7 @@ public class MonsterDie : BaseState<BasicMonster>
             }
             else
             {
-                MonsterSpawner.instance.EnterPool(monster.gameObject, GameManager.instance.stage);
+                MonsterSpawner.instance.EnterPool(monster.transform.parent.GetComponent<SPUM_Prefabs>().gameObject, GameManager.instance.stage);
             }
         }
     }
@@ -319,7 +318,7 @@ public class BasicMonster : Monster, IInteractable
             if(unitRecipe.unitSkillType == UnitSkillType.PD)
             {
                 float defFactor = def - GameManager.instance.DefDeBuff;
-                float damageP = defFactor * 0.0175f / (1 + defFactor * 0.0175f);
+                float damageP = defFactor * 0.015f / (1 + defFactor * 0.015f);
                 float finalDamage = damage * (1f - damageP);
                 Hp -= finalDamage;
                 textManager.ShowDamageText(finalDamage);

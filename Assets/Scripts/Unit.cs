@@ -277,6 +277,8 @@ public class Unit : MonoBehaviour
                     }
                     else
                     {
+                        GameObject _skill = skillStack.Pop();
+                        _skill.GetComponent<Animator>().SetTrigger("Skill");
                         isBuff = true;
                         buffTime = Mathf.Max(buffTime, 3f);
                         buff = unitRecipe.skillDamage;

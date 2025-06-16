@@ -1,11 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class MonsterSpawner : Singleton<MonsterSpawner>
 {
+    [SerializeField] private int monsterCount;
+    public int MonsterCount
+    {
+        get { return monsterCount; }
+        set
+        {
+            monsterCount = value;
+            if(monsterCount >= 80)
+            {
+                if (monsterCount >= 100)
+                {
+                    monsterCount = 0;
+                }
+            }
+
+        }
+    }
     [SerializeField] private GameObject[] monsters;
     [SerializeField] private GameObject[] missionMonsters;
     [SerializeField] private GameObject missionUi;
@@ -22,6 +40,8 @@ public class MonsterSpawner : Singleton<MonsterSpawner>
     [SerializeField] private TextMeshProUGUI monsterDef;
     [SerializeField] private TextMeshProUGUI monsterSpeed;
     private bool isState = false;
+    private IEnumerator monsterCo;
+
 
     private new void Awake()
     {
@@ -35,7 +55,13 @@ public class MonsterSpawner : Singleton<MonsterSpawner>
 
     public void StartStage()
     {
-        StartCoroutine(MonsterCo());
+        monsterCo = MonsterCo();
+        StartCoroutine(monsterCo);
+    }
+
+    public void StopStage()
+    {
+        StopCoroutine(monsterCo);
     }
 
 
@@ -67,7 +93,11 @@ public class MonsterSpawner : Singleton<MonsterSpawner>
         {
             foreach(var monster in monsterPool[stage])
             {
-                if(!monster.activeInHierarchy && monster.GetComponentInChildren<BasicMonster>().stage == monsters[stage].GetComponentInChildren<BasicMonster>().stage)
+                if (monster == null) continue;
+
+                if(!monster.activeInHierarchy &&
+                    monster.GetComponentInChildren<BasicMonster>().stage ==
+                    monsters[stage].GetComponentInChildren<BasicMonster>().stage)
                 {
                     monster.SetActive(true);
                     return monster;
@@ -77,13 +107,18 @@ public class MonsterSpawner : Singleton<MonsterSpawner>
 
         GameObject newMonster = Instantiate(monsters[stage], transform);
         EnterPool(newMonster, stage);
+        monsterCount++;
         return newMonster;
     }
 
     public void EnterPool(GameObject monster, int stage)
     {
+        monsterCount--;
         if (!monsterPool.ContainsKey(stage))
             monsterPool[stage] = new List<GameObject>();
+        monster.transform.position = transform.position;
+        monster.GetComponentInChildren<BasicMonster>().transform.position = transform.position;
+        monster.GetComponentInChildren<BasicMonster>().posIndex = 0;
         monster.SetActive(false);
         monsterPool[stage].Add(monster);
     }
@@ -95,23 +130,36 @@ public class MonsterSpawner : Singleton<MonsterSpawner>
 
     private IEnumerator DestoryMonsterCo()
     {
-        for (int i = monsterPool.Count - 1; i >= 0; i--)
+        int bfStage = GameManager.instance.stage - 1;
+
+        if (bfStage < 0) yield break;
+
+        if (monsterPool.Count > 0)
         {
-            if (GameManager.instance.stage != i)
+            if (monsterPool.ContainsKey(bfStage))
             {
-                if (monsterPool.ContainsKey(i))
+                for (int j = monsterPool[bfStage].Count - 1; j >= 0; j--)
                 {
-                    for (int j = monsterPool[i].Count - 1; j >= 0; j--)
+                    GameObject monster = monsterPool[bfStage][j];
+
+                    if (monster == null || !monster.activeInHierarchy)
                     {
-                        if (!monsterPool[i][j].activeInHierarchy)
-                        {
-                            Destroy(monsterPool[i][j]);
-                            monsterPool[i].RemoveAt(j);
-                            yield return new WaitForSeconds(0.1f);
-                        }
+                        monsterPool[bfStage].RemoveAt(j);
+                        if (monster != null)
+                            Destroy(monster);
+                        yield return new WaitForSeconds(0.1f);
                     }
                 }
             }
+        }
+        CleanPool();
+    }
+
+    private void CleanPool()
+    {
+        foreach(var key in monsterPool.Keys.ToList())
+        {
+            monsterPool[key] = monsterPool[key].Where(m => m != null).ToList();
         }
     }
 

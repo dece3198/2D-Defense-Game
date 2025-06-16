@@ -8,7 +8,7 @@ using UnityEngine.Tilemaps;
 
 public enum GameState
 {
-    None, Wait, StageStart, StageEnd
+    None, Wait, StageStart, StageEnd, GameEnd
 }
 
 public class None : BaseState<GameManager>
@@ -133,7 +133,8 @@ public class StageEnd : BaseState<GameManager>
             game.timeText.text = $"{minutes:00} : {seconds:00}";
             yield return null;
         }
-        if(game.stage < 100)
+
+        if (game.stage < 100)
         {
             game.ChanageState(GameState.StageStart);
         }
@@ -142,6 +143,22 @@ public class StageEnd : BaseState<GameManager>
             //게임 승리창 실행
             game.ChanageState(GameState.None);
         }
+    }
+}
+
+public class GameEnd : BaseState<GameManager>
+{
+    public override void Enter(GameManager monster)
+    {
+        MonsterSpawner.instance.StopStage();
+    }
+
+    public override void Exit(GameManager monster)
+    {
+    }
+
+    public override void Update(GameManager monster)
+    {
     }
 }
 
@@ -194,6 +211,7 @@ public class GameManager : Singleton<GameManager>
     public int missionFail = 0;
     public GameObject[] lockImage;
     [SerializeField] private TextMeshProUGUI defDeBuffText;
+    public bool isX2 = false; 
 
     private new void Awake()
     {
@@ -243,6 +261,20 @@ public class GameManager : Singleton<GameManager>
         foreach (var u in defUnitCount.Keys)
         {
             DefDeBuff += u.debuff;
+        }
+    }
+
+    public void X2Button()
+    {
+        isX2 = !isX2;
+
+        if(isX2)
+        {
+            Time.timeScale = 2;
+        }
+        else
+        {
+            Time.timeScale = 1;
         }
     }
 

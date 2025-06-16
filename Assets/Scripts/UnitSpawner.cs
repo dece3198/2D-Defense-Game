@@ -18,6 +18,7 @@ public class UnitSpawner : Singleton<UnitSpawner>
     private bool isStore = false;
 
     private Dictionary<UnitRating, int> unitPriceDic = new Dictionary<UnitRating, int>();
+    private Dictionary<UnitRecipe, Stack<GameObject>> unitPool = new();
 
     private new void Awake()
     {
@@ -63,11 +64,12 @@ public class UnitSpawner : Singleton<UnitSpawner>
                 if (!usedTiles.Contains(cellPos))
                 {
                     int rand = Random.Range(0, units.Length);
-                    GameObject tower = Instantiate(units[rand], transform);
-                    tower.GetComponentInChildren<Unit>().currentTilePos = cellPos;
-                    unitList.Add(tower);
+                    GameObject unit = ExitPool(units[rand]);
+                    unit.SetActive(true);
+                    unit.GetComponentInChildren<Unit>().currentTilePos = cellPos;
+                    unitList.Add(unit);
                     Vector3 worldPos = tilemap.GetCellCenterWorld(cellPos);
-                    tower.transform.position = worldPos;
+                    unit.transform.position = worldPos;
                     usedTiles.Add(cellPos);
                     return;
                 }
@@ -108,14 +110,16 @@ public class UnitSpawner : Singleton<UnitSpawner>
             {
                 usedTiles.Remove(t.GetComponentInChildren<Unit>().currentTilePos);
                 unitList.Remove(t);
-                Destroy(t);
+                EnterPool(t.GetComponentInChildren<Unit>());
             }
-            GameObject tower = Instantiate(unit.unitRecipe.nextUnitA, transform);
-            Unit towerComp = tower.GetComponentInChildren<Unit>();
+
+            GameObject _unit = ExitPool(unit.unitRecipe.nextUnitA);
+            _unit.SetActive(true);
+            Unit towerComp = _unit.GetComponentInChildren<Unit>();
             towerComp.currentTilePos = spawnCell;
-            unitList.Add(tower);
+            unitList.Add(_unit);
             Vector3 worldPos = tilemap.GetCellCenterWorld(spawnCell);
-            tower.transform.position = worldPos;
+            _unit.transform.position = worldPos;
             usedTiles.Add(spawnCell);
             UiManager.instance.CloseUi();
         }
@@ -178,14 +182,15 @@ public class UnitSpawner : Singleton<UnitSpawner>
             {
                 usedTiles.Remove(t.GetComponentInChildren<Unit>().currentTilePos);
                 unitList.Remove(t);
-                Destroy(t);
+                EnterPool(t.GetComponentInChildren<Unit>());
             }
-            GameObject tower = Instantiate(unit.unitRecipe.nextUnitB, transform);
-            Unit towerComp = tower.GetComponentInChildren<Unit>();
+            GameObject _unit = ExitPool(unit.unitRecipe.nextUnitB);
+            _unit.SetActive(true);
+            Unit towerComp = _unit.GetComponentInChildren<Unit>();
             towerComp.currentTilePos = spawnCell;
-            unitList.Add(tower);
+            unitList.Add(_unit);
             Vector3 worldPos = tilemap.GetCellCenterWorld(spawnCell);
-            tower.transform.position = worldPos;
+            _unit.transform.position = worldPos;
             usedTiles.Add(spawnCell);
             UiManager.instance.CloseUi();
         }
@@ -228,11 +233,12 @@ public class UnitSpawner : Singleton<UnitSpawner>
             {
                 if (!usedTiles.Contains(cellPos))
                 {
-                    GameObject tower = Instantiate(units[value], transform);
-                    tower.GetComponentInChildren<Unit>().currentTilePos = cellPos;
-                    unitList.Add(tower);
+                    GameObject unit = ExitPool(units[value]);
+                    unit.SetActive(true);
+                    unit.GetComponentInChildren<Unit>().currentTilePos = cellPos;
+                    unitList.Add(unit);
                     Vector3 worldPos = tilemap.GetCellCenterWorld(cellPos);
-                    tower.transform.position = worldPos;
+                    unit.transform.position = worldPos;
                     usedTiles.Add(cellPos);
                     return;
                 }
@@ -264,8 +270,30 @@ public class UnitSpawner : Singleton<UnitSpawner>
         }
         usedTiles.Remove(curUnit.GetComponentInChildren<Unit>().currentTilePos);
         unitList.Remove(curUnit);
-        Destroy(curUnit);
+        EnterPool(curUnit.GetComponentInChildren<Unit>());
         UiManager.instance.CloseUi();
+    }
+
+    private GameObject ExitPool(GameObject _unit)
+    {
+        UnitRecipe recipe = _unit.GetComponentInChildren<Unit>().unitRecipe;
+        if (unitPool.ContainsKey(recipe) && unitPool[recipe].Count > 0)
+        {
+            return unitPool[recipe].Pop();
+        }
+
+        return Instantiate(_unit);
+    }
+
+    private void EnterPool(Unit _unit)
+    {
+        GameObject parent = _unit.transform.parent.GetComponent<SPUM_Prefabs>().gameObject;
+
+        if (!unitPool.ContainsKey(_unit.unitRecipe))
+            unitPool[_unit.unitRecipe] = new Stack<GameObject>();
+
+        unitPool[_unit.unitRecipe].Push(parent);
+        parent.SetActive(false);
     }
 
     private IEnumerator shakeCo()

@@ -152,7 +152,14 @@ public class UiManager : Singleton<UiManager>
         else
         {
             recipeUi.SetActive(false);
-            Time.timeScale = 1;
+            if (GameManager.instance.isX2)
+            {
+                Time.timeScale = 2;
+            }
+            else
+            {
+                Time.timeScale = 1;
+            }
         }
     }
 
@@ -168,7 +175,15 @@ public class UiManager : Singleton<UiManager>
         else
         {
             menuUi.SetActive(false);
-            Time.timeScale = 1;
+
+            if(GameManager.instance.isX2)
+            {
+                Time.timeScale = 2;
+            }
+            else
+            {
+                Time.timeScale = 1;
+            }
         }
     }
 

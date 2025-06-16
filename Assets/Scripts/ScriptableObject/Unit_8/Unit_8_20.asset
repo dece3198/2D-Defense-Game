@@ -20,9 +20,9 @@ MonoBehaviour:
   maxAtk: 722
   stun: 0
   skillStun: 0
-  skillPercent: 0.075
+  skillPercent: 0.1
   skillDamage: 20
-  debuff: 15
+  debuff: 25
   buff: 0
   speedDebuff: 0
   recipeA: []
