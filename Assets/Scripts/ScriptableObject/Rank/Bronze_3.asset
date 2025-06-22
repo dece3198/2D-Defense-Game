@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ccfdf0dbc29783f4c905c0cefb833565, type: 3}
+  m_Name: Bronze_3
+  m_EditorClassIdentifier: 
+  rankImage: {fileID: 365528960, guid: 4bf075e8c43dfcf4c8869b42f8416784, type: 3}
+  pieces:
+  - {fileID: -2149028112621677209, guid: 4bf075e8c43dfcf4c8869b42f8416784, type: 3}
+  - {fileID: 6629493116433042656, guid: 4bf075e8c43dfcf4c8869b42f8416784, type: 3}
+  - {fileID: -763168669, guid: 4bf075e8c43dfcf4c8869b42f8416784, type: 3}
+  - {fileID: -1033918567, guid: 4bf075e8c43dfcf4c8869b42f8416784, type: 3}
+  - {fileID: 456234065, guid: 4bf075e8c43dfcf4c8869b42f8416784, type: 3}
+  - {fileID: -885725558, guid: 4bf075e8c43dfcf4c8869b42f8416784, type: 3}
+  - {fileID: 1579468748, guid: 4bf075e8c43dfcf4c8869b42f8416784, type: 3}
+  nextRank: {fileID: 0}
+  rankNumber: 2

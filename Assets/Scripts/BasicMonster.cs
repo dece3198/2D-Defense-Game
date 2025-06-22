@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using static UnityEngine.Rendering.DebugUI;
 
 public class MonsterIdle : BaseState<BasicMonster>
 {
@@ -116,6 +114,7 @@ public class MonsterDie : BaseState<BasicMonster>
 {
     public override void Enter(BasicMonster monster)
     {
+        MonsterSpawner.instance.MonsterCount--;
         monster.gameObject.layer = 0;
         monster.animator.SetTrigger("4_Death");
         if (monster.transform.localScale.x == -1)
@@ -156,7 +155,7 @@ public class MonsterDie : BaseState<BasicMonster>
             }
             else
             {
-                MonsterSpawner.instance.EnterPool(monster.transform.parent.GetComponent<SPUM_Prefabs>().gameObject, GameManager.instance.stage);
+                MonsterSpawner.instance.EnterPool(monster.transform.parent.GetComponent<SPUM_Prefabs>().gameObject, monster.stage);
             }
         }
     }
@@ -318,7 +317,9 @@ public class BasicMonster : Monster, IInteractable
             if(unitRecipe.unitSkillType == UnitSkillType.PD)
             {
                 float defFactor = def - GameManager.instance.DefDeBuff;
-                float damageP = defFactor * 0.015f / (1 + defFactor * 0.015f);
+                float damageP = 
+                    defFactor * GameManager.instance.defDamageDic[GameManager.instance.curGameLevel]
+                    / (1 + defFactor * GameManager.instance.defDamageDic[GameManager.instance.curGameLevel]);
                 float finalDamage = damage * (1f - damageP);
                 Hp -= finalDamage;
                 textManager.ShowDamageText(finalDamage);

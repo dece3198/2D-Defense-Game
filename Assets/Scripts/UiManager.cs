@@ -187,6 +187,18 @@ public class UiManager : Singleton<UiManager>
         }
     }
 
+    public void EndGame()
+    {
+        unitUi.SetActive(false);
+        closeUi.SetActive(false);
+        menuUi.SetActive(false);
+        recipeUi.SetActive(false);
+        isRecipeUi = false;
+        isMenu = false;
+        curUnit = null;
+        Time.timeScale = 1;
+    }
+
     public void CloseUi()
     {
         unitUi.SetActive(false);

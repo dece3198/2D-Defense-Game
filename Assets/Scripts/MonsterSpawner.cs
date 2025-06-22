@@ -14,11 +14,12 @@ public class MonsterSpawner : Singleton<MonsterSpawner>
         set
         {
             monsterCount = value;
-            if(monsterCount >= 80)
+            if (monsterCount >= 80)
             {
                 if (monsterCount >= 100)
                 {
                     monsterCount = 0;
+                    GameManager.instance.ChanageState(GameState.GameEnd);
                 }
             }
 
@@ -72,6 +73,7 @@ public class MonsterSpawner : Singleton<MonsterSpawner>
             GameObject monster = GetFormPool(GameManager.instance.stage);
             monster.transform.position = transform.position;
             monster.SetActive(true);
+            MonsterCount++;
             yield return new WaitForSeconds(40);
         }
         else
@@ -81,6 +83,7 @@ public class MonsterSpawner : Singleton<MonsterSpawner>
                 GameObject monster = GetFormPool(GameManager.instance.stage);
                 monster.transform.position = transform.position;
                 monster.SetActive(true);
+                MonsterCount++;
                 yield return new WaitForSeconds(1f);
             }
         }
@@ -89,7 +92,7 @@ public class MonsterSpawner : Singleton<MonsterSpawner>
 
     public GameObject GetFormPool(int stage)
     {
-        if(monsterPool.ContainsKey(stage))
+        if (monsterPool.ContainsKey(stage))
         {
             foreach(var monster in monsterPool[stage])
             {
@@ -107,13 +110,11 @@ public class MonsterSpawner : Singleton<MonsterSpawner>
 
         GameObject newMonster = Instantiate(monsters[stage], transform);
         EnterPool(newMonster, stage);
-        monsterCount++;
         return newMonster;
     }
 
     public void EnterPool(GameObject monster, int stage)
     {
-        monsterCount--;
         if (!monsterPool.ContainsKey(stage))
             monsterPool[stage] = new List<GameObject>();
         monster.transform.position = transform.position;
@@ -121,6 +122,27 @@ public class MonsterSpawner : Singleton<MonsterSpawner>
         monster.GetComponentInChildren<BasicMonster>().posIndex = 0;
         monster.SetActive(false);
         monsterPool[stage].Add(monster);
+    }
+
+    //게임 종료시 활성화되있는 몬스터를 EnterPool로 집어넣음
+    public void EndGame()
+    {
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            Transform child = transform.GetChild(i);
+            GameObject monsterObject = child.gameObject;
+
+            if (!monsterObject.activeInHierarchy) continue;
+
+            BasicMonster monster = child.GetComponentInChildren<BasicMonster>();
+            if (monster == null) continue;
+
+            if(monster.monsterType == MonsterType.Mission)
+            {
+                monster.gameObject.SetActive(false);
+            }
+            EnterPool(monsterObject, monster.stage);
+        }
     }
 
     public void DeleteMonster()

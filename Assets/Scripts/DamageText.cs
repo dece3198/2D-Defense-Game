@@ -1,4 +1,3 @@
-using DG.Tweening;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -45,7 +44,6 @@ public class DamageText : MonoBehaviour
         }
 
         text.fontSize = 0.15f;
-        transform.localScale = Vector2.one;
         textManager.EnterPool(this.gameObject);
         gameObject.SetActive(false);
     }

@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,7 +54,7 @@ public class UnitSpawner : Singleton<UnitSpawner>
             }
         }
     }
-
+    //랜덤으로 유닛소환
     public void RandomSpawn()
     { 
         if(GameManager.instance.Gold >= 1)
@@ -80,7 +81,7 @@ public class UnitSpawner : Singleton<UnitSpawner>
 
         
     }
-
+    //조합A버튼을 누를시 알맞는 유닛 조합 없을시 missingText로 없는 유닛표시
     public void CombineA()
     {
         Unit unit = curUnit.GetComponentInChildren<Unit>();
@@ -152,7 +153,7 @@ public class UnitSpawner : Singleton<UnitSpawner>
             }
         }
     }
-
+    //조합B버튼을 누를시 알맞는 유닛 조합 없을시 missingText로 없는 유닛표시
     public void CombineB()
     {
         Unit unit = curUnit.GetComponentInChildren<Unit>();
@@ -224,6 +225,7 @@ public class UnitSpawner : Singleton<UnitSpawner>
         }
     }
     
+    //유닛 구매
     public void BuyUnit(int value)
     {
         if (GameManager.instance.Jam > 0)
@@ -248,6 +250,31 @@ public class UnitSpawner : Singleton<UnitSpawner>
         }
     }
 
+    //33%확률로 유닛판매
+    public void SellUnit()
+    {
+        if(Random.value < 0.33)
+        {
+            GameManager.instance.Gold += unitPriceDic[curUnit.GetComponentInChildren<Unit>().unitRecipe.unitRating];
+        }
+        usedTiles.Remove(curUnit.GetComponentInChildren<Unit>().currentTilePos);
+        unitList.Remove(curUnit);
+        EnterPool(curUnit.GetComponentInChildren<Unit>());
+        UiManager.instance.CloseUi();
+    }
+    //게임종료시 유닛제거
+    public void EndGame()
+    {
+        for (int i = unitList.Count - 1; i >= 0; i--)
+        {
+            Unit _unit = unitList[i].GetComponentInChildren<Unit>();
+
+            usedTiles.Remove(_unit.currentTilePos);
+            EnterPool(_unit);
+            unitList.RemoveAt(i);
+        }
+    }
+
     public void StoreUi()
     {
         isStore = !isStore;
@@ -262,17 +289,7 @@ public class UnitSpawner : Singleton<UnitSpawner>
         }
     }
 
-    public void SellUnit()
-    {
-        if(Random.value < 0.33)
-        {
-            GameManager.instance.Gold += unitPriceDic[curUnit.GetComponentInChildren<Unit>().unitRecipe.unitRating];
-        }
-        usedTiles.Remove(curUnit.GetComponentInChildren<Unit>().currentTilePos);
-        unitList.Remove(curUnit);
-        EnterPool(curUnit.GetComponentInChildren<Unit>());
-        UiManager.instance.CloseUi();
-    }
+
 
     private GameObject ExitPool(GameObject _unit)
     {
@@ -299,15 +316,8 @@ public class UnitSpawner : Singleton<UnitSpawner>
     private IEnumerator shakeCo()
     {
         missing.gameObject.SetActive(true);
-        float time = 1f;
-        Vector3 origingPos = missing.transform.position;
-        while(time > 0)
-        {
-            time -= Time.deltaTime;
-            missing.transform.position = Random.insideUnitSphere * 1f + origingPos;
-            yield return null;
-        }
-        missing.transform.position = origingPos;
+        missing.transform.DOShakePosition(1f, new Vector3(1f, 1f, 0), 30, 90f, false, true);
+        yield return new WaitForSeconds(1f);
         missing.gameObject.SetActive(false);
     }
 }
