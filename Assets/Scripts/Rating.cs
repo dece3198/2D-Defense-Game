@@ -1,6 +1,7 @@
 using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public enum RankNumber
@@ -16,6 +17,9 @@ public class Rating : Singleton<Rating>
     [SerializeField] private Vector3[] centersA;
     [SerializeField] private Vector3[] centersB;
     [SerializeField] private Vector3[] centersC;
+    [SerializeField] private GameObject rankLight;
+    [SerializeField] private TextMeshProUGUI rankText;
+    [SerializeField] private GameObject checkButton;
     private Dictionary<RankNumber, Vector3[]> centersDic = new Dictionary<RankNumber, Vector3[]>();
     public Rank curRank;
     public int value;
@@ -116,5 +120,34 @@ public class Rating : Singleton<Rating>
         }
         rankObj.GetComponent<SpriteRenderer>().sprite = rank.rankImage;
         rankObj.SetActive(true);
+
+        float time = 1;
+        Color alpha = rankLight.GetComponent<SpriteRenderer>().color;
+        rankText.text = rank.rankName;
+        while(time > 0)
+        {
+            time -= Time.deltaTime;
+            alpha.a = Mathf.Lerp(alpha.a, 1f, Time.deltaTime * 2.5f);
+            rankLight.GetComponent<SpriteRenderer>().color = alpha;
+            rankText.color = alpha;
+            yield return null;
+        }
+        checkButton.SetActive(true);
     }
+
+    public void CheckButton()
+    {
+        StartCoroutine(CheckCo());
+    }
+
+    private IEnumerator CheckCo()
+    {
+        GameManager.instance.fade.Fade(GameManager.instance.waitRoom);
+        yield return new WaitForSeconds(1f);
+        rankLight.SetActive(false);
+        checkButton.SetActive(false);
+        gameObject.SetActive(false);
+        rankText.gameObject.SetActive(false);
+    }
+
 }

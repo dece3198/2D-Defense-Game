@@ -17,7 +17,7 @@ public enum RankType
 
 public enum GameLevel
 {
-    Bronze, Silver, Gold, Platinum, Diamond, Master, Challenger
+    Bronze, Silver, Gold, Platinum, Diamond, Master, GrandMaster, Challenger
 }
 
 [System.Serializable]
@@ -177,14 +177,9 @@ public class GameEnd : BaseState<GameManager>
 {
     public override void Enter(GameManager game)
     {
-        MonsterSpawner.instance.StopStage();
-        MonsterSpawner.instance.EndGame();
-        UnitSpawner.instance.EndGame();
-        UiManager.instance.EndGame();
-        game.stage = 0;
-        game.Gold = 12;
-        game.Jam = 0;
-        game.loseText.SetActive(true);
+        game.EndGame();
+        game.fail.SetActive(true);
+        game.StartCoroutine(FailCo(game));
     }
 
     public override void Exit(GameManager game)
@@ -194,19 +189,35 @@ public class GameEnd : BaseState<GameManager>
     public override void Update(GameManager game)
     {
     }
+
+    private IEnumerator FailCo(GameManager game)
+    {
+        float time = 2f;
+        Color alpha = game.failText.color;
+        while (time > 0)
+        {
+            time -= Time.deltaTime;
+            alpha.a = Mathf.Lerp(alpha.a, 1f, Time.deltaTime);
+            game.failText.color = alpha;
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(2f);
+        game.fade.Fade(game.waitRoom);
+        yield return new WaitForSeconds(1f);
+        alpha.a = 0;
+        game.failText.color = alpha;
+        game.fail.SetActive(false);
+        game.mainUi.SetActive(false);
+    }
 }
 
 public class GameWinner : BaseState<GameManager>
 {
     public override void Enter(GameManager game)
     {
-        MonsterSpawner.instance.StopStage();
-        MonsterSpawner.instance.EndGame();
-        UnitSpawner.instance.EndGame();
-        UiManager.instance.EndGame();
-        game.stage = 0;
-        game.Gold = 12;
-        game.Jam = 0;
+        game.EndGame();
+        game.mainUi.SetActive(false);
         game.clear.GameClear();
     }
 
@@ -248,7 +259,7 @@ public class GameManager : Singleton<GameManager>
         set
         {
             defDeBuff = value;
-            defDeBuffText.text = defDeBuff.ToString();
+            defDeBuffText.text = defDeBuff.ToString() + "\n" + (defDeBuff * 0.2f).ToString("N1") + "%";
         }
     }
     public int stage = 0;
@@ -260,13 +271,15 @@ public class GameManager : Singleton<GameManager>
     public GameLevel curGameLevel;
     public GameObject grid;
     public GameObject[] lockImage;
-    public GameObject loseText;
+    public GameObject fail;
     public GameObject mainUi;
+    public GameObject waitRoom;
     public Transform[] targetPos;
     public FadeInOut fade;
     public Clear clear;
     public TextMeshProUGUI timeText;
     public TextMeshProUGUI roundText;
+    public TextMeshProUGUI failText;
     [SerializeField] private TextMeshProUGUI goldText;
     [SerializeField] private TextMeshProUGUI jamText;
     [SerializeField] private TextMeshProUGUI defDeBuffText;
@@ -296,13 +309,15 @@ public class GameManager : Singleton<GameManager>
         rankDic.Add(RankType.Bronze1, ranks[1]);
         rankDic.Add(RankType.Bronze2, ranks[2]);
         rankDic.Add(RankType.Bronze3, ranks[3]);
-        defDamageDic.Add(GameLevel.Bronze, 0.001f);
-        defDamageDic.Add(GameLevel.Silver, 0.0025f);
-        defDamageDic.Add(GameLevel.Gold, 0.005f);
-        defDamageDic.Add(GameLevel.Platinum, 0.01f);
-        defDamageDic.Add(GameLevel.Diamond, 0.015f);
-        defDamageDic.Add(GameLevel.Master, 0.03f);
-        ChanageState(GameState.Wait);
+        defDamageDic.Add(GameLevel.Bronze, 0.04f);
+        defDamageDic.Add(GameLevel.Silver, 0.035f);
+        defDamageDic.Add(GameLevel.Gold, 0.03f);
+        defDamageDic.Add(GameLevel.Platinum, 0.015f);
+        defDamageDic.Add(GameLevel.Diamond, 0.01f);
+        defDamageDic.Add(GameLevel.Master, 0.005f);
+        defDamageDic.Add(GameLevel.GrandMaster, 0.0025f);
+        defDamageDic.Add(GameLevel.Challenger, 0.001f);
+        ChanageState(GameState.None);
 
         RankCondition bronzeCond = new RankCondition
         {
@@ -381,7 +396,7 @@ public class GameManager : Singleton<GameManager>
     {
         if(Input.GetKeyDown(KeyCode.K))
         {
-            ChanageState(GameState.GameWinner);
+            ChanageState(GameState.GameEnd);
         }
     }
 
@@ -442,7 +457,6 @@ public class GameManager : Singleton<GameManager>
         rating.value = next - cur;
         rating.isRank = true;
         rating.rankObj.GetComponent<SpriteRenderer>().sprite = rankDic[curRank].rankImage;
-        mainUi.SetActive(false);
         rating.rankObj.SetActive(true);
         rating.gameObject.SetActive(true);
     }
@@ -463,6 +477,17 @@ public class GameManager : Singleton<GameManager>
         {
             RankReset(targetRank, curRank);
         }
+    }
+
+    public void EndGame()
+    {
+        MonsterSpawner.instance.StopStage();
+        MonsterSpawner.instance.EndGame();
+        UnitSpawner.instance.EndGame();
+        UiManager.instance.EndGame();
+        stage = 0;
+        Gold = 12;
+        Jam = 0;
     }
 
     public void ChanageState(GameState state)

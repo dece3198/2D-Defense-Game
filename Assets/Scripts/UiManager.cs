@@ -6,7 +6,9 @@ using UnityEngine.UI;
 
 public class UiManager : Singleton<UiManager>
 {
+    [SerializeField] private GameObject CombineUi;
     [SerializeField] private GameObject unitUi;
+    [SerializeField] private GameObject unitStateUi;
     [SerializeField] private GameObject closeUi;
     [SerializeField] private Image unitImage;
     [SerializeField] private Image[] recipeImageA;
@@ -64,6 +66,8 @@ public class UiManager : Singleton<UiManager>
     {
         curUnit = unit;
         unitUi.SetActive(true);
+        unitStateUi.SetActive(true);
+        CombineUi.SetActive(true);
         closeUi.SetActive(true);
         unitImage.sprite = unit.unitRecipe.unitImage;
         curUnitName.text = unit.unitRecipe.unitName;
@@ -202,6 +206,8 @@ public class UiManager : Singleton<UiManager>
     public void CloseUi()
     {
         unitUi.SetActive(false);
+        CombineUi.SetActive(false);
+        unitStateUi.SetActive(false);
         closeUi.SetActive(false);
         curUnit = null;
     }

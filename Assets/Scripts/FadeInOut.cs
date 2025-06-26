@@ -12,12 +12,12 @@ public class FadeInOut : MonoBehaviour
         fadeImage = GetComponent<Image>();
     }
 
-    public void Fade()
+    public void Fade(GameObject openObj)
     {
-        StartCoroutine(FadeCo());
+        StartCoroutine(FadeCo(openObj));
     }
 
-    private IEnumerator FadeCo()
+    private IEnumerator FadeCo(GameObject openobj)
     {
         float time = 0;
         Color alpha = fadeImage.color;
@@ -30,7 +30,7 @@ public class FadeInOut : MonoBehaviour
         }
 
         time = 0;
-
+        openobj.SetActive(true);
         yield return new WaitForSeconds(1f);
 
         while (alpha.a > 0)

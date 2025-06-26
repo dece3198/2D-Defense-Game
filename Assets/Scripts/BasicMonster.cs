@@ -317,17 +317,25 @@ public class BasicMonster : Monster, IInteractable
             if(unitRecipe.unitSkillType == UnitSkillType.PD)
             {
                 float defFactor = def - GameManager.instance.DefDeBuff;
-                float damageP = 
-                    defFactor * GameManager.instance.defDamageDic[GameManager.instance.curGameLevel]
-                    / (1 + defFactor * GameManager.instance.defDamageDic[GameManager.instance.curGameLevel]);
-                float finalDamage = damage * (1f - damageP);
+                float scale = GameManager.instance.defDamageDic[GameManager.instance.curGameLevel];
+                float multiplier;
+                if(defFactor >= 0f)
+                {
+                    multiplier = 1f / (1f + defFactor * scale);
+                }
+                else
+                {
+                    multiplier = 1 - defFactor * scale;
+                }
+                float finalDamage = damage * multiplier;
                 Hp -= finalDamage;
                 textManager.ShowDamageText(finalDamage);
             }
             else
             {
-                Hp -= damage;
-                textManager.ShowDamageText(damage);
+                float finalDamage = damage + (damage * (GameManager.instance.DefDeBuff * 0.002f));
+                Hp -= finalDamage;
+                textManager.ShowDamageText(finalDamage);
             }
             
             StartCoroutine(HitCo());

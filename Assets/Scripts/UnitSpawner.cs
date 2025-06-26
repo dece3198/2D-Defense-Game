@@ -59,14 +59,16 @@ public class UnitSpawner : Singleton<UnitSpawner>
     { 
         if(GameManager.instance.Gold >= 1)
         {
-            GameManager.instance.Gold -= 1;
             foreach (var cellPos in tilePosList)
             {
                 if (!usedTiles.Contains(cellPos))
                 {
+                    GameManager.instance.Gold -= 1;
                     int rand = Random.Range(0, units.Length);
                     GameObject unit = ExitPool(units[rand]);
                     unit.SetActive(true);
+                    unit.transform.position = Vector3.zero;
+                    unit.GetComponentInChildren<Unit>().transform.position = Vector3.zero;
                     unit.GetComponentInChildren<Unit>().currentTilePos = cellPos;
                     unitList.Add(unit);
                     Vector3 worldPos = tilemap.GetCellCenterWorld(cellPos);
@@ -116,7 +118,9 @@ public class UnitSpawner : Singleton<UnitSpawner>
 
             GameObject _unit = ExitPool(unit.unitRecipe.nextUnitA);
             _unit.SetActive(true);
+            _unit.transform.position = Vector3.zero;
             Unit towerComp = _unit.GetComponentInChildren<Unit>();
+            towerComp.transform.position = Vector3.zero;
             towerComp.currentTilePos = spawnCell;
             unitList.Add(_unit);
             Vector3 worldPos = tilemap.GetCellCenterWorld(spawnCell);
@@ -187,7 +191,9 @@ public class UnitSpawner : Singleton<UnitSpawner>
             }
             GameObject _unit = ExitPool(unit.unitRecipe.nextUnitB);
             _unit.SetActive(true);
+            _unit.transform.position = Vector3.zero;
             Unit towerComp = _unit.GetComponentInChildren<Unit>();
+            towerComp.transform.position = Vector3.zero;
             towerComp.currentTilePos = spawnCell;
             unitList.Add(_unit);
             Vector3 worldPos = tilemap.GetCellCenterWorld(spawnCell);
@@ -290,7 +296,6 @@ public class UnitSpawner : Singleton<UnitSpawner>
     }
 
 
-
     private GameObject ExitPool(GameObject _unit)
     {
         UnitRecipe recipe = _unit.GetComponentInChildren<Unit>().unitRecipe;
@@ -304,11 +309,26 @@ public class UnitSpawner : Singleton<UnitSpawner>
 
     private void EnterPool(Unit _unit)
     {
-        GameObject parent = _unit.transform.parent.GetComponent<SPUM_Prefabs>().gameObject;
+        if (_unit.unitRecipe.unitType == UnitType.DefDebuff)
+        {
+            GameManager.instance.RemoveUnit(_unit.unitRecipe);
+        }
 
+        if(_unit.unitRecipe.unitType == UnitType.Buffer)
+        {
+            _unit.viewDetector.RemoveAllBuffsGiven();
+        }
+
+        if(_unit.unitRecipe.unitType == UnitType.SpeedDebuff)
+        {
+            _unit.viewDetector.RemoveAllSpeedDebuff();
+        }
+
+        GameObject parent = _unit.transform.parent.GetComponent<SPUM_Prefabs>().gameObject;
         if (!unitPool.ContainsKey(_unit.unitRecipe))
             unitPool[_unit.unitRecipe] = new Stack<GameObject>();
-
+        parent.GetComponentInChildren<Unit>().transform.position = Vector3.zero;
+        _unit.isAtk = true;
         unitPool[_unit.unitRecipe].Push(parent);
         parent.SetActive(false);
     }

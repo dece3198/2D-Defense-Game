@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccfdf0dbc29783f4c905c0cefb833565, type: 3}
   m_Name: Bronze_3
   m_EditorClassIdentifier: 
+  rankName: "\uBE0C\uB860\uC9883"
   rankImage: {fileID: 365528960, guid: 4bf075e8c43dfcf4c8869b42f8416784, type: 3}
   pieces:
   - {fileID: -2149028112621677209, guid: 4bf075e8c43dfcf4c8869b42f8416784, type: 3}
