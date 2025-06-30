@@ -77,3 +77,6 @@ crashlytics-build.properties
 /Assets/Resources/SPUM
 /Assets/Resources
 /Assets/Plugins
+/Assets/ExternalDependencyManager
+/Assets/GeneratedLocalRepo
+/Assets/GooglePlayGames
