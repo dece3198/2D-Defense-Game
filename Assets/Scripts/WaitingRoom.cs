@@ -3,10 +3,11 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class WaitingRoom : MonoBehaviour
+public class WaitingRoom : Singleton<WaitingRoom>
 {
+    public GameButton curButton;    
     [SerializeField] private RectTransform level;
-    [SerializeField] private float slotWidth = 700f;
+    [SerializeField] private float slotWidth = 500f;
     private int rouletteCount = 0;
     private bool isWait = true;
 
@@ -42,7 +43,7 @@ public class WaitingRoom : MonoBehaviour
             {
                 GameManager.instance.curGameLevel = (GameLevel)rouletteCount;
             }
-            GameManager.instance.fade.Fade(GameManager.instance.mainUi);
+            FadeInOut.instance.Fade(GameManager.instance.mainUi);
             StartCoroutine(StartCo());
             isWait = false;
         }

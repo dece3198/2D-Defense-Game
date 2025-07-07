@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -203,7 +204,7 @@ public class GameEnd : BaseState<GameManager>
         }
 
         yield return new WaitForSeconds(2f);
-        game.fade.Fade(game.waitRoom);
+        FadeInOut.instance.Fade(game.waitRoom);
         yield return new WaitForSeconds(1f);
         alpha.a = 0;
         game.failText.color = alpha;
@@ -218,7 +219,7 @@ public class GameWinner : BaseState<GameManager>
     {
         game.EndGame();
         game.mainUi.SetActive(false);
-        game.clear.GameClear();
+        Clear.instance.GameClear();
     }
 
     public override void Exit(GameManager game)
@@ -262,33 +263,51 @@ public class GameManager : Singleton<GameManager>
             defDeBuffText.text = defDeBuff.ToString() + "\n" + (defDeBuff * 0.2f).ToString("N1") + "%";
         }
     }
+    [SerializeField] private int ruby;
+    public int Ruby
+    {
+        get { return ruby; }
+        set
+        {
+            ruby = value;
+            rubyText.text = ruby.ToString();
+        }
+    }
+    [SerializeField] private int dia;
+    public int Dia
+    {
+        get { return dia; }
+        set
+        {
+            dia = value;
+        }
+    }
     public int stage = 0;
     public int missionFail = 0;
 
     public Rating rating;
     public Rank[] ranks;
-    public RankType curRank;
-    public GameLevel curGameLevel;
     public GameObject grid;
     public GameObject[] lockImage;
     public GameObject fail;
     public GameObject mainUi;
     public GameObject waitRoom;
     public Transform[] targetPos;
-    public FadeInOut fade;
-    public Clear clear;
     public TextMeshProUGUI timeText;
     public TextMeshProUGUI roundText;
     public TextMeshProUGUI failText;
     [SerializeField] private TextMeshProUGUI goldText;
     [SerializeField] private TextMeshProUGUI jamText;
     [SerializeField] private TextMeshProUGUI defDeBuffText;
+    [SerializeField] private TextMeshProUGUI rubyText;
+    public RankType curRank;
+    public GameLevel curGameLevel;
+    public GameState gameState;
     public StateMachine<GameState, GameManager> stateMachine = new StateMachine<GameState, GameManager>();
     private Dictionary<UnitRecipe, int> defUnitCount = new Dictionary<UnitRecipe, int>();
     public Dictionary<RankType, Rank> rankDic = new Dictionary<RankType, Rank>();
     public Dictionary<GameLevel, RankCondition> rankConditionDic = new Dictionary<GameLevel, RankCondition>();
     public Dictionary<GameLevel, float> defDamageDic = new Dictionary<GameLevel, float>();
-    public GameState gameState;
     public Tilemap groundTileMap;
     public bool isSelect = false;
     public bool isX2 = false;
@@ -400,6 +419,20 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
+    public void SaveData()
+    {
+
+    }
+
+    public void LoadData()
+    {
+        if(Enum.IsDefined(typeof(RankType), DataManager.instance.curData.rank))
+        {
+            curRank = (RankType)DataManager.instance.curData.rank;
+        }
+        
+    }
+
     public void AddUnit(UnitRecipe unit)
     {
         if(defUnitCount.ContainsKey(unit))
@@ -494,5 +527,41 @@ public class GameManager : Singleton<GameManager>
     {
         gameState = state;
         stateMachine.ChangeState(state);
+    }
+
+    public void CheckTime()
+    {
+        StartCoroutine(CheckTimeCo());
+    }
+
+    private IEnumerator CheckTimeCo()
+    {
+        var curData = DataManager.instance.curData;
+        while (true)
+        {
+            DateTime now = DateTime.Now;
+            DateTime lastCheckTime = Convert.ToDateTime(curData.lastCheckTimeString);
+            DateTime todayReseTime = now.Date;
+            DateTime nextDay = todayReseTime.AddDays(1);
+
+            if (lastCheckTime < todayReseTime)
+            {
+                DataManager.instance.curData.isTimeCompensation = true;
+                SaveData();
+            }
+
+            if (curData.isTimeCompensation)
+            {
+                //첫 보상 또는 12시가 지났을 때
+                StoreManager.instance.NewDay();
+            }
+
+            //다음날 - 현재시간 = 다음날까지 남은시간
+            TimeSpan timeUntilReset = nextDay - DateTime.Now; 
+            yield return new WaitForSecondsRealtime((float)timeUntilReset.TotalSeconds);
+            curData.isTimeCompensation = true;
+            SaveData();
+
+        }
     }
 }

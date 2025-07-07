@@ -17,8 +17,10 @@ public enum UnitRangeType
 [CreateAssetMenu(fileName = "New UnitRecipe", menuName = "New UnitRecipe/UnitRecipe")]
 public class UnitRecipe : ScriptableObject
 {
+    public int level;
     public string unitName;
     public string unitCharacteristic;
+    public string explanation;
     public Sprite unitImage;
     public float atkCoolTime;
     public int minAtk;

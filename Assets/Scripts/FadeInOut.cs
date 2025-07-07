@@ -2,13 +2,14 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class FadeInOut : MonoBehaviour
+public class FadeInOut : Singleton<FadeInOut>
 {
     private Image fadeImage;
     private float F_time = 1;
 
-    private void Awake()
+    private new void Awake()
     {
+        base.Awake();
         fadeImage = GetComponent<Image>();
     }
 

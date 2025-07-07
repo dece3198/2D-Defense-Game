@@ -12,8 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 606347e0de2684a42a847958e4fa7b94, type: 3}
   m_Name: Unit_1
   m_EditorClassIdentifier: 
+  level: 0
   unitName: "\uD558\uAE09\uAC80\uC6A9\uBCD1"
   unitCharacteristic: "\uBB3C\uB51C"
+  explanation: 
   unitImage: {fileID: 21300000, guid: 3905168768f003b4aa55c33a9ff583e0, type: 3}
   atkCoolTime: 2
   minAtk: 16

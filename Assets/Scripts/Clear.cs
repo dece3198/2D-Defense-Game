@@ -3,7 +3,7 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 
-public class Clear : MonoBehaviour
+public class Clear : Singleton<Clear>
 {
     [SerializeField] private float alphaSpeed;
     [SerializeField] private SpriteRenderer clearText;
@@ -16,8 +16,9 @@ public class Clear : MonoBehaviour
     Vector3 originScaleA;
     Vector3 originScaleB;
 
-    private void Awake()
+    private new void Awake()
     {
+        base.Awake();
         clear = GetComponent<SpriteRenderer>();
         alphaA = clear.color;
         alphaB = clearText.color;

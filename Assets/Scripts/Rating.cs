@@ -142,7 +142,7 @@ public class Rating : Singleton<Rating>
 
     private IEnumerator CheckCo()
     {
-        GameManager.instance.fade.Fade(GameManager.instance.waitRoom);
+        FadeInOut.instance.Fade(GameManager.instance.waitRoom);
         yield return new WaitForSeconds(1f);
         rankLight.SetActive(false);
         checkButton.SetActive(false);

@@ -40,7 +40,7 @@ public class UiManager : Singleton<UiManager>
     [SerializeField] private GameObject menuUi;
     private bool isRecipeUi = false;
     private bool isMenu = false;
-    private Dictionary<UnitRating, Color> unitDic = new Dictionary<UnitRating, Color>();
+    public Dictionary<UnitRating, Color> unitDic = new Dictionary<UnitRating, Color>();
     private Unit curUnit;
 
     private new void Awake()
@@ -71,10 +71,12 @@ public class UiManager : Singleton<UiManager>
         closeUi.SetActive(true);
         unitImage.sprite = unit.unitRecipe.unitImage;
         curUnitName.text = unit.unitRecipe.unitName;
-        curUnitAtk.text = unit.unitRecipe.minAtk.ToString() + " ~ " + unit.unitRecipe.maxAtk.ToString();
+        float min = unit.unitRecipe.minAtk * ((unit.unitRecipe.level + 1) * 0.2f);
+        float max = unit.unitRecipe.maxAtk * ((unit.unitRecipe.level + 1) * 0.2f);
+        curUnitAtk.text = (unit.unitRecipe.minAtk + min).ToString() + " ~ " + (unit.unitRecipe.maxAtk + max).ToString();
         curUnitAtkSpeed.text = (1 / unit.unitRecipe.atkCoolTime).ToString("N1");
         curUnitDefDebuff.text = unit.unitRecipe.debuff.ToString("N1");
-        curUnitSpeedDebuff.text = unit.unitRecipe.speedDebuff.ToString("N1");
+        curUnitSpeedDebuff.text = (unit.unitRecipe.speedDebuff * 100).ToString("N0") + "%";
         curUnitBuff.text = unit.unitRecipe.buff.ToString("N1");
         curUnitStun.text = unit.unitRecipe.stun.ToString("N1");
         curUnitSkill.text = (unit.unitRecipe.skillDamage * 100).ToString("N0") + "%";

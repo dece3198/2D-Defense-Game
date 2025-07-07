@@ -56,7 +56,7 @@ public class UnitWalk : BaseState<Unit>
 
     public override void Update(Unit unit)
     {
-        unit.transform.position = Vector2.MoveTowards(unit.transform.position, unit.target, 0.08f);
+        unit.transform.position = Vector2.MoveTowards(unit.transform.position, unit.target, 7f * Time.deltaTime);
 
         if(Vector2.Distance(unit.transform.position, unit.target) < 0.1f)
         {
