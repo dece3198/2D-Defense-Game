@@ -19,7 +19,7 @@ public class UnitSlot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
         {
             exp = value;
             maxExp = 3 + (unitRecipe.level);
-            levelSlider.value = exp / maxExp;
+            levelSlider.value = Mathf.Clamp01(exp / maxExp);
             expText.text = Exp.ToString() + " / " + maxExp.ToString();
         }
     }

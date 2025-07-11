@@ -1,5 +1,8 @@
+using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using DG.Tweening;
 
 public class StoreManager : Singleton<StoreManager>
 {
@@ -13,7 +16,9 @@ public class StoreManager : Singleton<StoreManager>
     [SerializeField] private UnitStroeSlot[] epicSlots;
     [SerializeField] private UnitStroeSlot[] uniqueSlots;
     [SerializeField] private UnitStroeSlot[] legendarySlots;
+    [SerializeField] private TextMeshProUGUI missing;
     private Dictionary<UnitRating, (int, int)> priceDic = new Dictionary<UnitRating, (int, int)>();
+    
 
     private new void Awake()
     {
@@ -33,7 +38,6 @@ public class StoreManager : Singleton<StoreManager>
         Shuffle(epicUnits, epicSlots);
         Shuffle(uniqueUnits, uniqueSlots);
         Shuffle(legendaryUnits, legendarySlots);
-        gameObject.SetActive(false);
     }
 
     private void Shuffle(UnitRecipe[] units, UnitStroeSlot[] unitSlots)
@@ -50,6 +54,22 @@ public class StoreManager : Singleton<StoreManager>
         {
             int randomValue = Random.Range((priceDic[unitPool[i].unitRating]).Item1, (priceDic[unitPool[i].unitRating]).Item2);
             unitSlots[i].AddUnit(unitPool[i], randomValue);
+            unitSlots[i].buyImage.SetActive(false);
+            unitSlots[i].isBuy = true;
         }
+    }
+
+    public void ShowLackText()
+    {
+        StartCoroutine(shakeCo());
+    }
+
+    private IEnumerator shakeCo()
+    {
+        missing.gameObject.SetActive(true);
+        missing.text = "루비가 부족합니다.";
+        missing.transform.DOShakePosition(1f, new Vector3(1.5f, 1.5f, 0), 30, 90f, false, true);
+        yield return new WaitForSeconds(1f);
+        missing.gameObject.SetActive(false);
     }
 }

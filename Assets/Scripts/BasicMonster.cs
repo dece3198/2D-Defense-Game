@@ -177,7 +177,7 @@ public class BasicMonster : Monster, IInteractable
                     ChangeState(MonsterState.Die);
                 }
             }
-            hpBar.value = Hp / maxHp;
+            hpBar.value = Mathf.Clamp01(hp/maxHp);
         }
     }
     public float stunTime = 0;

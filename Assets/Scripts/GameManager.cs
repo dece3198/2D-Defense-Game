@@ -280,6 +280,7 @@ public class GameManager : Singleton<GameManager>
         set
         {
             dia = value;
+            diaText.text = dia.ToString();
         }
     }
     public int stage = 0;
@@ -300,6 +301,7 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private TextMeshProUGUI jamText;
     [SerializeField] private TextMeshProUGUI defDeBuffText;
     [SerializeField] private TextMeshProUGUI rubyText;
+    [SerializeField] private TextMeshProUGUI diaText;
     public RankType curRank;
     public GameLevel curGameLevel;
     public GameState gameState;

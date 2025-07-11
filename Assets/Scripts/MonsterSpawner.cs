@@ -35,6 +35,7 @@ public class MonsterSpawner : Singleton<MonsterSpawner>
     private bool isMission = false;
     private Dictionary<int, List<GameObject>> monsterPool = new Dictionary<int, List<GameObject>>();
     public Dictionary<MonsterType, float> speedDic = new Dictionary<MonsterType, float>();
+    public Dictionary<MonsterRating, int> ratingDic = new Dictionary<MonsterRating, int>();
     [SerializeField] private GameObject monsterState;
     [SerializeField] private Image monsterImage;
     [SerializeField] private TextMeshProUGUI monsterHp;
@@ -52,6 +53,12 @@ public class MonsterSpawner : Singleton<MonsterSpawner>
         speedDic.Add(MonsterType.VeryFast, 2f);
         speedDic.Add(MonsterType.Boss, 0.5f);
         speedDic.Add(MonsterType.Mission, 0.5f);
+
+        ratingDic.Add(MonsterRating.Normal, 1);
+        ratingDic.Add(MonsterRating.Rare, 2);
+        ratingDic.Add(MonsterRating.Epic, 5);
+        ratingDic.Add(MonsterRating.Unique, 10);
+        ratingDic.Add(MonsterRating.Legendary, 100);
     }
 
     public void StartStage()

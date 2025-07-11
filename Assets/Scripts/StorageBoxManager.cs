@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -44,17 +43,8 @@ public class StorageBoxManager : Singleton<StorageBoxManager>
         slots = slotParent.GetComponentsInChildren<UnitSlot>();
     }
 
-    public void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            curUnitSlot.Exp += 1;
-        }
-    }
-
     public void AddSlot(UnitRecipe unitRecipe, float value)
     {
-        Debug.Log((((int)unitRecipe.unitRating + 1) * 500) + (unitRecipe.level * 100));
         unitState.SetActive(true);
         expSlider.value = value;
         unitImage.sprite = unitRecipe.unitImage;

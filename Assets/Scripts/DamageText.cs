@@ -8,6 +8,7 @@ public class DamageText : MonoBehaviour
     [SerializeField] private float moveSpeed;
     [SerializeField] private float alphaSpeed;
     [SerializeField] private TextMeshProUGUI text;
+    [SerializeField] private float scaleSpeed;
     Color alpha;
 
     private void Awake()
@@ -36,7 +37,7 @@ public class DamageText : MonoBehaviour
             }
 
             time -= Time.deltaTime;
-            text.fontSize += 0.005f;
+            text.fontSize += scaleSpeed;
             transform.Translate(new Vector3(0, moveSpeed * Time.deltaTime, 0));
             alpha.a = Mathf.Lerp(alpha.a, 0, Time.deltaTime * alphaSpeed);
             text.color = alpha;

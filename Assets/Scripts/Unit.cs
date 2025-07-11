@@ -218,11 +218,19 @@ public class Unit : MonoBehaviour
         {
             if (isDragging)
             {
-                if (GameManager.instance.isSelect)
+                Vector2 mPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector3Int currentCell = GameManager.instance.groundTileMap.WorldToCell(mPos);
+
+                GameObject targetUnitGO = UnitSpawner.instance.unitList.Find(u => u.GetComponentInChildren<Unit>().currentTilePos == currentCell);
+
+                if(targetUnitGO != null)
+                {
+                    Unit targetUnit = targetUnitGO.GetComponentInChildren<Unit>();
+                    SwapUnit(this, targetUnit);
+                }
+                else if (GameManager.instance.isSelect)
                 {
                     ChanageState(UnitState.Walk);
-                    Vector2 mPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                    Vector3Int currentCell = GameManager.instance.groundTileMap.WorldToCell(mPos);
 
                     UnitSpawner.instance.usedTiles.Remove(currentTilePos);
                     UnitSpawner.instance.usedTiles.Add(currentCell);
@@ -242,6 +250,20 @@ public class Unit : MonoBehaviour
 
         GameManager.instance.grid.SetActive(false);
         isDragging = false;
+    }
+
+    private void SwapUnit(Unit a, Unit b)
+    {
+        Vector3Int tempTile = a.currentTilePos;
+        Vector3 tempTarget = a.target;
+
+        a.reservedTilePos = b.currentTilePos;
+        a.target = GameManager.instance.groundTileMap.GetCellCenterWorld(b.currentTilePos);
+        a.ChanageState(UnitState.Walk);
+
+        b.reservedTilePos = tempTile;
+        b.target = GameManager.instance.groundTileMap.GetCellCenterWorld(tempTile);
+        b.ChanageState(UnitState.Walk);
     }
 
     public void Attack()

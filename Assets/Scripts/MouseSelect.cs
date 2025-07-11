@@ -36,8 +36,8 @@ public class MouseSelect : MonoBehaviour
 
         if(UnitSpawner.instance.usedTiles.Contains(currentCell))
         {
-            GameManager.instance.isSelect = false;
-            renderer.color = Color.red;
+            GameManager.instance.isSelect = true;
+            renderer.color = Color.green;
         }
         else
         {

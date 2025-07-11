@@ -32,7 +32,7 @@ public class ViewDetector : MonoBehaviour
             if(distance < min)
             {
                 min = distance;
-                if(collider2D.GetComponentInChildren<BasicMonster>() != null)
+                if(collider2D.GetComponentInChildren<IInteractable>() != null)
                 {
                     target = collider2D.gameObject;
                 }
