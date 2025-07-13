@@ -14,6 +14,9 @@ public class WaitingRoom : Singleton<WaitingRoom>
     [SerializeField] private GameObject defenseMap;
     [SerializeField] private GameObject coinParent;
     [SerializeField] private Sprite dia;
+    [SerializeField] private Sprite blueDia;
+    [SerializeField] private Sprite purpleDia;
+    [SerializeField] private Sprite redDia;
     [SerializeField] private Sprite ruby;
     [SerializeField] private Transform diaTargetPos;
     [SerializeField] private Transform rubyTargetPos;
@@ -25,7 +28,7 @@ public class WaitingRoom : Singleton<WaitingRoom>
 
     private void Start()
     {
-        for(int i = 0; i < 15; i++)
+        for(int i = 0; i < 30; i++)
         {
             GameObject _coin = Instantiate(coin, coinParent.transform);
             coinStack.Push(_coin);
@@ -70,34 +73,50 @@ public class WaitingRoom : Singleton<WaitingRoom>
         }
     }
 
-    public void EnterCoin(GameObject _coin)
+    public void EnterCoin(GameObject _coin, int value)
     {
         coinStack.Push(_coin);
         _coin.SetActive(false);
         if(_coin.GetComponent<MoveCoin>().coinType == CoinType.Dia)
         {
-            GameManager.instance.Dia++;
+            GameManager.instance.Dia += value;
         }
         else
         {
-            GameManager.instance.Ruby++;
+            GameManager.instance.Ruby += value;
         }
     }
 
-    public void ExitCoin(int diaCount, int rubyCount)
+    public void ExitCoin(int diaCount, int rubyCount, int diaValue, int rubyValue)
     {
         if(diaCount != 0)
         {
-            SettingCoin(diaCount, dia, diaTargetPos, CoinType.Dia);
+            if(diaValue >= 1000)
+            {
+                SettingCoin(diaCount, redDia, diaTargetPos, CoinType.Dia, diaValue);
+            }
+            else if (diaValue >= 100)
+            {
+                SettingCoin(diaCount, purpleDia, diaTargetPos, CoinType.Dia, diaValue);
+            }
+            else if (diaValue >= 10)
+            {
+                SettingCoin(diaCount, blueDia, diaTargetPos, CoinType.Dia, diaValue);
+            }
+            else
+            {
+                SettingCoin(diaCount, dia, diaTargetPos, CoinType.Dia, diaValue);
+            }
+            
         }
 
         if(rubyCount != 0)
         {
-            SettingCoin(rubyCount, ruby, rubyTargetPos, CoinType.Ruby);
+            SettingCoin(rubyCount, ruby, rubyTargetPos, CoinType.Ruby, rubyValue);
         }
     }
 
-    private void SettingCoin(int count, Sprite image, Transform pos, CoinType coinType)
+    private void SettingCoin(int count, Sprite image, Transform pos, CoinType coinType, int coinValue)
     {
         for(int i = 0; i < count; i++)
         {
@@ -117,6 +136,7 @@ public class WaitingRoom : Singleton<WaitingRoom>
             moveCoin.startPos = startPos;
             moveCoin.GetComponent<Image>().sprite = image;
             moveCoin.coinType = coinType;
+            moveCoin.coinValue = coinValue;
             moveCoin.gameObject.SetActive(true);
         }
     }

@@ -15,7 +15,14 @@ public class UpGradeSlot : MonoBehaviour
         set
         {
             price = value;
-            priceText.text = price.ToString();
+            if(level == maxLevel)
+            {
+                priceText.text = "Max";
+            }
+            else
+            {
+                priceText.text = price.ToString();
+            }
         }
     }
     public int level;
@@ -24,8 +31,7 @@ public class UpGradeSlot : MonoBehaviour
     [SerializeField] private float percent;
     [SerializeField] private int maxLevel;
     [SerializeField] private UpGradeSlotType slotType;
-
-    [SerializeField] private GameObject lockImage;
+    public GameObject lockImage;
 
     private void Start()
     {
@@ -34,11 +40,21 @@ public class UpGradeSlot : MonoBehaviour
 
     public void SlotSetting()
     {
-        int value = UpGradeManager.instance.upGradeDic[slotType];
-        string unit = UpGradeManager.instance.stringDic[slotType];
-        valueText.text = (value + (increase * level)).ToString() + unit;
-        nextValueText.text = (value + (increase * (level + 1 ))).ToString() + unit;
-        Price = basePrice + (priceIncrease * level);
+        if(level == maxLevel)
+        {
+            string unit = UpGradeManager.instance.stringDic[slotType];
+            valueText.text = "Max";
+            nextValueText.text = "Max";
+            Price = basePrice + (priceIncrease * level);
+        }
+        else
+        {
+            int value = UpGradeManager.instance.upGradeDic[slotType];
+            string unit = UpGradeManager.instance.stringDic[slotType];
+            valueText.text = (value + (increase * level)).ToString() + unit;
+            nextValueText.text = (value + (increase * (level + 1))).ToString() + unit;
+            Price = basePrice + (priceIncrease * level);
+        }
     }
 
     private void LevelUp()
@@ -60,7 +76,7 @@ public class UpGradeSlot : MonoBehaviour
 
     public void UpButton()
     {
-        if(level <= maxLevel)
+        if(level < maxLevel)
         {
             if (GameManager.instance.Dia >= price)
             {

@@ -11,6 +11,7 @@ public class MoveCoin : MonoBehaviour
     public Transform target;
     public Transform startPos;
     public CoinType coinType;
+    public int coinValue;
 
     private void OnEnable()
     {
@@ -29,6 +30,6 @@ public class MoveCoin : MonoBehaviour
         Sequence sequence = DOTween.Sequence();
         sequence.Append(transform.DOMove(from + Random.insideUnitCircle * range, 0.5f).SetEase(Ease.OutCubic));
         sequence.Append(transform.DOMove(_target, 1f).SetEase(Ease.OutCubic));
-        sequence.AppendCallback(() => { WaitingRoom.instance.EnterCoin(gameObject); });
+        sequence.AppendCallback(() => { WaitingRoom.instance.EnterCoin(gameObject, coinValue); });
     }
 }

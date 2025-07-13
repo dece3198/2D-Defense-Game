@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum UpGradeSlotType
 {
@@ -16,6 +17,7 @@ public class UpGradeManager : Singleton<UpGradeManager>
     public UpGradeSlot atkSpeedUp;
     public UpGradeSlot skillPercent;
     public UpGradeSlot skillDamage;
+    [SerializeField] private UpGradeSlot monsterLevel;
     public Dictionary<UpGradeSlotType, int> upGradeDic = new Dictionary<UpGradeSlotType, int>();
     public Dictionary<UpGradeSlotType, string> stringDic = new Dictionary<UpGradeSlotType, string>();
     [SerializeField] private TextMeshProUGUI levelText;
@@ -23,6 +25,7 @@ public class UpGradeManager : Singleton<UpGradeManager>
     [SerializeField] private TextMeshProUGUI atkSpeedText;
     [SerializeField] private TextMeshProUGUI skillPText;
     [SerializeField] private TextMeshProUGUI skillDText;
+    [SerializeField] private Image unitImage;
 
     private new void Awake()
     {
@@ -31,7 +34,7 @@ public class UpGradeManager : Singleton<UpGradeManager>
         upGradeDic.Add(UpGradeSlotType.Atk, 100);
         upGradeDic.Add(UpGradeSlotType.AtkSpeed, 0);
         upGradeDic.Add(UpGradeSlotType.SkillPercent, 1);
-        upGradeDic.Add(UpGradeSlotType.SkillDamage, 200);
+        upGradeDic.Add(UpGradeSlotType.SkillDamage, 0);
         upGradeDic.Add(UpGradeSlotType.MonsterLevel, 1);
         stringDic.Add(UpGradeSlotType.Level, "lv");
         stringDic.Add(UpGradeSlotType.Atk, "%");
@@ -48,11 +51,20 @@ public class UpGradeManager : Singleton<UpGradeManager>
 
     public void UnitSetting()
     {
-        float damage = ((curUnit.unitRecipe.minAtk + (curUnit.unitRecipe.minAtk * (atkUp.level * 0.05f))) + (curUnit.unitRecipe.maxAtk + (curUnit.unitRecipe.maxAtk * (atkUp.level * 0.05f)))) * 0.5f;
+        switch (levelUp.level)
+        {
+            case 1: 
+                skillDamage.lockImage.SetActive(false);
+                skillPercent.lockImage.SetActive(false); break;
+            case 2 : monsterLevel.lockImage.SetActive(false); break;
+        }
+        unitImage.sprite = curUnit.unitRecipe.unitImage;
+        float minAtk = curUnit.unitRecipe.minAtk + (curUnit.unitRecipe.minAtk * (atkUp.level * 0.05f));
+        float maxAtk = curUnit.unitRecipe.maxAtk + (curUnit.unitRecipe.maxAtk * (atkUp.level * 0.05f));
         levelText.text = (levelUp.level + 1).ToString() + "lv";
-        atkText.text = damage.ToString("N1");
+        atkText.text = minAtk.ToString("N1") + " ~ " + maxAtk.ToString("N1");
         atkSpeedText.text = (1 / (curUnit.unitRecipe.atkCoolTime - (curUnit.unitRecipe.atkCoolTime * (atkSpeedUp.level * 0.005f)))).ToString("N3");
-        skillPText.text = (curUnit.unitRecipe.skillPercent + (curUnit.unitRecipe.skillPercent * (skillPercent.level * 0.01f))).ToString() + "%";
-        skillDText.text = ((curUnit.unitRecipe.skillDamage + (curUnit.unitRecipe.skillDamage + (skillDamage.level * 0.05f))) * 100).ToString() + "%";
+        skillPText.text = ((curUnit.unitRecipe.skillPercent + (curUnit.unitRecipe.skillPercent * (skillPercent.level * 0.01f))) * 100).ToString() + "%";
+        skillDText.text = ((curUnit.unitRecipe.skillDamage + (curUnit.unitRecipe.skillDamage * (skillDamage.level * 0.05f))) * 100).ToString() + "%";
     }
 }

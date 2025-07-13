@@ -286,7 +286,7 @@ public class GameManager : Singleton<GameManager>
     public int stage = 0;
     public int missionFail = 0;
 
-    public Rating rating;
+    public RankRating rating;
     public Rank[] ranks;
     public GameObject grid;
     public GameObject[] lockImage;

@@ -40,18 +40,18 @@ public class UiManager : Singleton<UiManager>
     [SerializeField] private GameObject menuUi;
     private bool isRecipeUi = false;
     private bool isMenu = false;
-    public Dictionary<UnitRating, Color> unitDic = new Dictionary<UnitRating, Color>();
+    public Dictionary<Rating, Color> unitDic = new Dictionary<Rating, Color>();
     private Unit curUnit;
 
     private new void Awake()
     {
         base.Awake();
         recipeUi.SetActive(false);
-        unitDic.Add(UnitRating.Normal, Color.gray);
-        unitDic.Add(UnitRating.Rare, Color.white);
-        unitDic.Add(UnitRating.Epic, Color.yellow);
-        unitDic.Add(UnitRating.Unique, Color.blue);
-        unitDic.Add(UnitRating.Legendary, Color.red);
+        unitDic.Add(Rating.Normal, Color.gray);
+        unitDic.Add(Rating.Rare, Color.white);
+        unitDic.Add(Rating.Epic, Color.yellow);
+        unitDic.Add(Rating.Unique, Color.blue);
+        unitDic.Add(Rating.Legendary, Color.red);
     }
 
     private void Update()
@@ -82,7 +82,7 @@ public class UiManager : Singleton<UiManager>
         curUnitSkill.text = (unit.unitRecipe.skillDamage * 100).ToString("N0") + "%";
         characteristicText.text = unit.unitRecipe.unitCharacteristic;
 
-        if(unit.unitRecipe.unitRating < UnitRating.Legendary)
+        if(unit.unitRecipe.unitRating < Rating.Legendary)
         {
             sellButton.SetActive(true);
         }

@@ -9,6 +9,7 @@ public class DamageText : MonoBehaviour
     [SerializeField] private float alphaSpeed;
     [SerializeField] private TextMeshProUGUI text;
     [SerializeField] private float scaleSpeed;
+    private IEnumerator textCo;
     Color alpha;
 
     private void Awake()
@@ -21,7 +22,21 @@ public class DamageText : MonoBehaviour
     {
         alpha.a = 1;
         text.color = alpha;
-        StartCoroutine(TextCo());
+        StartText();
+    }
+
+    private void StartText()
+    {
+        textCo = TextCo();
+        StartCoroutine(textCo);
+    }    
+
+    public void StopText()
+    {
+        if(textCo != null)
+           StartCoroutine(textCo);
+        text.fontSize = 0.1f;
+        textManager.EnterPool(this.gameObject);
     }
 
     private IEnumerator TextCo()
@@ -44,8 +59,7 @@ public class DamageText : MonoBehaviour
             yield return null;
         }
 
-        text.fontSize = 0.15f;
+        text.fontSize = 0.1f;
         textManager.EnterPool(this.gameObject);
-        gameObject.SetActive(false);
     }
 }

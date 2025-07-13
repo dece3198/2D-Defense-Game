@@ -1,5 +1,6 @@
 using UnityEngine;
-public enum UnitRating
+
+public enum Rating
 {
     Normal, Rare, Epic, Unique, Legendary
 }
@@ -39,5 +40,5 @@ public class UnitRecipe : ScriptableObject
     public UnitType unitType;
     public UnitAtkType unitAtkType;
     public UnitSkillType unitSkillType;
-    public UnitRating unitRating;
+    public Rating unitRating;
 }

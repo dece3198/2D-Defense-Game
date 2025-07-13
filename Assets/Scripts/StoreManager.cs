@@ -17,17 +17,17 @@ public class StoreManager : Singleton<StoreManager>
     [SerializeField] private UnitStroeSlot[] uniqueSlots;
     [SerializeField] private UnitStroeSlot[] legendarySlots;
     [SerializeField] private TextMeshProUGUI missing;
-    private Dictionary<UnitRating, (int, int)> priceDic = new Dictionary<UnitRating, (int, int)>();
+    private Dictionary<Rating, (int, int)> priceDic = new Dictionary<Rating, (int, int)>();
     
 
     private new void Awake()
     {
         base.Awake();
-        priceDic.Add(UnitRating.Normal, (1, 5));
-        priceDic.Add(UnitRating.Rare, (5, 10));
-        priceDic.Add(UnitRating.Epic, (10, 20));
-        priceDic.Add(UnitRating.Unique, (25, 50));
-        priceDic.Add(UnitRating.Legendary, (50, 100));
+        priceDic.Add(Rating.Normal, (1, 5));
+        priceDic.Add(Rating.Rare, (5, 10));
+        priceDic.Add(Rating.Epic, (10, 20));
+        priceDic.Add(Rating.Unique, (25, 50));
+        priceDic.Add(Rating.Legendary, (50, 100));
     }
 
     public void NewDay()

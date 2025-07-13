@@ -116,6 +116,7 @@ public class MonsterDie : BaseState<BasicMonster>
     {
         MonsterSpawner.instance.MonsterCount--;
         monster.gameObject.layer = 0;
+        monster.textManager.StopAllTexts();
         monster.animator.SetTrigger("4_Death");
         if (monster.transform.localScale.x == -1)
         {

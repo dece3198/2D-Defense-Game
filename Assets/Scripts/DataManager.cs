@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -7,8 +8,18 @@ public class PlayerData
 {
     public int rank = 0;
     public int ruby = 0;
+    public int dia = 0;
+    public List<int> cardLevel;
+    public int unitLevel;
+    public int unitAtkLevel;
+    public int unitAtkSpeedLevel;
+    public int unitSkillPercentLevel;
+    public int unitSkillDamageLevel;
+    public int monsterLevel;
     public string lastCheckTimeString;
     public bool isTimeCompensation = true;
+
+
 }
 
 public class DataManager : Singleton<DataManager>

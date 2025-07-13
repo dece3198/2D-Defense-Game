@@ -97,7 +97,7 @@ public class UnitAttack : BaseState<Unit>
         else
         {
             unit.sPUM_Prefabs.PlayAnimation(PlayerState.ATTACK, 0);
-            if (unit.unitRecipe.unitAtkType == UnitAtkType.AD)
+            if (unit.transform.CompareTag("Archer"))
             {
                 yield return new WaitForSeconds(0.5f);
             }
@@ -284,7 +284,7 @@ public class Unit : MonoBehaviour
                 viewDetector.Target.GetComponentInChildren<IInteractable>().TakeHit(rand, unitRecipe, unitRecipe.stun);
             }
 
-            if (unitRecipe.unitRating >= UnitRating.Legendary)
+            if (unitRecipe.unitRating >= Rating.Legendary)
             {
                 if (Random.value < unitRecipe.skillPercent)
                 {

@@ -16,14 +16,14 @@ MonoBehaviour:
   unitName: 
   unitCharacteristic: 
   explanation: 
-  unitImage: {fileID: 0}
-  atkCoolTime: 0
-  minAtk: 0
-  maxAtk: 0
+  unitImage: {fileID: 21300000, guid: 273f563c6ae52144ba0b56ba47f5bf77, type: 3}
+  atkCoolTime: 1
+  minAtk: 128
+  maxAtk: 192
   stun: 0
   skillStun: 0
-  skillPercent: 0
-  skillDamage: 0
+  skillPercent: 0.2
+  skillDamage: 5
   debuff: 0
   buff: 0
   speedDebuff: 0

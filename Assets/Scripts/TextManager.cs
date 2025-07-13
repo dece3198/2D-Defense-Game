@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -6,6 +7,7 @@ public class TextManager : MonoBehaviour
 {
     [SerializeField] private GameObject damageText;
     private Stack<GameObject> textStack = new Stack<GameObject>();
+    private List<DamageText> activeTexts = new List<DamageText>();
     private RectTransform rect;
 
     private void Awake()
@@ -36,6 +38,8 @@ public class TextManager : MonoBehaviour
         }
 
         GameObject text = textStack.Pop();
+        DamageText dt = text.GetComponent<DamageText>();
+        activeTexts.Add(dt);
 
         text.GetComponent<RectTransform>().localPosition = pos;
         if(damage >= 1_000_000)
@@ -55,8 +59,19 @@ public class TextManager : MonoBehaviour
 
     public void EnterPool(GameObject text)
     {
+        var dt = text.GetComponent<DamageText>();
+        activeTexts.Remove(dt);
         textStack.Push(text);
         text.SetActive(false);
+    }
+
+    public void StopAllTexts()
+    {
+        foreach(var dt in activeTexts.ToList())
+        {
+            dt.StopText();
+        }
+        activeTexts.Clear();
     }
 
     private void Refill(int Count)

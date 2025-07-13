@@ -18,16 +18,16 @@ public class UnitSpawner : Singleton<UnitSpawner>
     [SerializeField] private GameObject unitStore;
     private bool isStore = false;
 
-    private Dictionary<UnitRating, int> unitPriceDic = new Dictionary<UnitRating, int>();
+    private Dictionary<Rating, int> unitPriceDic = new Dictionary<Rating, int>();
     private Dictionary<UnitRecipe, Stack<GameObject>> unitPool = new();
 
     private new void Awake()
     {
         base.Awake();
-        unitPriceDic.Add(UnitRating.Normal, 1);
-        unitPriceDic.Add(UnitRating.Rare, 2);
-        unitPriceDic.Add(UnitRating.Epic, 3);
-        unitPriceDic.Add(UnitRating.Unique, 9);
+        unitPriceDic.Add(Rating.Normal, 1);
+        unitPriceDic.Add(Rating.Rare, 2);
+        unitPriceDic.Add(Rating.Epic, 3);
+        unitPriceDic.Add(Rating.Unique, 9);
     }
 
     private void Start()
@@ -243,6 +243,8 @@ public class UnitSpawner : Singleton<UnitSpawner>
                 {
                     GameObject unit = ExitPool(units[value]);
                     unit.SetActive(true);
+                    unit.transform.position = Vector3.zero;
+                    unit.GetComponentInChildren<Unit>().transform.position = Vector3.zero;
                     unit.GetComponentInChildren<Unit>().currentTilePos = cellPos;
                     unitList.Add(unit);
                     Vector3 worldPos = tilemap.GetCellCenterWorld(cellPos);

@@ -26,16 +26,16 @@ public class StorageBoxManager : Singleton<StorageBoxManager>
     public UnitSlot curUnitSlot;
     [SerializeField] private GameObject slotParent;
     public UnitSlot[] slots;
-    public Dictionary<UnitRating, Color> unitColorDic = new Dictionary<UnitRating, Color>();
+    public Dictionary<Rating, Color> unitColorDic = new Dictionary<Rating, Color>();
 
     private new void Awake()
     {
         base.Awake();
-        unitColorDic.Add(UnitRating.Normal, Color.gray);
-        unitColorDic.Add(UnitRating.Rare, Color.white);
-        unitColorDic.Add(UnitRating.Epic, Color.yellow);
-        unitColorDic.Add(UnitRating.Unique, new Color32(0, 75, 255,255));
-        unitColorDic.Add(UnitRating.Legendary, new Color32(255, 75, 75,255));
+        unitColorDic.Add(Rating.Normal, Color.gray);
+        unitColorDic.Add(Rating.Rare, Color.white);
+        unitColorDic.Add(Rating.Epic, Color.yellow);
+        unitColorDic.Add(Rating.Unique, new Color32(0, 75, 255,255));
+        unitColorDic.Add(Rating.Legendary, new Color32(255, 75, 75,255));
     }
 
     private void Start()
