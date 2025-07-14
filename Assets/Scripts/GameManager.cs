@@ -413,14 +413,6 @@ public class GameManager : Singleton<GameManager>
         Gold += 12;
     }
 
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.K))
-        {
-            ChanageState(GameState.GameEnd);
-        }
-    }
-
     public void SaveData()
     {
 

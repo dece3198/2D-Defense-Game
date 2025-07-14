@@ -67,8 +67,10 @@ public class IdleUnit : MonoBehaviour
     {
         isAtk = false;
         sPUM_Prefabs.PlayAnimation(PlayerState.ATTACK, 0);
-        minAtk = unitRecipe.minAtk + (unitRecipe.minAtk * (UpGradeManager.instance.atkUp.level *  0.05f));
-        maxAtk = unitRecipe.maxAtk + (unitRecipe.maxAtk * (UpGradeManager.instance.atkUp.level * 0.05f));
+        float unitMinAtk = unitRecipe.minAtk + (unitRecipe.minAtk * InventoryManager.instance.itemAtk * 0.01f);
+        float unitMaxAtk = unitRecipe.maxAtk + (unitRecipe.maxAtk * InventoryManager.instance.itemAtk * 0.01f);
+        minAtk = unitMinAtk + (unitMinAtk * (UpGradeManager.instance.atkUp.level *  0.05f));
+        maxAtk = unitMaxAtk + (unitMaxAtk * (UpGradeManager.instance.atkUp.level * 0.05f));
         float randDamage = Random.Range(minAtk, maxAtk);
         if(unitRecipe.unitAtkType == UnitAtkType.AD)
         {

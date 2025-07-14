@@ -2,7 +2,7 @@ using UnityEngine;
 
 public enum Rating
 {
-    Normal, Rare, Epic, Unique, Legendary
+    Normal, Rare, Epic, Unique, Legendary, Superior, Myth
 }
 
 public enum UnitSkillType

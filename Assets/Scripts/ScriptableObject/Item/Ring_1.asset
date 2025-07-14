@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0e5d8dbbfb025942aab0ccbaf2ff9d6, type: 3}
   m_Name: Ring_1
   m_EditorClassIdentifier: 
-  itemImage: {fileID: 1075673462804012373, guid: 71cbc82b368e50e4baecaa2104a0e74a, type: 3}
-  atk: 2
-  skillP: 0
+  itemImage: {fileID: -6151225886629503370, guid: 71cbc82b368e50e4baecaa2104a0e74a, type: 3}
+  atk: 0
+  skillP: 2
   skillD: 0
-  itemRating: 0
+  itemRating: 1
+  itemType: 4

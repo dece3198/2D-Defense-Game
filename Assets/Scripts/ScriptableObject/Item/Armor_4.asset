@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0e5d8dbbfb025942aab0ccbaf2ff9d6, type: 3}
+  m_Name: Armor_4
+  m_EditorClassIdentifier: 
+  itemImage: {fileID: 3244727735202268472, guid: b31071c26ee341742a8e8c13bc0b57f0, type: 3}
+  atk: 5
+  skillP: 5
+  skillD: 5
+  itemRating: 6
+  itemType: 2

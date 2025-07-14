@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: Ring_0
   m_EditorClassIdentifier: 
   itemImage: {fileID: 6631836781738976247, guid: 71cbc82b368e50e4baecaa2104a0e74a, type: 3}
-  atk: 1
-  skillP: 0
+  atk: 0
+  skillP: 1
   skillD: 0
   itemRating: 0
+  itemType: 4
