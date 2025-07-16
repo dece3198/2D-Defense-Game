@@ -1,6 +1,7 @@
 using DG.Tweening;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -9,10 +10,12 @@ public class HelperSlot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     public UnitRecipe unitRecipe;
     public Image unitImage;
-    public Image unitrating;
+    public Image unitRating;
     [SerializeField] private Outline outline;
     private Vector3 originalScales;
     [SerializeField] private bool isCombine = false;
+    [SerializeField] private TextMeshProUGUI countText;
+    public int recipeIndex;
 
     private void Awake()
     {
@@ -20,66 +23,98 @@ public class HelperSlot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         originalScales = transform.localScale;
     }
 
+    public void SetRecipe(UnitRecipe recipe, int count)
+    {
+        unitRecipe = recipe;
+        recipeIndex = count;
+
+        if (unitRecipe == null)
+        {
+            gameObject.SetActive(false);
+            return;
+        }
+        unitRating.color = UiManager.instance.unitDic[unitRecipe.unitRating];
+        gameObject.SetActive(true);
+        unitImage.sprite = recipe.unitImage;
+        FindUnit();
+    }
+
     public void FindUnit()
     {
-        // 1. 필요한 유닛 몇 마리인지 세기
-        Dictionary<UnitRecipe, int> neededUnits = new Dictionary<UnitRecipe, int>();
-        foreach (var recipeUnit in unitRecipe.recipes)
+
+        if(unitRecipe == null)
         {
-            if (neededUnits.ContainsKey(recipeUnit))
-                neededUnits[recipeUnit]++;
+            gameObject.SetActive(false);
+            return;
+        }
+        // 1. 필요한 유닛 개수를 세기
+        Dictionary<UnitRecipe, int> neededCount = new Dictionary<UnitRecipe, int>();
+        foreach (var recipe in unitRecipe.recipes)
+        {
+            if (!neededCount.ContainsKey(recipe))
+                neededCount[recipe] = 1;
             else
-                neededUnits[recipeUnit] = 1;
+                neededCount[recipe]++;
         }
 
-        // 2. 현재 내가 가진 유닛 세기
-        Dictionary<UnitRecipe, int> myUnits = new Dictionary<UnitRecipe, int>();
+        // 2. 내가 가진 유닛 개수를 세기
+        Dictionary<UnitRecipe, int> haveCount = new Dictionary<UnitRecipe, int>();
         foreach (var obj in UnitSpawner.instance.unitList)
         {
-            UnitRecipe recipe = obj.GetComponentInChildren<Unit>().unitRecipe;
-
-            if (myUnits.ContainsKey(recipe))
-                myUnits[recipe]++;
+            var unit = obj.GetComponentInChildren<Unit>().unitRecipe;
+            if (!haveCount.ContainsKey(unit))
+                haveCount[unit] = 1;
             else
-                myUnits[recipe] = 1;
+                haveCount[unit]++;
         }
 
-        // 3. 조합 가능한지 체크
+        // 3. 비교해서 조합 가능한지 판단
         bool isCombinable = true;
-        foreach (var pair in neededUnits)
+
+        foreach (var pair in neededCount)
         {
-            UnitRecipe needed = pair.Key;
-            int requiredCount = pair.Value;
+            UnitRecipe needUnit = pair.Key;
+            int required = pair.Value;
+            int owned = haveCount.ContainsKey(needUnit) ? haveCount[needUnit] : 0;
 
-            int haveCount = myUnits.ContainsKey(needed) ? myUnits[needed] : 0;
-
-            if (haveCount < requiredCount)
+            if (owned < required)
             {
                 isCombinable = false;
                 break;
             }
         }
 
-        // 4. 이미 조합된 유닛이 있는지 확인 (이것도 1개만 있으면 됨)
-        bool alreadyHave = myUnits.ContainsKey(unitRecipe) && myUnits[unitRecipe] > 0;
+        if(unitRecipe != null && unitRecipe.unitRating > Rating.Normal)
+        {
+            if (isCombinable)
+            {
+                outline.effectColor = Color.yellow;
+                isCombine = true;
+            }
+            else
+            {
+                outline.effectColor = Color.red;
+                isCombine = false;
+            }
+        }
 
-        // 5. 색상 설정
-        if (alreadyHave)
+        int haveCountz = 0;
+        foreach (var obj in UnitSpawner.instance.unitList)
         {
-            outline.effectColor = Color.green; //  이미 조합한 경우
-            isCombine = false;
+            var unit = obj.GetComponentInChildren<Unit>().unitRecipe;
+            if (unit == unitRecipe)
+                haveCountz++;
         }
-        else if (isCombinable)
+
+        countText.text = $"{Mathf.Min(haveCountz, recipeIndex)} / {recipeIndex}";
+
+        if(haveCountz == recipeIndex)
         {
-            outline.effectColor = Color.yellow; //  조합 가능
-            isCombine = true;
-        }
-        else
-        {
-            outline.effectColor = Color.red; //  조합 불가능
+            outline.effectColor = Color.green;
             isCombine = false;
         }
     }
+
 
     public void OnPointerDown(PointerEventData eventData)
     {

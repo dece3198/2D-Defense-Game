@@ -93,37 +93,23 @@ public class UiManager : Singleton<UiManager>
             sellButton.SetActive(false);
         }
 
-        UnitRecipe[] unitRecipesA = unit.unitRecipe.nextUnitA.recipes;
-        UnitRecipe[] unitRecipesB = unit.unitRecipe.nextUnitB.recipes;
-        for (int i = 0; i < recipeImageA.Length; i++)
-        {
-            if (i < unitRecipesA.Length && unitRecipesA[i] != null)
-            {
-                recipeImageA[i].sprite = unitRecipesA[i].unitImage;
-                starImageA[i].color = unitDic[unitRecipesA[i].unitRating];
-                recipeImageA[i].gameObject.SetActive(true);
-                unitANames[i].text = unitRecipesA[i].unitName;
-            }
-            else
-            {
-                recipeImageA[i].gameObject.SetActive(false);
-            }
-
-            if (i < unitRecipesB.Length && unitRecipesB[i] != null)
-            {
-                recipeImageB[i].sprite = unitRecipesB[i].unitImage;
-                starImageB[i].color = unitDic[unitRecipesB[i].unitRating];
-                recipeImageB[i].gameObject.SetActive(true);
-                unitBNames[i].text = unitRecipesB[i].unitName;
-            }
-            else
-            {
-                recipeImageB[i].gameObject.SetActive(false);
-            }
-        }
-
         if(unit.unitRecipe.nextUnitA != null)
         {
+            UnitRecipe[] unitRecipesA = unit.unitRecipe.nextUnitA.recipes;
+            for (int i = 0; i < recipeImageA.Length; i++)
+            {
+                if (i < unitRecipesA.Length && unitRecipesA[i] != null)
+                {
+                    recipeImageA[i].sprite = unitRecipesA[i].unitImage;
+                    starImageA[i].color = unitDic[unitRecipesA[i].unitRating];
+                    recipeImageA[i].gameObject.SetActive(true);
+                    unitANames[i].text = unitRecipesA[i].unitName;
+                }
+                else
+                {
+                    recipeImageA[i].gameObject.SetActive(false);
+                }
+            }
             resultImageA.gameObject.SetActive(true);
             resultImageA.sprite = unit.unitRecipe.nextUnitA.unitImage;
             starA.color = unitDic[unit.unitRecipe.nextUnitA.unitRating];
@@ -131,10 +117,31 @@ public class UiManager : Singleton<UiManager>
         }
         else
         {
+            foreach (var u in recipeImageA)
+            {
+                u.gameObject.SetActive(false);
+            }
             resultImageA.gameObject.SetActive(false);
         }
+
         if(unit.unitRecipe.nextUnitB != null)
         {
+            UnitRecipe[] unitRecipesB = unit.unitRecipe.nextUnitB.recipes;
+            for (int i = 0; i < recipeImageB.Length; i++)
+            {
+                if (i < unitRecipesB.Length && unitRecipesB[i] != null)
+                {
+                    recipeImageB[i].sprite = unitRecipesB[i].unitImage;
+                    starImageB[i].color = unitDic[unitRecipesB[i].unitRating];
+                    recipeImageB[i].gameObject.SetActive(true);
+                    unitBNames[i].text = unitRecipesB[i].unitName;
+                }
+                else
+                {
+                    recipeImageB[i].gameObject.SetActive(false);
+                }
+
+            }
             resultImageB.gameObject.SetActive(true);
             resultImageB.sprite = unit.unitRecipe.nextUnitB.unitImage;
             starB.color = unitDic[unit.unitRecipe.nextUnitB.unitRating];
@@ -142,6 +149,10 @@ public class UiManager : Singleton<UiManager>
         }
         else
         {
+            foreach(var u in recipeImageB)
+            {
+                u.gameObject.SetActive(false);
+            }
             resultImageB.gameObject.SetActive(false);
         }
 
