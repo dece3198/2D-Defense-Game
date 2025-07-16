@@ -87,7 +87,7 @@ public class ViewDetector : MonoBehaviour
     }
 
     /*주변 Unit을 찾아 공격력 버프를 주는 코드인데 HashSet를 사용하여 업데이트 문에서 실행하더라도
-     * 한번만 실행됨 그래서 버프를 제거를 할때도 간단히 제거를 할 수있음
+     한번만 실행됨 그래서 버프를 제거를 할때도 간단히 제거를 할 수있음
       */
     public void FindBufferTarget(UnitRecipe unitRecipe, float buff)
     {

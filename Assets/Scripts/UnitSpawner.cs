@@ -74,14 +74,13 @@ public class UnitSpawner : Singleton<UnitSpawner>
                     Vector3 worldPos = tilemap.GetCellCenterWorld(cellPos);
                     unit.transform.position = worldPos;
                     usedTiles.Add(cellPos);
+                    HelperManager.instance.UnitCheck();
                     return;
                 }
             }
 
             Debug.Log("더 이상 배치할 타일이 없을 때");
         }
-
-        
     }
     //조합A버튼을 누를시 알맞는 유닛 조합 없을시 missingText로 없는 유닛표시
     public void CombineA()
@@ -89,7 +88,7 @@ public class UnitSpawner : Singleton<UnitSpawner>
         Unit unit = curUnit.GetComponentInChildren<Unit>();
 
         List<GameObject> matchedUnits = new List<GameObject>() { curUnit };
-        UnitRecipe[] required = unit.unitRecipe.recipeA;
+        UnitRecipe[] required = unit.unitRecipe.nextUnitA.recipes;
         List<UnitRecipe> requiredList = new List<UnitRecipe>(required);
         requiredList.Remove(unit.unitRecipe);
         List<GameObject> tempList = new List<GameObject>(unitList);
@@ -116,7 +115,7 @@ public class UnitSpawner : Singleton<UnitSpawner>
                 EnterPool(t.GetComponentInChildren<Unit>());
             }
 
-            GameObject _unit = ExitPool(unit.unitRecipe.nextUnitA);
+            GameObject _unit = ExitPool(unit.unitRecipe.nextUnitA.unitObj);
             _unit.SetActive(true);
             _unit.transform.position = Vector3.zero;
             Unit towerComp = _unit.GetComponentInChildren<Unit>();
@@ -131,6 +130,7 @@ public class UnitSpawner : Singleton<UnitSpawner>
         else
         {
             List<UnitRecipe> existing = unitList.Where(t => t != curUnit.gameObject).Select(t => t.GetComponentInChildren<Unit>().unitRecipe).ToList();
+            existing.Add(curUnit.GetComponentInChildren<Unit>().unitRecipe);
             List<UnitRecipe> missings = new List<UnitRecipe>();
             foreach (var req in required.Distinct())
             {
@@ -156,6 +156,8 @@ public class UnitSpawner : Singleton<UnitSpawner>
                 StartCoroutine(shakeCo());
             }
         }
+
+        HelperManager.instance.UnitCheck();
     }
     //조합B버튼을 누를시 알맞는 유닛 조합 없을시 missingText로 없는 유닛표시
     public void CombineB()
@@ -163,7 +165,7 @@ public class UnitSpawner : Singleton<UnitSpawner>
         Unit unit = curUnit.GetComponentInChildren<Unit>();
 
         List<GameObject> matchedUnits = new List<GameObject>() { curUnit};
-        UnitRecipe[] required = unit.unitRecipe.recipeB;
+        UnitRecipe[] required = unit.unitRecipe.nextUnitB.recipes;
         List<UnitRecipe> requiredList = new List<UnitRecipe>(required);
         requiredList.Remove(unit.unitRecipe);
         List<GameObject> tempList = new List<GameObject>(unitList);
@@ -189,7 +191,7 @@ public class UnitSpawner : Singleton<UnitSpawner>
                 unitList.Remove(t);
                 EnterPool(t.GetComponentInChildren<Unit>());
             }
-            GameObject _unit = ExitPool(unit.unitRecipe.nextUnitB);
+            GameObject _unit = ExitPool(unit.unitRecipe.nextUnitB.unitObj);
             _unit.SetActive(true);
             _unit.transform.position = Vector3.zero;
             Unit towerComp = _unit.GetComponentInChildren<Unit>();
@@ -204,6 +206,7 @@ public class UnitSpawner : Singleton<UnitSpawner>
         else
         {
             List<UnitRecipe> existing = unitList.Where(t => t != curUnit.gameObject).Select(t => t.GetComponentInChildren<Unit>().unitRecipe).ToList();
+            existing.Add(curUnit.GetComponentInChildren<Unit>().unitRecipe);
             List<UnitRecipe> missings = new List<UnitRecipe>();
 
             foreach (var req in required.Distinct())
@@ -229,8 +232,83 @@ public class UnitSpawner : Singleton<UnitSpawner>
                 StartCoroutine(shakeCo());
             }
         }
+        HelperManager.instance.UnitCheck();
     }
-    
+
+    public void Combine(UnitRecipe unitRecipe)
+    {
+        List<GameObject> matchedUnits = new List<GameObject>();
+        List<UnitRecipe> requiredList = new List<UnitRecipe>(unitRecipe.recipes);
+        List<GameObject> tempList = new List<GameObject>(unitList);
+
+        foreach (var req in requiredList)
+        {
+            GameObject match = tempList.FirstOrDefault(t => t.GetComponentInChildren<Unit>().unitRecipe == req);
+            if (match != null)
+            {
+                matchedUnits.Add(match);
+                tempList.Remove(match);
+            }
+        }
+
+        if (matchedUnits.Count == unitRecipe.recipes.Length)
+        {
+            foreach (var t in matchedUnits)
+            {
+                usedTiles.Remove(t.GetComponentInChildren<Unit>().currentTilePos);
+                unitList.Remove(t);
+                EnterPool(t.GetComponentInChildren<Unit>());
+            }
+
+            foreach (var cellPos in tilePosList)
+            {
+                if (!usedTiles.Contains(cellPos))
+                {
+                    GameObject unit = ExitPool(unitRecipe.unitObj);
+                    unit.SetActive(true);
+                    unit.transform.position = Vector3.zero;
+                    unit.GetComponentInChildren<Unit>().transform.position = Vector3.zero;
+                    unit.GetComponentInChildren<Unit>().currentTilePos = cellPos;
+                    unitList.Add(unit);
+                    Vector3 worldPos = tilemap.GetCellCenterWorld(cellPos);
+                    unit.transform.position = worldPos;
+                    usedTiles.Add(cellPos);
+                    HelperManager.instance.UnitCheck();
+                    return;
+                }
+            }
+        }
+        else
+        {
+            List<UnitRecipe> existing = unitList.Select(t => t.GetComponentInChildren<Unit>().unitRecipe).ToList();
+            List<UnitRecipe> missings = new List<UnitRecipe>();
+            foreach (var req in unitRecipe.recipes.Distinct())
+            {
+                int requiredCount = unitRecipe.recipes.Count(r => r == req);
+                int existingCount = existing.Count(e => e == req);
+
+                if (existingCount < requiredCount)
+                {
+                    int missingAmount = requiredCount - existingCount;
+
+                    for (int i = 0; i < missingAmount; i++)
+                    {
+                        missings.Add(req);
+                    }
+                }
+            }
+
+            if (missings.Count != 0)
+            {
+                var grouped = missings.GroupBy(r => r.unitName);
+                string missingText = string.Join(", ", grouped.Select(g => g.Count() > 1 ? $"{g.Key} X{g.Count()}" : g.Key));
+                missing.text = "부족한 유닛 : " + missingText;
+                StartCoroutine(shakeCo());
+            }
+        }
+        HelperManager.instance.UnitCheck();
+    }
+
     //유닛 구매
     public void BuyUnit(int value)
     {
@@ -250,12 +328,14 @@ public class UnitSpawner : Singleton<UnitSpawner>
                     Vector3 worldPos = tilemap.GetCellCenterWorld(cellPos);
                     unit.transform.position = worldPos;
                     usedTiles.Add(cellPos);
+                    HelperManager.instance.UnitCheck();
                     return;
                 }
             }
 
             Debug.Log("더 이상 배치할 타일이 없을 때");
         }
+        HelperManager.instance.UnitCheck();
     }
 
     //33%확률로 유닛판매
@@ -269,6 +349,7 @@ public class UnitSpawner : Singleton<UnitSpawner>
         unitList.Remove(curUnit);
         EnterPool(curUnit.GetComponentInChildren<Unit>());
         UiManager.instance.CloseUi();
+        HelperManager.instance.UnitCheck();
     }
     //게임종료시 유닛제거
     public void EndGame()
@@ -338,8 +419,8 @@ public class UnitSpawner : Singleton<UnitSpawner>
     private IEnumerator shakeCo()
     {
         missing.gameObject.SetActive(true);
-        missing.transform.DOShakePosition(1f, new Vector3(1f, 1f, 0), 30, 90f, false, true);
-        yield return new WaitForSeconds(1f);
+        missing.transform.DOShakePosition(1f, new Vector3(1f, 1f, 0), 30, 90f, false, true).SetUpdate(true);
+        yield return new WaitForSecondsRealtime(1f);
         missing.gameObject.SetActive(false);
     }
 }

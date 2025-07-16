@@ -9,6 +9,7 @@ public class StorageBoxManager : Singleton<StorageBoxManager>
     [SerializeField] private Image unitImage;
     [SerializeField] private GameObject def;
     [SerializeField] private GameObject stun;
+    [SerializeField] private GameObject rangeStun;
     [SerializeField] private GameObject speed;
     [SerializeField] private GameObject skill;
     [SerializeField] private TextMeshProUGUI unitName;
@@ -18,6 +19,7 @@ public class StorageBoxManager : Singleton<StorageBoxManager>
     [SerializeField] private TextMeshProUGUI atkSpeedText;
     [SerializeField] private TextMeshProUGUI defText;
     [SerializeField] private TextMeshProUGUI stunText;
+    [SerializeField] private TextMeshProUGUI rangeStunText;
     [SerializeField] private TextMeshProUGUI speedText;
     [SerializeField] private TextMeshProUGUI skillText;
     [SerializeField] private TextMeshProUGUI expText;
@@ -75,6 +77,16 @@ public class StorageBoxManager : Singleton<StorageBoxManager>
         else
         {
             stun.SetActive(false);
+        }
+
+        if (unitRecipe.skillStun != 0)
+        {
+            rangeStun.SetActive(true);
+            rangeStunText.text = unitRecipe.skillStun.ToString();
+        }
+        else
+        {
+            rangeStun.SetActive(false);
         }
 
         if (unitRecipe.speedDebuff != 0)

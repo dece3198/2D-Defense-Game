@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 606347e0de2684a42a847958e4fa7b94, type: 3}
   m_Name: Unit_1_6
   m_EditorClassIdentifier: 
+  unitObj: {fileID: 6982626028433834576, guid: 4a4c4456ad43d6848926ddd9d71b936e, type: 3}
   level: 0
   unitName: "\uD558\uAE09\uAC80\uAE30\uC0ACB"
   unitCharacteristic: "\uB9C8\uB51C"
@@ -24,15 +25,16 @@ MonoBehaviour:
   skillStun: 0
   skillPercent: 0
   skillDamage: 0
+  singleSKillPercent: 0
+  singleSKillDamage: 0
   debuff: 0
   buff: 0
   speedDebuff: 0
-  recipeA:
-  - {fileID: 11400000}
-  - {fileID: 11400000, guid: b90deeecf6e203943b638faa3480e6be, type: 2}
-  - {fileID: 11400000, guid: 44306648b635eb24e88d39de15ed0080, type: 2}
-  recipeB: []
-  nextUnitA: {fileID: 884159676051393231, guid: 873af9bcd40a524439a87be0db018999, type: 3}
+  recipes:
+  - {fileID: 11400000, guid: dee005bb59532964295a94aa38929ff9, type: 2}
+  - {fileID: 11400000, guid: 4b28f60868eebdc44a15ac20588d28cf, type: 2}
+  - {fileID: 11400000, guid: 2c69dac5b5dccbf49a71e4654c64ab7e, type: 2}
+  nextUnitA: {fileID: 11400000, guid: 483cbd6a83e8a46499aac84f85333509, type: 2}
   nextUnitB: {fileID: 0}
   unitType: 0
   unitAtkType: 0

@@ -380,8 +380,17 @@ public class Unit : MonoBehaviour
 
             tempBuff += buffValue;
         }
-        maxAtk = unitRecipe.maxAtk + (unitRecipe.maxAtk * tempBuff);
-        minAtk = unitRecipe.minAtk + (unitRecipe.minAtk * tempBuff);
+        
+        if(unitRecipe.unitSkillType == UnitSkillType.PD)
+        {
+            maxAtk = unitRecipe.maxAtk + (unitRecipe.maxAtk * tempBuff);
+            minAtk = unitRecipe.minAtk + (unitRecipe.minAtk * tempBuff);
+        }
+        else
+        {
+            maxAtk = unitRecipe.maxAtk + (unitRecipe.maxAtk * tempBuff * 0.2f);
+            minAtk = unitRecipe.minAtk + (unitRecipe.minAtk * tempBuff * 0.2f);
+        }
     }
 
 

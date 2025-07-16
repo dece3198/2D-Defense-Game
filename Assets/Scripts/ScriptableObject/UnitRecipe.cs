@@ -18,6 +18,7 @@ public enum UnitRangeType
 [CreateAssetMenu(fileName = "New UnitRecipe", menuName = "New UnitRecipe/UnitRecipe")]
 public class UnitRecipe : ScriptableObject
 {
+    public GameObject unitObj;
     public int level;
     public string unitName;
     public string unitCharacteristic;
@@ -30,13 +31,14 @@ public class UnitRecipe : ScriptableObject
     public float skillStun;
     public float skillPercent;
     public float skillDamage;
+    public float singleSKillPercent;
+    public float singleSKillDamage;
     public int debuff;
     public float buff;
     public float speedDebuff;
-    public UnitRecipe[] recipeA;
-    public UnitRecipe[] recipeB;
-    public GameObject nextUnitA;
-    public GameObject nextUnitB;
+    public UnitRecipe[] recipes;
+    public UnitRecipe nextUnitA;
+    public UnitRecipe nextUnitB;
     public UnitType unitType;
     public UnitAtkType unitAtkType;
     public UnitSkillType unitSkillType;

@@ -92,7 +92,7 @@ public class IdleUnit : MonoBehaviour
             skillAni.gameObject.GetComponent<ViewDetector>().FindTarget();
             float skillDamage = unitRecipe.skillDamage + (unitRecipe.skillDamage * (UpGradeManager.instance.skillDamage.level * 0.05f));
             float finalDamage = ((minAtk + maxAtk) * 0.5f) * skillDamage;
-            if (skillAni.gameObject.GetComponent<ViewDetector>().Target != null)
+            if (skillAni.gameObject.GetComponent<ViewDetector>().Target)
             {
                 skillAni.gameObject.GetComponent<ViewDetector>().Target.GetComponent<IInteractable>().TakeHit(finalDamage, unitRecipe, 0);
             }

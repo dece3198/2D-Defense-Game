@@ -14,6 +14,7 @@ public class MonsterSpawner : Singleton<MonsterSpawner>
         set
         {
             monsterCount = value;
+            monsterCountText.text = monsterCount.ToString() + "/ 100";
             if (monsterCount >= 80)
             {
                 if (monsterCount >= 100)
@@ -32,6 +33,7 @@ public class MonsterSpawner : Singleton<MonsterSpawner>
     [SerializeField] private TextMeshProUGUI[] timeText;
     [SerializeField] private GameObject[] missionTime;
     [SerializeField] private TextMeshProUGUI[] missionTimeText;
+    [SerializeField] private TextMeshProUGUI monsterCountText;
     private bool isMission = false;
     private Dictionary<int, List<GameObject>> monsterPool = new Dictionary<int, List<GameObject>>();
     public Dictionary<MonsterType, float> speedDic = new Dictionary<MonsterType, float>();
