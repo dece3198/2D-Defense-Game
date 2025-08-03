@@ -7,11 +7,11 @@ using UnityEngine.UI;
 
 public class WaitingRoom : Singleton<WaitingRoom>
 {
-    public GameButton curButton;    
+    public GameObject curUi;    
     [SerializeField] private RectTransform level;
     [SerializeField] private float slotWidth = 500f;
-    [SerializeField] private GameObject dungeonMap;
-    [SerializeField] private GameObject defenseMap;
+    public GameObject dungeonMap;
+    public GameObject defenseMap;
     [SerializeField] private GameObject coinParent;
     [SerializeField] private Sprite dia;
     [SerializeField] private Sprite blueDia;
@@ -23,6 +23,9 @@ public class WaitingRoom : Singleton<WaitingRoom>
     [SerializeField] private Transform startPos;
     [SerializeField] private GameObject coin;
     private Stack<GameObject> coinStack = new Stack<GameObject>();
+    [SerializeField] private GameObject waitRoomUi;
+    [SerializeField] private Image[] menuButtons;
+    [SerializeField] private GameObject[] menuUis;
     private int rouletteCount = 0;
     private bool isWait = true;
 
@@ -67,7 +70,7 @@ public class WaitingRoom : Singleton<WaitingRoom>
             {
                 GameManager.instance.curGameLevel = (GameLevel)rouletteCount;
             }
-            FadeInOut.instance.Fade(GameManager.instance.mainUi);
+            FadeInOut.instance.Fade();
             StartCoroutine(StartCo());
             isWait = false;
         }
@@ -116,6 +119,18 @@ public class WaitingRoom : Singleton<WaitingRoom>
         }
     }
 
+    public void ChangeMenu(int value)
+    {
+        for(int i = 0; i < menuButtons.Length; i++)
+        {
+            bool isSelected = (i == value);
+            menuButtons[i].color = isSelected ? Color.white : Color.black;
+            menuUis[i].SetActive(isSelected);
+        }
+
+        curUi = menuUis[value];
+    }
+
     private void SettingCoin(int count, Sprite image, Transform pos, CoinType coinType, int coinValue)
     {
         for(int i = 0; i < count; i++)
@@ -144,12 +159,13 @@ public class WaitingRoom : Singleton<WaitingRoom>
     private IEnumerator StartCo()
     {
         yield return new WaitForSeconds(1f);
+        GameManager.instance.mainUi.SetActive(true);
         isWait = true;
         GameManager.instance.ChanageState(GameState.Wait);
         GameManager.instance.Gold = 12;
         GameManager.instance.Jam = 0;
         dungeonMap.SetActive(false);
         defenseMap.SetActive(true);
-        gameObject.SetActive(false);
+        waitRoomUi.SetActive(false);
     }
 }

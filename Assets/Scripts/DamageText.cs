@@ -34,7 +34,7 @@ public class DamageText : MonoBehaviour
     public void StopText()
     {
         if(textCo != null)
-           StartCoroutine(textCo);
+           StopCoroutine(textCo);
         text.fontSize = 0.1f;
         textManager.EnterPool(this.gameObject);
     }

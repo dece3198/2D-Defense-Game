@@ -59,15 +59,15 @@ public class UpGradeSlot : MonoBehaviour
 
     private void LevelUp()
     {
-        IdleUnit tempUnit = UpGradeManager.instance.curUnit;
-        UpGradeManager.instance.curUnit = UpGradeManager.instance.curUnit.nextUnit;
+        DungeonUnit tempUnit = UpGradeManager.instance.curUnit;
+        //UpGradeManager.instance.curUnit = UpGradeManager.instance.curUnit.nextUnit;
         UpGradeManager.instance.curUnit.sPUM_Prefabs.gameObject.SetActive(true);
         tempUnit.sPUM_Prefabs.gameObject.SetActive(false);
     }
 
     private void MonsterLevelUp()
     {
-        IdleMonster tempUnit = UpGradeManager.instance.curMonster;
+        DungeonMonster tempUnit = UpGradeManager.instance.curMonster;
         UpGradeManager.instance.curMonster = UpGradeManager.instance.curMonster.nextMonster;
         UpGradeManager.instance.curMonster.sPUM_Prefabs.gameObject.SetActive(true);
         tempUnit.sPUM_Prefabs.gameObject.SetActive(false);

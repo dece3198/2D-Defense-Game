@@ -142,12 +142,17 @@ public class RankRating : Singleton<RankRating>
 
     private IEnumerator CheckCo()
     {
-        FadeInOut.instance.Fade(GameManager.instance.waitRoom);
+        FadeInOut.instance.Fade();
         yield return new WaitForSeconds(1f);
+        GameManager.instance.waitRoom.SetActive(true);
+        WaitingRoom.instance.defenseMap.SetActive(false);
+        WaitingRoom.instance.dungeonMap.SetActive(true);
+        UpGradeManager.instance.curUnit.isAtk = true;
+        UpGradeManager.instance.curMonster.StartMonster();
         rankLight.SetActive(false);
         checkButton.SetActive(false);
-        gameObject.SetActive(false);
         rankText.gameObject.SetActive(false);
+        gameObject.SetActive(false);
     }
 
 }

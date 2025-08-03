@@ -10,8 +10,9 @@ public enum UpGradeSlotType
 
 public class UpGradeManager : Singleton<UpGradeManager>
 {
-    public IdleUnit curUnit;
-    public IdleMonster curMonster;
+    public GameObject UpGradeUi;
+    public DungeonUnit curUnit;
+    public DungeonMonster curMonster;
     public UpGradeSlot levelUp;
     public UpGradeSlot atkUp;
     public UpGradeSlot atkSpeedUp;
@@ -26,6 +27,11 @@ public class UpGradeManager : Singleton<UpGradeManager>
     [SerializeField] private TextMeshProUGUI skillPText;
     [SerializeField] private TextMeshProUGUI skillDText;
     [SerializeField] private Image unitImage;
+    [SerializeField] private GameObject buttons;
+    [SerializeField] private GameObject skillSlots;
+    [SerializeField] private Image[] stateButtons;
+    [SerializeField] private GameObject[] stateUi;
+    private bool isChange = false;
 
     private new void Awake()
     {
@@ -49,6 +55,38 @@ public class UpGradeManager : Singleton<UpGradeManager>
         UnitSetting();
     }
 
+    public void ChangeButton(int value)
+    {
+        for(int i = 0; i < stateButtons.Length; i++)
+        {
+            bool isSelected = (i == value);
+            SetColor(isSelected ? 1f : 0.5f, stateButtons[i]);
+            stateUi[i].SetActive(isSelected);
+        }
+    }
+
+    private void SetColor(float alpha, Image image)
+    {
+        Color color = image.color;
+        color.a = alpha;
+        image.color = color;
+    }
+
+    public void ChangeSlot()
+    {
+        isChange = !isChange;
+        if(isChange)
+        {
+            skillSlots.SetActive(true);
+            buttons.SetActive(false);
+        }
+        else
+        {
+            skillSlots.SetActive(false);
+            buttons.SetActive(true);
+        }
+    }
+
     public void UnitSetting()
     {
         switch (levelUp.level)
@@ -68,7 +106,7 @@ public class UpGradeManager : Singleton<UpGradeManager>
         atkSpeedText.text = (1 / (curUnit.unitRecipe.atkCoolTime - (curUnit.unitRecipe.atkCoolTime * (atkSpeedUp.level * 0.005f)))).ToString("N3");
         float skillP = curUnit.unitRecipe.skillPercent + (curUnit.unitRecipe.skillPercent * InventoryManager.instance.itemSkillP * 0.01f);
         skillPText.text = ((skillP + (skillP * (skillPercent.level * 0.01f))) * 100).ToString() + "%";
-        float skillD = curUnit.unitRecipe.skillDamage + (curUnit.unitRecipe.skillDamage * InventoryManager.instance.itemSKillD * 0.01f);
+        float skillD = curUnit.unitRecipe.skillDamage + (curUnit.unitRecipe.skillDamage * InventoryManager.instance.itemSKillD * 0.1f);
         skillDText.text = ((skillD + (skillD * (skillDamage.level * 0.05f))) * 100).ToString() + "%";
     }
 }

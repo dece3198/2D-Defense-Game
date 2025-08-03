@@ -7,7 +7,7 @@ public class InventorySlot : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
 {
     public Item item;
     public Image itemImage;
-    [SerializeField] private Outline outline;
+    [SerializeField] private Image rankImage;
     public Sprite itemTypeImage;
     public float atk;
     public float skillP;
@@ -19,7 +19,7 @@ public class InventorySlot : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
     private void Awake()
     {
         originalScales = transform.localScale;
-        outline = GetComponent<Outline>();
+        rankImage = GetComponent<Image>();
     }
 
     public void AddItem(Item _item)
@@ -29,11 +29,16 @@ public class InventorySlot : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
         atk = _item.atk;
         skillP = _item.skillP;
         skillD = _item.skillD;
-        outline.effectColor = UiManager.instance.unitDic[_item.itemRating];
+        rankImage.color = UiManager.instance.unitDic[_item.itemRating];
         slotType = _item.itemType;
         if(item.itemRating == Rating.Myth)
         {
             slotSader.SetActive(true);
+            slotSader.GetComponent<Image>().color = UiManager.instance.unitDic[_item.itemRating];
+        }
+        else
+        {
+            slotSader.SetActive(false);
         }
         SetColor(1);
     }
@@ -44,6 +49,7 @@ public class InventorySlot : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
         slotType = ItemType.None;
         SetColor(0);
         slotSader.SetActive(false);
+        rankImage.color = Color.white;
         if (transform.CompareTag("InventorySlot"))
         {
             gameObject.SetActive(false);
@@ -61,7 +67,10 @@ public class InventorySlot : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            transform.DOScale(originalScales * 0.9f, 0.1f).SetEase(Ease.OutQuad);
+            if(!transform.CompareTag("ItemSlot"))
+            {
+                transform.DOScale(originalScales * 0.9f, 0.1f).SetEase(Ease.OutQuad);
+            }
         }
     }
 
@@ -69,10 +78,13 @@ public class InventorySlot : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            transform.DOScale(originalScales, 0.1f).SetEase(Ease.OutQuad);
-            if(item != null)
+            if (!transform.CompareTag("ItemSlot"))
             {
-                InventoryManager.instance.ShowItem(this);
+                transform.DOScale(originalScales, 0.1f).SetEase(Ease.OutQuad);
+                if (item != null)
+                {
+                    InventoryManager.instance.ShowItem(this);
+                }
             }
         }
     }

@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 606347e0de2684a42a847958e4fa7b94, type: 3}
   m_Name: IdleUnit_6
   m_EditorClassIdentifier: 
-  level: 1
+  unitObj: {fileID: 0}
+  level: 0
   unitName: 
   unitCharacteristic: 
   explanation: 
@@ -24,11 +25,12 @@ MonoBehaviour:
   skillStun: 0
   skillPercent: 0.05
   skillDamage: 10
+  singleSKillPercent: 0
+  singleSKillDamage: 0
   debuff: 0
   buff: 0
   speedDebuff: 0
-  recipeA: []
-  recipeB: []
+  recipes: []
   nextUnitA: {fileID: 0}
   nextUnitB: {fileID: 0}
   unitType: 0

@@ -51,7 +51,8 @@ public class Wait : BaseState<GameManager>
 {
     public override void Enter(GameManager game)
     {
-        game.StartCoroutine(WaitCo(game));
+        game.gameCo = WaitCo(game);
+        game.StartCoroutine(game.gameCo);
     }
 
     public override void Exit(GameManager monster)
@@ -83,7 +84,8 @@ public class StageStart : BaseState<GameManager>
     public override void Enter(GameManager game)
     {
         MonsterSpawner.instance.StartStage();
-        game.StartCoroutine(StageStartCo(game));
+        game.gameCo = StageStartCo(game);
+        game.StartCoroutine(game.gameCo);
         game.roundText.text = (game.stage + 1).ToString() + "Lv";
 
         switch (game.stage)
@@ -128,7 +130,8 @@ public class StageEnd : BaseState<GameManager>
 {
     public override void Enter(GameManager game)
     {
-        game.StartCoroutine(StageEndCo(game));
+        game.gameCo = StageEndCo(game);
+        game.StartCoroutine(game.gameCo);
         if(game.missionFail <= 0)
         {
             game.Gold += 2;
@@ -204,8 +207,12 @@ public class GameEnd : BaseState<GameManager>
         }
 
         yield return new WaitForSeconds(2f);
-        FadeInOut.instance.Fade(game.waitRoom);
+        FadeInOut.instance.Fade();
         yield return new WaitForSeconds(1f);
+        game.waitRoom.SetActive(true);
+        WaitingRoom.instance.defenseMap.SetActive(false);
+        WaitingRoom.instance.dungeonMap.SetActive(true);
+        UpGradeManager.instance.curUnit.isAtk = true;
         alpha.a = 0;
         game.failText.color = alpha;
         game.fail.SetActive(false);
@@ -293,6 +300,7 @@ public class GameManager : Singleton<GameManager>
     public GameObject fail;
     public GameObject mainUi;
     public GameObject waitRoom;
+    public GameObject defenseMap;
     public Transform[] targetPos;
     public TextMeshProUGUI timeText;
     public TextMeshProUGUI roundText;
@@ -313,8 +321,11 @@ public class GameManager : Singleton<GameManager>
     public Tilemap groundTileMap;
     public bool isSelect = false;
     public bool isX2 = false;
+    public IEnumerator gameCo;
 
     public List<RankCondition> rankConditionList = new();
+
+    public PlayerController player;
 
     private new void Awake()
     {
@@ -412,6 +423,37 @@ public class GameManager : Singleton<GameManager>
     {
         Gold += 12;
     }
+
+    public void Update()
+    {
+        /*
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            ChanageState(GameState.GameWinner);
+        }
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            ChanageState(GameState.GameEnd);
+        }
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            Ruby += 1000000;
+        }
+
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            Dia += 999999999;
+        }
+
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            Jam += 100;
+        }
+        */
+    }
+
 
     public void SaveData()
     {
@@ -515,6 +557,7 @@ public class GameManager : Singleton<GameManager>
         stage = 0;
         Gold = 12;
         Jam = 0;
+        StopCoroutine(gameCo);
     }
 
     public void ChanageState(GameState state)

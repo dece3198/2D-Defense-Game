@@ -13,12 +13,12 @@ public class FadeInOut : Singleton<FadeInOut>
         fadeImage = GetComponent<Image>();
     }
 
-    public void Fade(GameObject openObj)
+    public void Fade()
     {
-        StartCoroutine(FadeCo(openObj));
+        StartCoroutine(FadeCo());
     }
 
-    private IEnumerator FadeCo(GameObject openobj)
+    private IEnumerator FadeCo()
     {
         float time = 0;
         Color alpha = fadeImage.color;
@@ -31,7 +31,6 @@ public class FadeInOut : Singleton<FadeInOut>
         }
 
         time = 0;
-        openobj.SetActive(true);
         yield return new WaitForSeconds(1f);
 
         while (alpha.a > 0)

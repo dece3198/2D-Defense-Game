@@ -53,7 +53,7 @@ public class UiManager : Singleton<UiManager>
         unitDic.Add(Rating.Unique, Color.blue);
         unitDic.Add(Rating.Legendary, Color.red);
         unitDic.Add(Rating.Superior, new Color32(170, 170, 255, 255));
-        unitDic.Add(Rating.Myth, new Color32(136, 255, 255, 255));
+        unitDic.Add(Rating.Myth, new Color32(50, 200, 200, 255));
     }
 
     private void Update()

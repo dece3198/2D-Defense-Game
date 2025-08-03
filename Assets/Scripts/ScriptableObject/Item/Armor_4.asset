@@ -16,5 +16,5 @@ MonoBehaviour:
   atk: 5
   skillP: 5
   skillD: 5
-  itemRating: 6
+  itemRating: 4
   itemType: 2

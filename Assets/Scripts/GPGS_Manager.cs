@@ -1,6 +1,6 @@
 using UnityEngine;
-using GooglePlayGames;
-using GooglePlayGames.BasicApi;
+//using GooglePlayGames;
+//using GooglePlayGames.BasicApi;
 using TMPro;
 using System.Collections;
 using DG.Tweening;
@@ -20,15 +20,16 @@ public class GPGS_Manager : MonoBehaviour, IPointerClickHandler
 
     public void GPGS_LogIn()
     {
-        PlayGamesPlatform.Instance.Authenticate(ProcessAuthentication);
+        //PlayGamesPlatform.Instance.Authenticate(ProcessAuthentication);
     }
 
+    /*
     internal void ProcessAuthentication(SignInStatus status)
     {
         if(status == SignInStatus.Success)
         {
-            string displayName = PlayGamesPlatform.Instance.GetUserDisplayName();
-            userID = PlayGamesPlatform.Instance.GetUserId();
+            //string displayName = PlayGamesPlatform.Instance.GetUserDisplayName();
+            //userID = PlayGamesPlatform.Instance.GetUserId();
             StartCoroutine(LogInCo());
         }
         else
@@ -36,6 +37,7 @@ public class GPGS_Manager : MonoBehaviour, IPointerClickHandler
             //loginText.text = "연동 실패";
         }
     }
+    */
 
 
     private IEnumerator LogInCo()
@@ -48,9 +50,12 @@ public class GPGS_Manager : MonoBehaviour, IPointerClickHandler
         yield return new WaitForSeconds(3f);
         userID = "zzz";
         DataManager.instance.userID = userID;
+        GameManager.instance.waitRoom.SetActive(true);
         DataManager.instance.LoadData();
-        FadeInOut.instance.Fade(GameManager.instance.waitRoom);
+        FadeInOut.instance.Fade();
         yield return new WaitForSeconds(1f);
+        
+        WaitingRoom.instance.dungeonMap.SetActive(true);
         gameObject.SetActive(false);
     }
 
@@ -60,10 +65,12 @@ public class GPGS_Manager : MonoBehaviour, IPointerClickHandler
         {
             if(isLogIn)
             {
-                PlayGamesPlatform.Instance.Authenticate(ProcessAuthentication);
-                string displayName = PlayGamesPlatform.Instance.GetUserDisplayName();
-                userID = PlayGamesPlatform.Instance.GetUserId();
+                //PlayGamesPlatform.Instance.Authenticate(ProcessAuthentication);
+                
+                //string displayName = PlayGamesPlatform.Instance.GetUserDisplayName();
+                //userID = PlayGamesPlatform.Instance.GetUserId();
                 StartCoroutine(LogInCo());
+                
                 isLogIn = false;
             }
         }
