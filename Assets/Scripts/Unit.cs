@@ -281,7 +281,7 @@ public class Unit : MonoBehaviour
             }
             else
             {
-                viewDetector.Target.GetComponentInChildren<IInteractable>().TakeHit(rand, unitRecipe, unitRecipe.stun);
+                viewDetector.Target.GetComponentInChildren<IInteractable>().DefenseTakeHit(rand, unitRecipe, unitRecipe.stun);
             }
 
             if (unitRecipe.unitRating >= Rating.Legendary)

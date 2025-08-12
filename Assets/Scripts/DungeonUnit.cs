@@ -11,6 +11,7 @@ public class IdleUnit : BaseState<DungeonUnit>
 {
     public override void Enter(DungeonUnit unit)
     {
+        unit.animator.SetBool("1_Move", false);
     }
 
     public override void Exit(DungeonUnit unit)
@@ -19,6 +20,11 @@ public class IdleUnit : BaseState<DungeonUnit>
 
     public override void Update(DungeonUnit unit)
     {
+        unit.viewDetector.FindTarget();
+        if (unit.viewDetector.Target != null)
+        {
+            unit.ChangeState(DungenoState.Walk);
+        }
     }
 }
 
@@ -26,6 +32,8 @@ public class WalkUnit : BaseState<DungeonUnit>
 {
     public override void Enter(DungeonUnit unit)
     {
+        unit.animator.SetBool("1_Move", true);
+        unit.target = unit.viewDetector.Target.GetComponent<Rigidbody2D>();
     }
 
     public override void Exit(DungeonUnit unit)
@@ -34,6 +42,15 @@ public class WalkUnit : BaseState<DungeonUnit>
 
     public override void Update(DungeonUnit unit)
     {
+        Vector2 dirVec = unit.target.position - unit.rigid.position;
+        Vector2 nextVec = dirVec.normalized * unit.speed * Time.fixedDeltaTime;
+        unit.rigid.MovePosition(unit.rigid.position + nextVec);
+        unit.rigid.linearVelocity = Vector2.zero;
+
+        if(Vector2.Distance(unit.transform.position, unit.target.transform.position) < 1f)
+        {
+            unit.ChangeState(DungenoState.Attack);
+        }
     }
 }
 
@@ -42,6 +59,7 @@ public class AttackUnit : BaseState<DungeonUnit>
 {
     public override void Enter(DungeonUnit unit)
     {
+        unit.animator.SetBool("1_Move", false);
     }
 
     public override void Exit(DungeonUnit unit)
@@ -103,19 +121,28 @@ public class DungeonUnit : MonoBehaviour
     public UnitRecipe unitRecipe;
     [SerializeField] private float minAtk;
     [SerializeField] private float maxAtk;
-    [SerializeField] private ViewDetector viewDetector;
-    [SerializeField] private Animator skillAni;
+    public float speed;
+    public ViewDetector viewDetector;
+    public Animator animator;
+    public Rigidbody2D rigid;
+    [SerializeField] private ViewDetector[] skillView;
     public SPUM_Prefabs sPUM_Prefabs;
     [SerializeField] private OrbitManager orbitManager;
     private StateMachine<DungenoState, DungeonUnit> stateMachine = new StateMachine<DungenoState, DungeonUnit> ();
     public DungenoState unitState;
     public bool isAtk = true;
+    public Rigidbody2D target;
+    [SerializeField] private Transform slashP;
+    [SerializeField] private Transform slashC;
+
 
     private void Awake()
     {
         stateMachine.Reset(this);
         viewDetector = GetComponent<ViewDetector>();
         sPUM_Prefabs = transform.parent.GetComponent<SPUM_Prefabs>();
+        animator = GetComponent<Animator>();
+        rigid = GetComponent<Rigidbody2D>();
         sPUM_Prefabs.OverrideControllerInit();
         stateMachine.AddState(DungenoState.Idle, new IdleUnit());
         stateMachine.AddState(DungenoState.Walk, new WalkUnit());
@@ -126,16 +153,37 @@ public class DungeonUnit : MonoBehaviour
         ChangeState(DungenoState.Idle);
     }
 
-
     private void Update()
     {
-        viewDetector.FindTarget();
-        if(viewDetector.Target != null)
+        if(Input.GetKeyDown(KeyCode.K))
         {
-            if(isAtk)
-            {
-                StartCoroutine(AtkCo());
-            }
+            /*
+            skillView[4].animator.SetTrigger("Skill");
+            skillView[4].FindAngleTarget(10);
+            sPUM_Prefabs.PlayAnimation(PlayerState.ATTACK, 0);
+            */
+            StartCoroutine(SkillA());
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        stateMachine.Update();
+    }
+
+    private void LateUpdate()
+    {
+        if(target != null)
+        {
+            float direction = target.position.x < rigid.position.x ? -1f : 1f;
+            Vector3 scale = transform.localScale;
+            scale.x = Mathf.Abs(scale.x) * direction;
+            transform.localScale = scale;
+
+            float zPRotation = direction > 0 ? 180f : 0f;
+            slashP.localRotation = Quaternion.Euler(0, 0, zPRotation);
+            float zCRotation = direction > 0 ? -75f : 120f;
+            slashC.localRotation = Quaternion.Euler(0, 0, zCRotation);
         }
     }
 
@@ -143,6 +191,19 @@ public class DungeonUnit : MonoBehaviour
     {
         unitState = state;
         stateMachine.ChangeState(state);
+    }
+
+    private IEnumerator SkillA()
+    {
+        animator.SetTrigger("SkillA");
+        yield return new WaitForSeconds(0.5f);
+        for (int i = 0; i < 4; i++)
+        {
+            skillView[i].animator.SetTrigger("Skill");
+            skillView[i].FindRangeTarget(11);
+            skillView[i].FindRangeTarget(11);
+            yield return new WaitForSeconds(0.25f);
+        }
     }
 
     private IEnumerator AtkCo()

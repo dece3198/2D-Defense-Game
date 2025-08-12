@@ -10,10 +10,16 @@ public class OrbitManager : MonoBehaviour
     private void Update()
     {
         transform.Rotate(Vector3.back, rotationSpeed * Time.deltaTime);
+    }
 
-        if (Input.GetKeyDown(KeyCode.W))
+    private void OrbitobjectUp()
+    {
+        foreach (var o in orbitobjects)
         {
-            RepositionOrbit();
+            if (o.gameObject.activeInHierarchy)
+            {
+                o.gameObject.SetActive(true);
+            }
         }
     }
 

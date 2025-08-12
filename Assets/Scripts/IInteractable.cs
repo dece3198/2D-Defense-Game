@@ -2,5 +2,6 @@ using UnityEngine;
 
 public interface IInteractable
 {
-    public void TakeHit(float damage, UnitRecipe unitRecipe, float stun);
+    public void DefenseTakeHit(float damage, UnitRecipe unitRecipe, float stun);
+    public void DungeonTakeHit(float damage);
 }

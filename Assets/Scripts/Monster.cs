@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public enum MonsterState
 {
-    Idle, Walk, Hit, Stun, Die
+    Idle, Walk, Hit, Stun, Die, Attack
 }
 
 public enum MonsterType

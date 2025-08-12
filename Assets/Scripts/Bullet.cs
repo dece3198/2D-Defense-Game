@@ -36,7 +36,7 @@ public class Bullet : MonoBehaviour
                 if (collision.GetComponentInChildren<Monster>().gameObject == target.gameObject)
                 {
                     int rand = Random.Range(unit.unitRecipe.minAtk, unit.unitRecipe.maxAtk);
-                    collision.GetComponentInChildren<IInteractable>().TakeHit(rand, unit.unitRecipe, unit.unitRecipe.stun);
+                    collision.GetComponentInChildren<IInteractable>().DefenseTakeHit(rand, unit.unitRecipe, unit.unitRecipe.stun);
                     target = null;
                     unit.EnterPool(gameObject);
                 }

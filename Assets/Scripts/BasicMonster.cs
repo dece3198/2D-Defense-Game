@@ -311,7 +311,7 @@ public class BasicMonster : Monster, IInteractable
         stateMachine.ChangeState(_state);
     }
 
-    public void TakeHit(float damage, UnitRecipe unitRecipe, float stun)
+    public void DefenseTakeHit(float damage, UnitRecipe unitRecipe, float stun)
     {
         if(Hp > 0)
         {
@@ -356,6 +356,11 @@ public class BasicMonster : Monster, IInteractable
                 }
             }
         }
+    }
+
+    public void DungeonTakeHit(float damage)
+    {
+
     }
 
     private IEnumerator HitCo()

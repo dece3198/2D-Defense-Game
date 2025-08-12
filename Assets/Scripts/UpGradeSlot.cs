@@ -68,7 +68,6 @@ public class UpGradeSlot : MonoBehaviour
     private void MonsterLevelUp()
     {
         DungeonMonster tempUnit = UpGradeManager.instance.curMonster;
-        UpGradeManager.instance.curMonster = UpGradeManager.instance.curMonster.nextMonster;
         UpGradeManager.instance.curMonster.sPUM_Prefabs.gameObject.SetActive(true);
         tempUnit.sPUM_Prefabs.gameObject.SetActive(false);
     }

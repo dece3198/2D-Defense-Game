@@ -6,6 +6,8 @@ public class PlayerController : MonoBehaviour
     private Vector2 inputVec;
     public Rigidbody2D rigid;
     private Animator animator;
+    [SerializeField] private Transform slashP;
+    [SerializeField] private Transform slashC;
 
     private void Awake()
     {
@@ -35,6 +37,11 @@ public class PlayerController : MonoBehaviour
             Vector3 scale = transform.localScale;
             scale.x = Mathf.Abs(scale.x) * direction;
             transform.localScale = scale;
+
+            float zPRotation = direction > 0 ? 180f : 0f;
+            slashP.localRotation = Quaternion.Euler(0,0, zPRotation);
+            float zCRotation = direction > 0 ? -75f : 120f;
+            slashC.localRotation = Quaternion.Euler(0, 0, zCRotation);
         }
     }
 }

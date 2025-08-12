@@ -4,10 +4,13 @@ using UnityEngine;
 public class ViewDetector : MonoBehaviour
 {
     private Unit unit;
+    public Animator animator;
     [SerializeField] private GameObject target;
     public GameObject Target { get { return target; } }
     public Transform center;
+    [SerializeField] private Transform player;
     [SerializeField] private float radius;
+    [SerializeField] private float angle;
     [SerializeField] private float debuffRadius;
     [SerializeField] private LayerMask layerMask;
     [SerializeField] private LayerMask buffLayerMask;
@@ -29,13 +32,10 @@ public class ViewDetector : MonoBehaviour
         {
             float distance = Vector2.Distance(center.position, collider2D.transform.position);
 
-            if(distance < min)
+            if (distance < min)
             {
                 min = distance;
-                if(collider2D.GetComponentInChildren<IInteractable>() != null)
-                {
-                    target = collider2D.gameObject;
-                }
+                target = collider2D.gameObject;
             }
         }
 
@@ -45,13 +45,53 @@ public class ViewDetector : MonoBehaviour
         }
     }
 
+    public void FindRangeTarget(float damage)
+    {
+        Collider2D[] targets = Physics2D.OverlapCircleAll(center.position, radius, layerMask);
+
+        foreach (Collider2D collider2D in targets)
+        {
+            collider2D.GetComponent<IInteractable>().DungeonTakeHit(damage);
+        }
+
+        if (targets.Length > 0)
+        {
+            target = targets[0].gameObject;
+        }
+        else
+        {
+            targets = null;
+        }
+    }
+
+    public void FindAngleTarget(float damage)
+    {
+        Collider2D[] targets = Physics2D.OverlapCircleAll(center.position, radius, layerMask);
+
+        for (int i = 0; i < targets.Length; i++)
+        {
+            Vector2 findTarget = (targets[i].transform.position - transform.position).normalized;
+            if (Vector3.Dot(transform.right, findTarget) < Mathf.Cos(angle * 0.5f * Mathf.Deg2Rad))
+            {
+                continue;
+            }
+            float findTargetRange = Vector2.Distance(transform.position, targets[i].transform.position);
+            Debug.DrawRay(transform.position, findTarget * findTargetRange, Color.red);
+
+            targets[i].GetComponent<IInteractable>().DungeonTakeHit(damage);
+
+            target = targets[i].gameObject;
+        }
+        target = null;
+    }
+
     public void FindSkillTarget(float atk,UnitRecipe unitRecipe , float stun)
     {
         Collider2D[] targets = Physics2D.OverlapCircleAll(center.position, radius, layerMask);
 
         for(int i = 0; i < targets.Length; i++)
         {
-            targets[i].GetComponent<BasicMonster>().TakeHit(atk, unitRecipe, stun);
+            targets[i].GetComponent<BasicMonster>().DefenseTakeHit(atk, unitRecipe, stun);
         }
 
         target = null;
@@ -172,6 +212,11 @@ public class ViewDetector : MonoBehaviour
         monsterList.Clear();
     }
 
+    public void ClearTarget()
+    {
+        target = null;
+    }
+
     private void OnDestroy()
     {
         foreach(var monster in monsterList)
@@ -190,5 +235,15 @@ public class ViewDetector : MonoBehaviour
         Gizmos.DrawWireSphere(center.position, radius);
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(center.position, debuffRadius);
+
+
+        Vector2 rightDir = transform.right;
+        float halfRad = angle * 0.5f * Mathf.Deg2Rad;
+        Vector2 rightBoundary = Quaternion.Euler(0,0, angle * 0.5f) * rightDir;
+        Vector2 leftBoundary = Quaternion.Euler(0, 0, -angle * 0.5f) * rightDir;
+
+        Debug.DrawRay(transform.position, rightDir * radius, Color.yellow);
+        Debug.DrawRay(transform.position, rightBoundary * radius, Color.green);
+        Debug.DrawRay(transform.position, leftBoundary * radius, Color.green);
     }
 }

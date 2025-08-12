@@ -325,7 +325,7 @@ public class GameManager : Singleton<GameManager>
 
     public List<RankCondition> rankConditionList = new();
 
-    public PlayerController player;
+    public Rigidbody2D heart;
 
     private new void Awake()
     {

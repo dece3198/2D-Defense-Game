@@ -17,7 +17,6 @@ public class InventoryManager : Singleton<InventoryManager>
     [SerializeField] private InventorySlot necklaceSlot;
     [SerializeField] private InventorySlot ringSlot;
     private Dictionary<ItemType, InventorySlot> slotDic = new Dictionary<ItemType, InventorySlot>();
-    [SerializeField] private Item[] item;
 
     public float itemAtk;
     public float itemSkillP;
@@ -39,17 +38,6 @@ public class InventoryManager : Singleton<InventoryManager>
         foreach(var slot in slots)
         {
             slot.gameObject.SetActive(false);
-        }
-    }
-
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.K))
-        {
-            foreach(var i in item)
-            {
-                AcquireItem(i);
-            }
         }
     }
 
