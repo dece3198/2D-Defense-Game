@@ -1,16 +1,24 @@
 using UnityEngine;
 
-public class SkillManager : MonoBehaviour
+public class SkillManager : Singleton<SkillManager>
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    public SkillSlot[] slots;
+    [SerializeField] private Skill[] skills;
+    public bool isSkill = false;
+    public Skill curSkill;
+    public GameObject mark;
+    public DungeonUnit player;
 
-    // Update is called once per frame
-    void Update()
+    public void EquippedButton(int number)
     {
-        
+        isSkill = true; 
+        curSkill = skills[number];
+        WaitingRoom.instance.ChangeMenu(2);
+
+        if(!UpGradeManager.instance.isChange)
+        {
+            UpGradeManager.instance.ChangeSlot();
+        }
+        mark.SetActive(true);
     }
 }

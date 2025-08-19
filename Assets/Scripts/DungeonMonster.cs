@@ -19,18 +19,25 @@ public class DungeonMonsterWalk : BaseState<DungeonMonster>
 
     public override void Update(DungeonMonster monster)
     {
-        Vector2 dirVec = monster.target.position - monster.rigid.position;
-        Vector2 nextVec = dirVec.normalized * monster.speed * Time.fixedDeltaTime;
-        monster.rigid.MovePosition(monster.rigid.position + nextVec);
-        monster.rigid.linearVelocity = Vector2.zero;
-
         monster.viewDetector.FindTarget();
-
         if (monster.viewDetector.Target != null)
         {
-            monster.ChangeState(MonsterState.Attack);
+            if (monster.isAtk)
+            {
+                monster.ChangeState(MonsterState.Attack);
+            }
+            monster.animator.SetBool("1_Move", false);
+        }
+        else
+        {
+            Vector2 dirVec = monster.target.position - monster.rigid.position;
+            Vector2 nextVec = dirVec.normalized * monster.speed * Time.fixedDeltaTime;
+            monster.rigid.MovePosition(monster.rigid.position + nextVec);
+            monster.rigid.linearVelocity = Vector2.zero;
         }
     }
+
+
 }
 
 public class DungeonMonsterHit : BaseState<DungeonMonster>
@@ -38,13 +45,14 @@ public class DungeonMonsterHit : BaseState<DungeonMonster>
     public override void Enter(DungeonMonster monster)
     {
         monster.rigid.linearVelocity = Vector2.zero;
-        monster.animator.SetTrigger("Debuff");
+        monster.animator.SetBool("5_Debuff", true);
         monster.StartStateCroutine(HitCo(monster));
     }
 
     public override void Exit(DungeonMonster monster)
     {
-
+        monster.animator.SetBool("5_Debuff", false);
+        monster.stun = 0;
     }
 
     public override void Update(DungeonMonster monster)
@@ -54,6 +62,9 @@ public class DungeonMonsterHit : BaseState<DungeonMonster>
 
     private IEnumerator HitCo(DungeonMonster monster)
     {
+        monster.animator.SetBool("1_Move", false);
+        monster.hitAnimator.transform.position = monster.hitAnimator.transform.position + new Vector3(Random.insideUnitCircle.x * 0.2f,Random.insideUnitCircle.y * 0.2f, 0);
+        monster.hitAnimator.SetTrigger("Hit");
         foreach (var r in monster.spriteRenderers)
         {
             r.color = Color.red;
@@ -63,11 +74,12 @@ public class DungeonMonsterHit : BaseState<DungeonMonster>
         {
             r.color = Color.white;
         }
-
-        if(monster.monsterState != MonsterState.Die)
+        yield return new WaitForSeconds(monster.stun);
+        if (monster.monsterState != MonsterState.Die)
         {
             monster.ChangeState(MonsterState.Walk);
         }
+
     }
 }
 
@@ -75,8 +87,13 @@ public class DungeonMonsterAttack : BaseState<DungeonMonster>
 {
     public override void Enter(DungeonMonster monster)
     {
-        monster.animator.SetBool("1_Move", false);
-        monster.StartStateCroutine(AttackCo(monster));
+        monster.animator.SetTrigger("2_Attack");
+        monster.viewDetector.FindTarget();
+        monster.StartCoroutine(AttackCo(monster));
+        if (monster.viewDetector.Target != null)
+        {
+            monster.viewDetector.Target.GetComponent<IInteractable>().DungeonTakeHit(monster.damage);
+        }
     }
 
     public override void Exit(DungeonMonster monster)
@@ -89,19 +106,13 @@ public class DungeonMonsterAttack : BaseState<DungeonMonster>
 
     private IEnumerator AttackCo(DungeonMonster monster)
     {
-        yield return new WaitForSeconds(2f);
-        monster.animator.SetTrigger("2_Attack");
-        monster.viewDetector.FindTarget();
-        if(monster.viewDetector.Target != null)
-        {
-            monster.viewDetector.Target.GetComponent<Heart>().DungeonTakeHit(monster.damage);
-        }
-
-        if (monster.monsterState == MonsterState.Attack)
-        {
-            monster.ChangeState(MonsterState.Walk);
-        }
+        monster.isAtk = false;
+        yield return new WaitForSeconds(0.2f);
+        monster.ChangeState(MonsterState.Walk);
+        yield return new WaitForSeconds(3.8f);
+        monster.isAtk = true;
     }
+
 }
 
 public class DungeonMonsterDie : BaseState<DungeonMonster>
@@ -157,7 +168,9 @@ public class DungeonMonster : Monster, IInteractable
             }
         }
     }
+    
     public float damage;
+    public Animator hitAnimator;
     public SpriteRenderer[] spriteRenderers;
     public SPUM_Prefabs sPUM_Prefabs;
     public Rigidbody2D target;
@@ -167,6 +180,8 @@ public class DungeonMonster : Monster, IInteractable
     private StateMachine<MonsterState, DungeonMonster> stateMachine = new StateMachine<MonsterState, DungeonMonster>();
     public Coroutine curCoroutine;
     public bool isDie = true;
+    public bool isAtk = true;
+    public float stun;
 
     private void Awake()
     {
@@ -201,8 +216,6 @@ public class DungeonMonster : Monster, IInteractable
             if(isDie)
             {
                 ChangeState(MonsterState.Hit);
-                Vector2 knockbackDir = (rigid.position - target.position).normalized;
-                rigid.AddForce(knockbackDir * 5f, ForceMode2D.Impulse);
                 Hp -= collision.GetComponent<OrbitingObject>().damage;
                 textManager.ShowDamageText(collision.GetComponent<OrbitingObject>().damage);
             }
@@ -216,6 +229,7 @@ public class DungeonMonster : Monster, IInteractable
         Vector3 scale = transform.localScale;
         scale.x = Mathf.Abs(scale.x) * direction;
         transform.localScale = scale;
+        textManager.transform.localScale = scale;
     }
 
     public void StartMonster()

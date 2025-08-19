@@ -14,15 +14,10 @@ public class Heart : MonoBehaviour, IInteractable
         }
     }
     private float maxHp;
+    public float def;
     [SerializeField] private Slider hpSlider;
     [SerializeField] private Animator animator;
     [SerializeField] private TextManager textManager;
-    private ViewDetector viewDetector;
-
-    private void Awake()
-    {
-        viewDetector = GetComponent<ViewDetector>();
-    }
 
     private void Start()
     {
@@ -36,12 +31,9 @@ public class Heart : MonoBehaviour, IInteractable
     public void DungeonTakeHit(float damage)
     {
         animator.SetTrigger("Hit");
-        Hp -= damage;
-        textManager.ShowDamageText(damage);
-        viewDetector.FindTarget();
-        if(viewDetector.Target != null)
-        {
-            viewDetector.Target.GetComponent<IInteractable>().DungeonTakeHit((damage * 0.5f));
-        }
+        float multiplier = 1f / (1f + def * 0.015f);
+        float finalDamage = damage * multiplier;
+        Hp -= finalDamage;
+        textManager.ShowDamageText(finalDamage);
     }
 }

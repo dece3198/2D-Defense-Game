@@ -12,18 +12,20 @@ public class OrbitManager : MonoBehaviour
         transform.Rotate(Vector3.back, rotationSpeed * Time.deltaTime);
     }
 
-    private void OrbitobjectUp()
+    public void OrbitobjectUp()
     {
         foreach (var o in orbitobjects)
         {
             if (o.gameObject.activeInHierarchy)
             {
                 o.gameObject.SetActive(true);
+                RepositionOrbit();
+                return;
             }
         }
     }
 
-    private void RepositionOrbit()
+    public void RepositionOrbit()
     {
         int count = 0;
         foreach (var o in orbitobjects)

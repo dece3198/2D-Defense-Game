@@ -119,7 +119,6 @@ public class RankRating : Singleton<RankRating>
             p.SetActive(false);
         }
         rankObj.GetComponent<SpriteRenderer>().sprite = rank.rankImage;
-        rankObj.SetActive(true);
 
         float time = 1;
         Color alpha = rankLight.GetComponent<SpriteRenderer>().color;
@@ -132,6 +131,7 @@ public class RankRating : Singleton<RankRating>
             rankText.color = alpha;
             yield return null;
         }
+        rankObj.SetActive(true);
         checkButton.SetActive(true);
     }
 

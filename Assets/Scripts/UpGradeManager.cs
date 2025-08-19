@@ -31,7 +31,7 @@ public class UpGradeManager : Singleton<UpGradeManager>
     [SerializeField] private GameObject skillSlots;
     [SerializeField] private Image[] stateButtons;
     [SerializeField] private GameObject[] stateUi;
-    private bool isChange = false;
+    public bool isChange = false;
 
     private new void Awake()
     {
@@ -96,6 +96,7 @@ public class UpGradeManager : Singleton<UpGradeManager>
                 skillPercent.lockImage.SetActive(false); break;
             case 2 : monsterLevel.lockImage.SetActive(false); break;
         }
+        /*
         unitImage.sprite = curUnit.unitRecipe.unitImage;
         float minAtk = curUnit.unitRecipe.minAtk + (curUnit.unitRecipe.minAtk * InventoryManager.instance.itemAtk * 0.01f);
         float maxAtk = curUnit.unitRecipe.maxAtk + (curUnit.unitRecipe.maxAtk * InventoryManager.instance.itemAtk * 0.01f);
@@ -108,5 +109,6 @@ public class UpGradeManager : Singleton<UpGradeManager>
         skillPText.text = ((skillP + (skillP * (skillPercent.level * 0.01f))) * 100).ToString() + "%";
         float skillD = curUnit.unitRecipe.skillDamage + (curUnit.unitRecipe.skillDamage * InventoryManager.instance.itemSKillD * 0.1f);
         skillDText.text = ((skillD + (skillD * (skillDamage.level * 0.05f))) * 100).ToString() + "%";
+        */
     }
 }

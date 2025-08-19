@@ -1,10 +1,12 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public enum DungenoState
+public enum DungeonState
 {
-    Idle, Walk, Attack, SkillA, SKillB, SkilLC, Die
+    Idle, Walk, Attack, Slash, DoubleSlash, Swoop, ConsecutiveSlash, Stormblade, Die
 }
 
 public class IdleUnit : BaseState<DungeonUnit>
@@ -23,7 +25,17 @@ public class IdleUnit : BaseState<DungeonUnit>
         unit.viewDetector.FindTarget();
         if (unit.viewDetector.Target != null)
         {
-            unit.ChangeState(DungenoState.Walk);
+            unit.target = unit.viewDetector.Target.GetComponent<Rigidbody2D>();
+            if (unit.isSkillDic.ContainsKey(SkillType.Swoop))
+            {
+                if (unit.isSkillDic[SkillType.Swoop])
+                {
+                    unit.ChangeState(DungeonState.Swoop);
+                    return;
+                }
+            }
+
+            unit.ChangeState(DungeonState.Walk);
         }
     }
 }
@@ -32,7 +44,6 @@ public class WalkUnit : BaseState<DungeonUnit>
 {
     public override void Enter(DungeonUnit unit)
     {
-        unit.animator.SetBool("1_Move", true);
         unit.target = unit.viewDetector.Target.GetComponent<Rigidbody2D>();
     }
 
@@ -42,14 +53,27 @@ public class WalkUnit : BaseState<DungeonUnit>
 
     public override void Update(DungeonUnit unit)
     {
-        Vector2 dirVec = unit.target.position - unit.rigid.position;
-        Vector2 nextVec = dirVec.normalized * unit.speed * Time.fixedDeltaTime;
-        unit.rigid.MovePosition(unit.rigid.position + nextVec);
-        unit.rigid.linearVelocity = Vector2.zero;
-
-        if(Vector2.Distance(unit.transform.position, unit.target.transform.position) < 1f)
+        unit.SkillCheck(SkillType.Swoop);
+        unit.SkillCheck(SkillType.Stormblade);
+        if (Vector2.Distance(unit.transform.position, unit.target.transform.position) < 1f)
         {
-            unit.ChangeState(DungenoState.Attack);
+            unit.SkillCheck(SkillType.ConsecutiveSlash);
+            unit.SkillCheck(SkillType.DoubleSlash);
+            unit.SkillCheck(SkillType.Slash);
+            if (unit.isAtk)
+            {
+                unit.ChangeState(DungeonState.Attack);
+            }
+            unit.animator.SetBool("1_Move", false);
+            return;
+        }
+        else
+        {
+            unit.animator.SetBool("1_Move", true);
+            Vector2 dirVec = unit.target.position - unit.rigid.position;
+            Vector2 nextVec = dirVec.normalized * unit.speed * Time.fixedDeltaTime;
+            unit.rigid.MovePosition(unit.rigid.position + nextVec);
+            unit.rigid.linearVelocity = Vector2.zero;
         }
     }
 }
@@ -59,22 +83,47 @@ public class AttackUnit : BaseState<DungeonUnit>
 {
     public override void Enter(DungeonUnit unit)
     {
+        unit.StartCoroutine(AttackCo(unit));
+    }
+
+    public override void Exit(DungeonUnit unit)
+    {
+    }
+
+    public override void Update(DungeonUnit unit)
+    {
+    }
+
+    private IEnumerator AttackCo(DungeonUnit unit)
+    {
+        unit.isAtk = false;
         unit.animator.SetBool("1_Move", false);
-    }
+        unit.sPUM_Prefabs.PlayAnimation(PlayerState.ATTACK, 0);
+        unit.viewDetector.FindAttackTarget(10);
+        yield return new WaitForSeconds(0.5f);
+        unit.ChangeState(DungeonState.Idle);
+        float time = unit.atkCoolTime;
 
-    public override void Exit(DungeonUnit unit)
-    {
-    }
+        while (time > 0)
+        {
+            time -= Time.deltaTime;
+            yield return null;
+        }
+        unit.isAtk = true;
 
-    public override void Update(DungeonUnit unit)
-    {
     }
 }
 
-public class SkillA : BaseState<DungeonUnit>
+public class Slash : BaseState<DungeonUnit>
 {
     public override void Enter(DungeonUnit unit)
     {
+        if (unit.viewDetector.Target == null)
+        {
+            unit.ChangeState(DungeonState.Idle);
+            return;
+        }
+        unit.StartCoroutine(SlashCo(unit));
     }
 
     public override void Exit(DungeonUnit unit)
@@ -84,27 +133,105 @@ public class SkillA : BaseState<DungeonUnit>
     public override void Update(DungeonUnit unit)
     {
     }
+
+    private IEnumerator SlashCo(DungeonUnit unit)
+    {
+        if (unit.target != null)
+        {
+            float direction = unit.target.position.x < unit.rigid.position.x ? -1f : 1f;
+            float zLocalRotation = direction > 0 ? 180f : 0f;
+            unit.skillView[4].transform.localRotation = Quaternion.Euler(0, 0, zLocalRotation);
+            float zCRotation = direction > 0 ? -75f : 120f;
+            unit.skillView[4].animator.transform.localRotation = Quaternion.Euler(0, 0, zCRotation);
+        }
+        unit.isSkillDic[SkillType.Slash] = false;
+        unit.skillView[4].animator.SetTrigger("Skill");
+        unit.skillView[4].FindAngleTarget(6);
+        unit.sPUM_Prefabs.PlayAnimation(PlayerState.ATTACK, 0);
+        unit.ChangeState(DungeonState.Idle);
+        float time = 3f;
+
+        while (time > 0)
+        {
+            time -= Time.deltaTime;
+            unit.SkillImageDic[SkillType.Slash].fillAmount = time / 3f;
+            yield return null;
+        }
+        
+        if(unit.isSkillDic.ContainsKey(SkillType.Slash))
+        {
+            unit.isSkillDic[SkillType.Slash] = true;
+        }
+    }
 }
 
-public class SkillB : BaseState<DungeonUnit>
+public class DoubleSlash : BaseState<DungeonUnit>
 {
     public override void Enter(DungeonUnit unit)
     {
+        if (unit.viewDetector.Target == null)
+        {
+            unit.ChangeState(DungeonState.Idle);
+            return;
+        }
+        unit.StartCoroutine(DoubleSlashCo(unit));
     }
 
     public override void Exit(DungeonUnit unit)
     {
+
     }
 
     public override void Update(DungeonUnit unit)
     {
     }
+
+    private IEnumerator DoubleSlashCo(DungeonUnit unit)
+    {
+        if (unit.target != null)
+        {
+            float direction = unit.target.position.x < unit.rigid.position.x ? -1f : 1f;
+
+            float zLocalRotation = direction > 0 ? 180f : 0f;
+            unit.skillView[5].transform.localRotation = Quaternion.Euler(0, 0, zLocalRotation);
+            float zRotation = direction > 0 ? 0f : 180f;
+            unit.skillView[5].animator.transform.localRotation = Quaternion.Euler(0, 0, zRotation);
+        }
+        unit.isSkillDic[SkillType.DoubleSlash] = false;
+        unit.skillView[5].animator.SetTrigger("Skill");
+        unit.skillView[5].FindAngleTarget(5);
+        unit.sPUM_Prefabs.PlayAnimation(PlayerState.ATTACK, 0);
+        yield return new WaitForSeconds(0.5f);
+        unit.skillView[5].FindAngleTarget(5);
+        unit.sPUM_Prefabs.PlayAnimation(PlayerState.ATTACK, 0);
+        yield return new WaitForSeconds(0.5f);
+        unit.ChangeState(DungeonState.Idle);
+        float time = 4f;
+
+        while (time > 0)
+        {
+            time -= Time.deltaTime;
+            unit.SkillImageDic[SkillType.DoubleSlash].fillAmount = time / 4f;
+            yield return null;
+        }
+
+        if(unit.isSkillDic.ContainsKey(SkillType.DoubleSlash))
+        {
+            unit.isSkillDic[SkillType.DoubleSlash] = true;
+        }
+    }
 }
 
-public class SkillC : BaseState<DungeonUnit>
+public class Swoop : BaseState<DungeonUnit>
 {
     public override void Enter(DungeonUnit unit)
     {
+        if (unit.viewDetector.Target == null)
+        {
+            unit.ChangeState(DungeonState.Idle);
+            return;
+        }
+        unit.StartCoroutine(SwoopCo(unit));
     }
 
     public override void Exit(DungeonUnit unit)
@@ -114,26 +241,166 @@ public class SkillC : BaseState<DungeonUnit>
     public override void Update(DungeonUnit unit)
     {
     }
+
+    private IEnumerator SwoopCo(DungeonUnit unit)
+    {
+        unit.animator.SetBool("1_Move", false);
+        unit.animator.SetTrigger("Swoop");
+        var target = unit.viewDetector.Target;
+        unit.isSkillDic[SkillType.Swoop] = false;
+        yield return new WaitForSeconds(0.1f);
+        if (target != null)
+        {
+            Vector3 toHeratDir = (GameManager.instance.heart.transform.position - target.transform.position).normalized;
+            Vector3 behindDir = -toHeratDir;
+
+            float distance = 1.5f;
+            Vector3 behindPos = target.transform.position + behindDir * distance;
+            unit.transform.DOMove(behindPos, 0.1f).SetEase(Ease.InOutQuad);
+            yield return new WaitForSeconds(0.25f);
+            unit.skillView[6].transform.position = target.transform.position;
+            unit.skillView[6].animator.SetTrigger("Skill");
+            target.GetComponent<IInteractable>().DungeonTakeHit(1);
+            target.GetComponent<DungeonMonster>().stun = 1f;
+        }
+        else
+        {
+            unit.ChangeState(DungeonState.Walk);
+        }
+
+        unit.ChangeState(DungeonState.Idle);
+
+
+        float time = 1f;
+
+        while (time > 0)
+        {
+            time -= Time.deltaTime;
+            unit.SkillImageDic[SkillType.Swoop].fillAmount = time;
+            yield return null;
+        }
+
+        if (unit.isSkillDic.ContainsKey(SkillType.Swoop))
+        {
+            unit.isSkillDic[SkillType.Swoop] = true;
+        }
+    }
 }
 
+public class ConsecutiveSlash : BaseState<DungeonUnit>
+{
+    public override void Enter(DungeonUnit unit)
+    {
+        if(unit.viewDetector.Target == null)
+        {
+            unit.ChangeState(DungeonState.Idle);
+            return;
+        }
+        unit.StartCoroutine(ConsecutiveSlashCo(unit));
+       
+    }
+
+    public override void Exit(DungeonUnit unit)
+    {
+    }
+
+    public override void Update(DungeonUnit unit)
+    {
+    }
+
+    private IEnumerator ConsecutiveSlashCo(DungeonUnit unit)
+    {
+        unit.isSkillDic[SkillType.ConsecutiveSlash] = false;
+        unit.animator.SetTrigger("SkillA");
+        yield return new WaitForSeconds(0.5f);
+        for (int i = 0; i < 4; i++)
+        {
+            unit.skillView[i].animator.SetTrigger("Skill");
+            unit.skillView[i].FindRangeTarget(3);
+            unit.skillView[i].FindRangeTarget(3);
+            yield return new WaitForSeconds(0.25f);
+        }
+        unit.ChangeState(DungeonState.Idle);
+
+        float time = 8.5f;
+
+        while (time > 0)
+        {
+            time -= Time.deltaTime;
+            unit.SkillImageDic[SkillType.ConsecutiveSlash].fillAmount = time / 8.5f;
+            yield return null;
+        }
+
+        if(unit.isSkillDic.ContainsKey(SkillType.ConsecutiveSlash))
+        {
+            unit.isSkillDic[SkillType.ConsecutiveSlash] = true;
+        }
+    }
+}
+
+public class Stormblade : BaseState<DungeonUnit>
+{
+    public override void Enter(DungeonUnit unit)
+    {
+        if (unit.viewDetector.Target == null)
+        {
+            unit.ChangeState(DungeonState.Idle);
+            return;
+        }
+        unit.StartCoroutine(StormbladeCo(unit));
+        Debug.Log(unit.isSkillDic[SkillType.Stormblade]);
+
+    }
+
+    public override void Exit(DungeonUnit unit)
+    {
+    }
+
+    public override void Update(DungeonUnit unit)
+    {
+    }
+
+    private IEnumerator StormbladeCo(DungeonUnit unit)
+    {
+        unit.isSkillDic[SkillType.Stormblade] = false;
+        unit.orbitManager.gameObject.SetActive(true);
+        unit.orbitManager.RepositionOrbit();
+        unit.ChangeState(DungeonState.Idle);
+        yield return new WaitForSeconds(5f);
+        unit.orbitManager.gameObject.SetActive(false);
+        float time = 8.5f;
+
+        while (time > 0)
+        {
+            unit.SkillImageDic[SkillType.Stormblade].fillAmount = time / 8.5f;
+            time -= Time.deltaTime;
+            yield return null;
+        }
+
+        if (unit.isSkillDic.ContainsKey(SkillType.Stormblade))
+        {
+            unit.isSkillDic[SkillType.Stormblade] = true;
+        }
+    }
+}
 public class DungeonUnit : MonoBehaviour
 {
-    public UnitRecipe unitRecipe;
-    [SerializeField] private float minAtk;
-    [SerializeField] private float maxAtk;
+    public float atk;
+    public float atkCoolTime;
     public float speed;
     public ViewDetector viewDetector;
     public Animator animator;
     public Rigidbody2D rigid;
-    [SerializeField] private ViewDetector[] skillView;
-    public SPUM_Prefabs sPUM_Prefabs;
-    [SerializeField] private OrbitManager orbitManager;
-    private StateMachine<DungenoState, DungeonUnit> stateMachine = new StateMachine<DungenoState, DungeonUnit> ();
-    public DungenoState unitState;
-    public bool isAtk = true;
     public Rigidbody2D target;
-    [SerializeField] private Transform slashP;
-    [SerializeField] private Transform slashC;
+    public ViewDetector[] skillView;
+    public SPUM_Prefabs sPUM_Prefabs;
+    public OrbitManager orbitManager;
+    private StateMachine<DungeonState, DungeonUnit> stateMachine = new StateMachine<DungeonState, DungeonUnit> ();
+    private Dictionary<SkillType, DungeonState> skillDic = new Dictionary<SkillType, DungeonState>();
+    public Dictionary<SkillType, bool> isSkillDic = new ();
+    public Dictionary<SkillType, Image> SkillImageDic = new();
+    public DungeonState unitState;
+    public bool isAtk = true;
 
 
     private void Awake()
@@ -144,26 +411,21 @@ public class DungeonUnit : MonoBehaviour
         animator = GetComponent<Animator>();
         rigid = GetComponent<Rigidbody2D>();
         sPUM_Prefabs.OverrideControllerInit();
-        stateMachine.AddState(DungenoState.Idle, new IdleUnit());
-        stateMachine.AddState(DungenoState.Walk, new WalkUnit());
-        stateMachine.AddState(DungenoState.Attack, new AttackUnit());
-        stateMachine.AddState(DungenoState.SkillA, new SkillA());
-        stateMachine.AddState(DungenoState.SKillB, new SkillB());
-        stateMachine.AddState(DungenoState.SkilLC, new SkillC());
-        ChangeState(DungenoState.Idle);
-    }
+        stateMachine.AddState(DungeonState.Idle, new IdleUnit());
+        stateMachine.AddState(DungeonState.Walk, new WalkUnit());
+        stateMachine.AddState(DungeonState.Attack, new AttackUnit());
+        stateMachine.AddState(DungeonState.Slash, new Slash());
+        stateMachine.AddState(DungeonState.DoubleSlash, new DoubleSlash());
+        stateMachine.AddState(DungeonState.Swoop, new Swoop());
+        stateMachine.AddState(DungeonState.ConsecutiveSlash, new ConsecutiveSlash());
+        stateMachine.AddState(DungeonState.Stormblade, new Stormblade());
+        ChangeState(DungeonState.Idle);
 
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.K))
-        {
-            /*
-            skillView[4].animator.SetTrigger("Skill");
-            skillView[4].FindAngleTarget(10);
-            sPUM_Prefabs.PlayAnimation(PlayerState.ATTACK, 0);
-            */
-            StartCoroutine(SkillA());
-        }
+        skillDic.Add(SkillType.Slash, DungeonState.Slash);
+        skillDic.Add(SkillType.DoubleSlash, DungeonState.DoubleSlash);
+        skillDic.Add(SkillType.Swoop, DungeonState.Swoop);
+        skillDic.Add(SkillType.ConsecutiveSlash, DungeonState.ConsecutiveSlash);
+        skillDic.Add(SkillType.Stormblade, DungeonState.Stormblade);
     }
 
     private void FixedUpdate()
@@ -179,30 +441,29 @@ public class DungeonUnit : MonoBehaviour
             Vector3 scale = transform.localScale;
             scale.x = Mathf.Abs(scale.x) * direction;
             transform.localScale = scale;
-
-            float zPRotation = direction > 0 ? 180f : 0f;
-            slashP.localRotation = Quaternion.Euler(0, 0, zPRotation);
-            float zCRotation = direction > 0 ? -75f : 120f;
-            slashC.localRotation = Quaternion.Euler(0, 0, zCRotation);
         }
     }
 
-    public void ChangeState(DungenoState state)
+    public void ChangeState(DungeonState state)
     {
         unitState = state;
         stateMachine.ChangeState(state);
     }
 
-    private IEnumerator SkillA()
+    public void SkillUse(SkillType skillType)
     {
-        animator.SetTrigger("SkillA");
-        yield return new WaitForSeconds(0.5f);
-        for (int i = 0; i < 4; i++)
+        if (skillDic[skillType] == unitState || isSkillDic[skillType] == false) return;
+        ChangeState(skillDic[skillType]);
+    }
+
+    public void SkillCheck(SkillType skillType)
+    {
+        if(isSkillDic.ContainsKey(skillType))
         {
-            skillView[i].animator.SetTrigger("Skill");
-            skillView[i].FindRangeTarget(11);
-            skillView[i].FindRangeTarget(11);
-            yield return new WaitForSeconds(0.25f);
+            if(isSkillDic[skillType])
+            {
+                ChangeState(skillDic[skillType]);
+            }
         }
     }
 

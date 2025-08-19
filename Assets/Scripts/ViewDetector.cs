@@ -45,6 +45,30 @@ public class ViewDetector : MonoBehaviour
         }
     }
 
+    public void FindAttackTarget(float damage)
+    {
+        Collider2D[] targets = Physics2D.OverlapCircleAll(center.position, debuffRadius, layerMask);
+        float min = Mathf.Infinity;
+
+        foreach (Collider2D collider2D in targets)
+        {
+            float distance = Vector2.Distance(center.position, collider2D.transform.position);
+
+            if (distance < min)
+            {
+                min = distance;
+                collider2D.GetComponent<IInteractable>().DungeonTakeHit(damage);
+                target = collider2D.gameObject;
+                return;
+            }
+        }
+
+        if (targets.Length <= 0)
+        {
+            target = null;
+        }
+    }
+
     public void FindRangeTarget(float damage)
     {
         Collider2D[] targets = Physics2D.OverlapCircleAll(center.position, radius, layerMask);
